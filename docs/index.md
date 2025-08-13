@@ -11,3 +11,5 @@ Do not take anything written in this wiki seriously, except the article about ch
 With that said, have fun browsing!
 
 (If you have any ideas for new articles, resources, anything really, please whisper <span class="tw-name col-matty">Matty5957</span> on Twitch).
+
+([Github repository link](https://github.com/SpikyTater/spud-wiki)).
