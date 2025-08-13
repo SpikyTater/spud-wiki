@@ -1,0 +1,32 @@
+.tw-name {
+  font-weight: 700;
+  font-family: "Inter", "Noto Sans Arabic", "Roobert", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.strike {
+  text-decoration: line-through;
+}
+
+.col-meg {
+  color: #00e700;
+}
+
+.col-blue {
+  color: #359bff;
+}
+
+.col-bluered {
+  color: #ff5858;
+}
+
+.col-matty {
+  color: #daa520;
+}
+
+.col-spammer {
+  color: #92ff00;
+}
+
+.smol {
+  font-size: 0.5em;
+}

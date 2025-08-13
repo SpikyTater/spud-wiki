@@ -1,0 +1,7 @@
+# GeminiTay
+
+(Written by <span class="tw-name strike col-bluered">red</span><span class="tw-name col-blue">bluestrategosj</span>)
+
+GeminiTay is one of Pearl’s best friends in the content creator community, fellow Hermit and recently Twitch Stream Mod. She commonly watches Pearl’s Twitch Streams and either talks trough Stream Chat or the in-game Minecraft chat with Pearl over various topics.
+
+In one case, Pearl had to mod her chat during a stream and Gem offered to become a Mod to help her out. Pearl accepted after mentioning that Gem would lose her VIP status. **GemMod** was born that fateful day. Since then, Gem gets greeted by a wall of “Hi GemMod” alongside the usual “Hi Gem”. Gem has several times threatened to use her mod powers to ban chatters and some chatters hide or scatter when she arrives. (For example, by changing their name colour in chat).

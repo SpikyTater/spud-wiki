@@ -6,3 +6,6 @@ theme:
   name: material
   favicon: assets/favicon.ico
   logo: assets/logo.png
+
+extra_css:
+  - assets/style/generic.css

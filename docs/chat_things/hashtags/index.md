@@ -1,0 +1,5 @@
+# Important
+
+Pearl has explicitly stated that chat should tone down with the hashtags on stream, especially so with the weirder ones.
+
+So have fun using them, but with **restraint** and please stop immediately when asked to by the majority of chat, by a moderator or by Pearl herself.
