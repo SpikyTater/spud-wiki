@@ -380,7 +380,7 @@ function CreateHtmlFileString(page) {
   s += '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">';
   s += '<meta name="application-name" content="Spud Wiki">';
   s += `<meta name="title" content="${title}">`;
-  s += '<link rel="icon" href="/assets/logo.png">';
+  s += '<link rel="icon" href="/spud-wiki/assets/logo.png">';
 
   // head end
   s += "</head><body>";
