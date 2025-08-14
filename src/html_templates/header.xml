@@ -17,8 +17,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.-->
 <div id="header">
   <div id="logo-cont">
-    <a id="logo-link" href="/" title="Go to Main Page">
-      <img id="logo" src="/assets/logo.png"/>
+    <a id="logo-link" href="/spud-wiki/" title="Go to Main Page">
+      <img id="logo" src="/spud-wiki/assets/logo.png"/>
       <div id="logo-title-cont">
         <span id="logo-title">Spud</span>
         <span id="logo-title">Wiki</span>
