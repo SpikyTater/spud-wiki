@@ -1,0 +1,27 @@
+{
+  "name": "spud-wiki-engine",
+  "version": "0.0.1",
+  "description": "Wiki Engine for the Spud Wiki.",
+  "main": "src/index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "build": "node src/index.js build",
+    "clean": "node src/index.js clean"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SpikyTater/spud-wiki.git"
+  },
+  "author": "SpikyTater, et al.",
+  "license": "SEE LICENSE IN LICENSE.TXT",
+  "bugs": {
+    "url": "https://github.com/SpikyTater/spud-wiki/issues"
+  },
+  "homepage": "https://github.com/SpikyTater/spud-wiki#readme",
+  "dependencies": {
+    "xml2js": "^0.6.2"
+  },
+  "type": "module"
+}

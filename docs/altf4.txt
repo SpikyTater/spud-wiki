@@ -1,0 +1,6 @@
+!title = Alt+F4
+!contributor = waarisdetaart 
+
+On the 10th of June 2025{1}, Pearl was terraforming on stream and chat tried to explain her how to set up camera's with the Freecam mod. Someone in chat, accidentally, suggested Alt+F4+1 (in reality it's just F4+1..9). Pearl pressed these keys, not realising/remembering that pressing **Alt+F4** closes your active window. This closed her Minecraft instance and also crashed the stream for a bit.
+
+!note1= <a href="https://www.twitch.tv/pearlescentmoon/clip/TolerantSucculentGuanacoYouDontSay-CkiweXZT1hG17-Rn">https://www.twitch.tv/pearlescentmoon/clip/TolerantSucculentGuanacoYouDontSay-CkiweXZT1hG17-Rn</a>

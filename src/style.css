@@ -1,0 +1,183 @@
+/*
+Spud Wiki Engine
+Copyright (C) 2025  SpikyTater
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
+html,
+body,
+p,
+blockquote {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  --color-bg-1-txt: #eee;
+  --color-bg-1: #7338cb;
+  --color-bg-1-darker: #652db9;
+  --outer-padding-inline: 8rem;
+}
+
+#header {
+  background-color: var(--color-bg-1);
+  min-height: 3rem;
+  width: 100%;
+  display: flex;
+  padding: .4rem var(--outer-padding-inline);
+  box-sizing: border-box;
+  border-bottom: 3px solid var(--color-bg-1-darker);
+}
+
+#logo-cont {
+  height: 100%;
+  display: flex;
+  justify-self: left;
+}
+
+#logo-link {
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 1;
+  text-decoration: none;
+  color: var(--color-bg-1-txt);
+  font-weight: 700;
+  font-family: monospace;
+  font-size: 1.3rem;
+  user-select: none;
+}
+
+#logo {
+  height: max(3rem, 50px);
+}
+
+#logo-title-cont {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: max(3rem, 50px);
+  align-items: center;
+}
+
+#footer {
+  background-color: var(--color-bg-1);
+  color: var(--color-bg-1-txt);
+  width: 100%;
+  display: flex;
+  padding: .4rem var(--outer-padding-inline);
+  box-sizing: border-box;
+}
+
+#footer-info {
+  font-size: .75em;
+  flex-grow: 1;
+}
+
+#footer-info>a,
+#footer-contributors>a {
+  color: var(--color-bg-1-txt);
+  text-decoration: none;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+#section-middle {
+  font-family: sans-serif;
+  box-sizing: border-box;
+  padding-inline: var(--outer-padding-inline);
+  display: grid;
+  grid-template-columns: 1fr 4fr 1fr;
+}
+
+#article-title {
+  font-size: 1.8em;
+  font-family: 'Linux Libertine', 'Georgia', 'Times', 'Source Serif Pro', serif;
+  line-height: 1.375;
+}
+
+div#article-content {
+  padding: 1rem 0;
+}
+
+.article-secttitle {
+  font-size: 1.5em;
+  font-family: 'Linux Libertine', 'Georgia', 'Times', 'Source Serif Pro', serif;
+  line-height: 1.375;
+  border-bottom: 1px solid #222;
+}
+
+.content {
+  /*padding: 1rem 15rem;*/
+  padding: 1rem;
+}
+
+.tw-name {
+  font-weight: 700;
+  font-family: "Inter", "Noto Sans Arabic", "Roobert", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+#footer-contributors {
+  font-size: 0.9em;
+}
+
+#article-content p {
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  line-height: 1.5;
+  text-align: justify;
+}
+
+blockquote {
+  border-left: .2rem solid #bbb;
+  margin-left: .6rem;
+  background-color: #eee;
+  padding: .1rem .6rem;
+}
+
+#bottom-refs {
+  padding-top: 1rem;
+}
+
+.article-title-centered {
+  text-align: center;
+}
+
+#side-nav {
+  display: flex;
+  flex-direction: column;
+  padding: 3rem 1rem 0rem 1rem;
+}
+
+#side-nav>a {
+  text-decoration: none;
+  color: #202;
+  line-height: 1.5;
+}
+
+#side-nav>a:hover {
+
+  color: #b613b6;
+}
+
+.text-strike {
+  text-decoration: line-through;
+}

@@ -1,2 +1,7 @@
-.vscode/
-serve.cmd
+.DS_Store
+/.vscode
+/build
+/node_modules
+/dev
+/docs_to_convert
+dev.txt

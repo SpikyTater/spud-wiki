@@ -1,0 +1,17 @@
+!title = Welcome to Spud Wiki!
+!center_title
+!contributor = Matty5957
+
+This is the lore wiki of <a target="_blank" rel="noopener noreferrer" href="https://www.twitch.tv/pearlescentmoon">PearlescentMoon's chat on Twitch</a>.
+
+Everything here has been written by fans for fans, with **no official endorsement by Pearl or by any of the other hermits**.
+
+The objective is to introduce new chatters and not to let them feel left out. And not to let them think we are psychopaths. (Are we really now, though? Nevermind, let me keep going.)
+
+Do not take anything written in this wiki seriously, except the article about chat etiquette.
+
+With that said, have fun browsing!
+
+If you have any ideas for new articles, resources, anything really, please whisper <span class="tw-name" style="color:#daa520;">Matty5957</span> on Twitch.
+
+<a target="_blank" rel="noopener noreferrer" href="https://github.com/SpikyTater/spud-wiki">Github repository link</a>.
