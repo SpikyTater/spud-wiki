@@ -32,6 +32,12 @@ body {
   --outer-padding-inline: 8rem;
 }
 
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 #header {
   background-color: var(--color-bg-1);
   min-height: 3rem;
@@ -39,7 +45,6 @@ body {
   display: flex;
   padding: .4rem var(--outer-padding-inline);
   box-sizing: border-box;
-  border-bottom: 3px solid var(--color-bg-1-darker);
 }
 
 #logo-cont {
@@ -106,6 +111,7 @@ body {
   padding-inline: var(--outer-padding-inline);
   display: grid;
   grid-template-columns: 1fr 4fr 1fr;
+  flex-grow: 1;
 }
 
 #article-title {

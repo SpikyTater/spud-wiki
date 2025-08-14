@@ -421,7 +421,7 @@ function CreateHtmlFileString(page) {
   // contributors
 
   if (page.contributors.length) {
-    s += '<div id="footer-contributors">This article is licensed under <a target="_blank" rel="noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>. It was written by ';
+    s += '<div id="footer-contributors">The content of this page is licensed under <a target="_blank" rel="noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> and it was written by ';
 
     const c = page.contributors, l = c.length;
     for (let i = 0; i < l; i++) {
