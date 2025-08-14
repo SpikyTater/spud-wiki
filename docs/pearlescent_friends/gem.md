@@ -1,6 +1,6 @@
 # GeminiTay
 
-(Written by <span class="tw-name strike col-bluered">red</span><span class="tw-name col-blue">bluestrategosj</span>)
+(Written by <span class="tw-name strike col-bluered">Red</span><span class="tw-name col-blue">BlueStrategosJ</span>)
 
 **GeminiTay** is one of Pearl’s best friends in the content creator community, fellow Hermit and recently Twitch Stream Mod. She commonly watches Pearl’s Twitch Streams and either talks trough Stream Chat or the in-game Minecraft chat with Pearl over various topics.
 

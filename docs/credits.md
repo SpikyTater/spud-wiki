@@ -6,7 +6,7 @@ This page contains the credits for anybody who has contributed to this wiki, eit
 
 <span class="tw-name col-meg">19_meg_91</span>
 
-<span class="tw-name col-blue">bluestrategosj</span>
+<span class="tw-name col-blue">BlueStrategosJ</span>
 
 <span class="tw-name col-matty">Matty5957</span>
 
