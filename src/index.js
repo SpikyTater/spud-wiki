@@ -444,12 +444,12 @@ function CreateHtmlFileString(page) {
 
 
 function CreateNavigatorSidebar() {
-  let s = '<div id="side-nav"><a href="/">Main Page</a><a href="/credits.html">Credits</a><div class="div-sep"></div>';
+  let s = '<div id="side-nav"><a href="/spud-wiki/">Main Page</a><a href="/spud-wiki/credits.html">Credits</a><div class="div-sep"></div>';
   const l = ALL_ARTICLES.length;
   for (let i = 0; i < l; i++) {
     const article = ALL_ARTICLES[i];
 
-    s += `<a href="/${article.name_no_ext}.html">${article.page.title}</a>`;
+    s += `<a href="/spud-wiki/${article.name_no_ext}.html">${article.page.title}</a>`;
 
 
   }
