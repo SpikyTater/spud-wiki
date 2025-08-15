@@ -139,7 +139,6 @@ a:hover {
 #footer-info>a,
 #footer-contributors>a {
   color: var(--color-bg-1-txt);
-  text-decoration: none;
 }
 
 .italic {
