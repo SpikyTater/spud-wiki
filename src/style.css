@@ -25,17 +25,62 @@ blockquote {
   padding: 0;
 }
 
-body {
+body:has(#theme-select>[value="light"]:checked) {
   --color-bg-1-txt: #eee;
   --color-bg-1: #7338cb;
+  --color-bg-1-lighter: #8662bb;
   --color-bg-1-darker: #652db9;
   --outer-padding-inline: 8rem;
+  --link-color-txt: #36c;
+  --link-color-txt-hover: #3056a9;
+  --link-color-txt-visited: #6a60b0;
+  --link-color-txt-visited-hover: #534fa3;
+  --color-bg-blockquote: #ddd;
+  --color-section-border: #444;
+  --bg-main: #eee;
+  --color-txt-main: #333;
+}
+
+body:has(#theme-select>[value="dark"]:checked) {
+  --color-bg-1-txt: #ddd;
+  --color-bg-1: #7338cb;
+  --color-bg-1-lighter: #8662bb;
+  --color-bg-1-darker: #652db9;
+  --outer-padding-inline: 8rem;
+  --link-color-txt: #88a3e8;
+  --link-color-txt-hover: #b0c1f0;
+  --link-color-txt-visited: #a799cd;
+  --link-color-txt-visited-hover: #c5b9dd;
+  --color-bg-blockquote: #444;
+  --color-section-border: #ddd;
+  --bg-main: #333;
+  --color-txt-main: #eee;
 }
 
 body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background-color: var(--bg-main);
+  color: var(--color-txt-main);
+}
+
+a {
+  color: var(--link-color-txt);
+  text-decoration: none;
+}
+
+a :visited {
+  color: var(--link-color-visited);
+}
+
+a :visited:hover {
+  color: var(--link-color-visited-hover);
+}
+
+a:hover {
+  color: var(--link-color-txt-hover);
+  text-decoration: underline;
 }
 
 #header {
@@ -118,6 +163,7 @@ body {
   font-size: 1.8em;
   font-family: 'Linux Libertine', 'Georgia', 'Times', 'Source Serif Pro', serif;
   line-height: 1.375;
+  border-bottom: 1px solid var(--color-section-border);
 }
 
 div#article-content {
@@ -128,11 +174,10 @@ div#article-content {
   font-size: 1.5em;
   font-family: 'Linux Libertine', 'Georgia', 'Times', 'Source Serif Pro', serif;
   line-height: 1.375;
-  border-bottom: 1px solid #222;
+  border-bottom: 1px solid var(--color-section-border);
 }
 
 .content {
-  /*padding: 1rem 15rem;*/
   padding: 1rem;
 }
 
@@ -153,9 +198,11 @@ div#article-content {
 }
 
 blockquote {
-  border-left: .2rem solid #bbb;
+  border-left: .2rem solid
+    /*#bbb*/
+    var(--color-bg-1-lighter);
   margin-left: .6rem;
-  background-color: #eee;
+  background-color: var(--color-bg-blockquote);
   padding: .1rem .6rem;
 }
 
@@ -174,16 +221,15 @@ blockquote {
 }
 
 #side-nav>a {
-  text-decoration: none;
-  color: #202;
   line-height: 1.5;
-}
-
-#side-nav>a:hover {
-
-  color: #b613b6;
 }
 
 .text-strike {
   text-decoration: line-through;
+}
+
+.div-sep {
+  height: 1px;
+  background-color: var(--color-section-border);
+  margin-block: .4rem;
 }

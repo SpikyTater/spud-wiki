@@ -30,7 +30,7 @@ const ALL_ARTICLES = (function () {
 
   let files = readdirSync("./docs", { recursive: true }).map(s => s.replaceAll("\\", "/"));                             // reads every file in /docs and puts them into files
 
-  const special_files = [                                                                                               
+  const special_files = [
     "main.txt",
     "credits.txt",
     "test.txt",
@@ -91,7 +91,7 @@ const additional_args = (function ParseAdditionalArgs(argv) {
   return o;
 })(process.argv);
 
-const linkInitiator ="§a"                                                                                       // defines the two characters who begin the link - Spammer92
+const linkInitiator = "§a"                                                                                       // defines the two characters who begin the link - Spammer92
 const linkCloser = "§c"                                                                                         // defines the two characters end begin the link - Spammer92
 
 function ReadFileAsText(fpath) {
@@ -191,44 +191,44 @@ class WikiPage {
         if (i + 6 < l && s[i + 1] === linkInitiator[1]) {
           if (s.substring(i + 2, i + 4) === "=+") {
 
-                const idx = s.indexOf(linkCloser, i + 5);
-                if (-1 === idx) {
-                    console.warn("Link does not end.");
-                    continue;
-                }
-
-                let searchTerm = s.substring(i + 4, s.substring(i + 4).indexOf("+") + 4 + i);
-                const searchTermSectionMarker = searchTerm.indexOf("#");
-                let searchTermSection = "";
-
-                if (searchTermSectionMarker !== -1) {
-                    searchTermSection = searchTerm.substring(searchTermSectionMarker);
-                    searchTerm = searchTerm.substring(0, searchTermSectionMarker);
-                }
-
-                let link;
-
-                for (const element of ALL_ARTICLES) {
-                    if (element.name_no_ext.substring(element.name_no_ext.lastIndexOf("/") + 1) === searchTerm) {
-                        link = element.dpath.substring(7);
-                        break;
-                    }
-                }
-
-                const linkText = s.substring(s.substring(i + 4).indexOf("+") + 5 + i, idx);
-
-                res += `<a href="/spud-wiki${link}${searchTermSection}">${linkText}</a>`;
-
-                i = idx + 1;                                                                                                                                       // + 1 , because linkCloser is 2 char long
+            const idx = s.indexOf(linkCloser, i + 5);
+            if (-1 === idx) {
+              console.warn("Link does not end.");
+              continue;
             }
-            else {
-                console.warn("Link is not forMATTYed correctly.");
-                continue;
+
+            let searchTerm = s.substring(i + 4, s.substring(i + 4).indexOf("+") + 4 + i);
+            const searchTermSectionMarker = searchTerm.indexOf("#");
+            let searchTermSection = "";
+
+            if (searchTermSectionMarker !== -1) {
+              searchTermSection = searchTerm.substring(searchTermSectionMarker);
+              searchTerm = searchTerm.substring(0, searchTermSectionMarker);
             }
+
+            let link;
+
+            for (const element of ALL_ARTICLES) {
+              if (element.name_no_ext.substring(element.name_no_ext.lastIndexOf("/") + 1) === searchTerm) {
+                link = element.dpath.substring(7);
+                break;
+              }
+            }
+
+            const linkText = s.substring(s.substring(i + 4).indexOf("+") + 5 + i, idx);
+
+            res += `<a href="/spud-wiki${link}${searchTermSection}">${linkText}</a>`;
+
+            i = idx + 1;                                                                                                                                       // + 1 , because linkCloser is 2 char long
+          }
+          else {
+            console.warn("Link is not forMATTYed correctly.");
+            continue;
+          }
         }
         else {
-            console.warn("Link is not initialized.");
-            continue;
+          console.warn("Link is not initialized.");
+          continue;
         }
 
       }                                                                                                         //end of the evil script
@@ -428,12 +428,12 @@ function CreateHtmlFileString(page) {
   s += '<meta name="application-name" content="Spud Wiki">';
   s += `<meta name="title" content="${title}">`;
   s += '<link rel="icon" href="/spud-wiki/assets/logo.png">';
-
+  s += '<script src="/spud-wiki/assets/main.js"></script>';
   // head end
   s += "</head><body>";
 
   // body start
-  s+='<div id="header"><div id="logo-cont"><a id="logo-link" href="/spud-wiki/" title="Go to Main Page"><img id="logo" src="/spud-wiki/assets/logo.png"/><div id="logo-title-cont"><span id="logo-title">Spud</span><span id="logo-title">Wiki</span></div></a></div><div id="search-cont">Search not yet implemented :]</div></div>';
+  s += '<div id="header"><div id="logo-cont"><a id="logo-link" href="/spud-wiki/" title="Go to Main Page"><img id="logo" src="/spud-wiki/assets/logo.png"/><div id="logo-title-cont"><span id="logo-title">Spud</span><span id="logo-title">Wiki</span></div></a></div><div id="search-cont">Search not yet implemented :]</div></div>';
   //s += HTML_TEMPLATES.header;
 
   s += '<div id="section-middle">';
@@ -458,7 +458,7 @@ function CreateHtmlFileString(page) {
   }
   s += '</div>';
 
-  s+='<div id="right-sidebar"></div>'
+  s += '<div id="right-sidebar"></div>'
 
   s += '</div><div id="footer">';
 
@@ -486,6 +486,22 @@ function CreateHtmlFileString(page) {
     s += '</div>';
   }
 
+  // themes
+
+  s += '<div id="theme-cont">Theme: <select id="theme-select">'
+
+  const themes = [
+    "Dark",
+    "Light"
+  ];
+
+  for (const theme of themes) {
+    s += `<option value="${theme.toLowerCase()}">${theme}</option>`
+  }
+
+
+  s += '</select></div>'
+
   // footer, body, html end
   return s + "</div></body></html>";
 }
@@ -493,12 +509,12 @@ function CreateHtmlFileString(page) {
 
 function CreateNavigatorSidebar(is_dev) {
   let s = '<div id="side-nav">';
-  
-if (is_dev) {
-  a+='<a href="/spud-wiki/test.html">TEST</a>';
-}
 
-  a+='<a href="/spud-wiki/">Main Page</a><a href="/spud-wiki/credits.html">Credits</a><div class="div-sep"></div>';
+  if (is_dev) {
+    s += '<a href="/spud-wiki/test.html">TEST</a>';
+  }
+
+  s += '<a href="/spud-wiki/">Main Page</a><a href="/spud-wiki/credits.html">Credits</a><div class="div-sep"></div>';
   const l = ALL_ARTICLES.length;
   for (let i = 0; i < l; i++) {
     const article = ALL_ARTICLES[i];
@@ -529,7 +545,7 @@ async function Build(is_dev) {
     const l = ALL_ARTICLES.length;
     for (let i = 0; i < l; i++) {
       const article = ALL_ARTICLES[i];
-        console.log(article.fpath) // -----------------
+      console.log(article.fpath) // -----------------
       article.page = WikiPage.ParseFromFile(article.fpath);
     }
 
@@ -543,6 +559,7 @@ async function Build(is_dev) {
   }
 
 
+  writeFileSync("./build/assets/main.js",'"use strict";\n(()=>{'+ ReadFileAsText("./src/wiki.js")+"})()", { encoding: "utf8", flush: true });
 
 
   writeFileSync("./build/index.html", CreateHtmlFileString(WikiPage.ParseFromFile("./docs/main.txt")), { encoding: "utf8", flush: true });
@@ -557,7 +574,7 @@ async function Build(is_dev) {
   })), { encoding: "utf8", flush: true });
 
   if (is_dev) {
-  writeFileSync("./build/test.html", CreateHtmlFileString(WikiPage.ParseFromFile("./docs/test.txt")), { encoding: "utf8", flush: true });
+    writeFileSync("./build/test.html", CreateHtmlFileString(WikiPage.ParseFromFile("./docs/test.txt")), { encoding: "utf8", flush: true });
 
   }
 }
