@@ -6,13 +6,13 @@
 
 ### Open console
 
-Open a command prompt inside the main directory of the repository.
+Open a command prompt inside the main directory of the repository you have cloned/downloaded.
 
 ### Step 1: Install module dependencies
 
 To install any module dependencies, run:
 
-    npm install
+    npm ci
 There are currently none, but some may be added in the future.
 
 ### Step 2: Build
