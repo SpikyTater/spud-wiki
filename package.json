@@ -8,6 +8,7 @@
   },
   "scripts": {
     "build": "node src/index.js build",
+    "build:dev": "node src/index.js build:dev",
     "clean": "node src/index.js clean"
   },
   "repository": {
@@ -20,8 +21,5 @@
     "url": "https://github.com/SpikyTater/spud-wiki/issues"
   },
   "homepage": "https://github.com/SpikyTater/spud-wiki#readme",
-  "dependencies": {
-    "xml2js": "^0.6.2"
-  },
   "type": "module"
 }

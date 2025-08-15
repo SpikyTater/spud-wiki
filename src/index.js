@@ -20,12 +20,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import { readFileSync, readdirSync, existsSync, mkdirSync, writeFileSync, cpSync, copyFileSync, rm, statSync } from "fs";
 import path from "path";
 import process from "process";
-import { Parser, Builder } from "xml2js";
+//import { Parser, Builder } from "xml2js";
 
 // A big thanks to every single one of you. <3
 const CONTRIBUTORS = {};
 const COPYRIGHT_COMMENT = `<!--Spud Wiki Engine\nCopyright (C) ${(new Date()).getFullYear()}  SpikyTater\n\nThis program is free software; you can redistribute it and/or modify\nit under the terms of the GNU General Public License as published by\nthe Free Software Foundation; either version 2 of the License, or\n(at your option) any later version.\n\nThis program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along\nwith this program; if not, write to the Free Software Foundation, Inc.,\n51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.-->\n`;
-const HTML_TEMPLATES = {};
+//const HTML_TEMPLATES = {};
 const ALL_ARTICLES = (function () {
 
   let files = readdirSync("./docs", { recursive: true }).map(s => s.replaceAll("\\", "/"));                             // reads every file in /docs and puts them into files
@@ -355,7 +355,7 @@ class WikiPage {
   }
 }
 
-async function ReadXmlFile(fpath) {
+/*async function ReadXmlFile(fpath) {
   const txt = ReadFileAsText(fpath);
   if (!txt) return;
 
@@ -372,9 +372,9 @@ function XmlToHtmlString(xml) {
   });
 
   return builder.buildObject(xml);
-}
+}*/
 
-async function LoadAllHtmlTemplates() {
+/*async function LoadAllHtmlTemplates() {
   const FILES = [
     "header",
   ];
@@ -387,7 +387,7 @@ async function LoadAllHtmlTemplates() {
       HTML_TEMPLATES[FILES[i]] = XmlToHtmlString(res[i]);
     }
   });
-}
+}*/
 
 function ReadJsonFile(fpath) {
   const txt = ReadFileAsText(fpath);
@@ -430,7 +430,8 @@ function CreateHtmlFileString(page) {
   s += "</head><body>";
 
   // body start
-  s += HTML_TEMPLATES.header;
+  s+='<div id="header"><div id="logo-cont"><a id="logo-link" href="/spud-wiki/" title="Go to Main Page"><img id="logo" src="/spud-wiki/assets/logo.png"/><div id="logo-title-cont"><span id="logo-title">Spud</span><span id="logo-title">Wiki</span></div></a></div><div id="search-cont">Search not yet implemented :]</div></div>';
+  //s += HTML_TEMPLATES.header;
 
   s += '<div id="section-middle">';
   s += NAVIGATOR_SIDEBAR;
@@ -501,10 +502,10 @@ function CreateNavigatorSidebar() {
   return s + "</div>";
 }
 
-async function Build(is_fast_build) {
+async function Build(is_dev) {
   Object.assign(CONTRIBUTORS, ReadJsonFile("./src/contributors.json"));
 
-  await LoadAllHtmlTemplates();
+  //await LoadAllHtmlTemplates();
 
   if (!existsSync("./build")) {
     mkdirSync("./build");
