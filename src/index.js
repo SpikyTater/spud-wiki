@@ -33,6 +33,7 @@ const ALL_ARTICLES = (function () {
   const special_files = [                                                                                               
     "main.txt",
     "credits.txt",
+    "test.txt",
   ];
 
   for (const f of special_files) {                                                                                      // removes special_files elements from files
@@ -188,7 +189,7 @@ class WikiPage {
       }
       else if (c === linkInitiator[0] && (i === 0 || (i > 0 && s[i - 1] !== "\\"))) {                           // evil words of Spammer92                          example link syntax §a=+altf4+TEXT§c
         if (i + 6 < l && s[i + 1] === linkInitiator[1]) {
-            if (s.substring(i + 2, i + 4) === "=+") {
+          if (s.substring(i + 2, i + 4) === "=+") {
 
                 const idx = s.indexOf(linkCloser, i + 5);
                 if (-1 === idx) {
@@ -215,6 +216,8 @@ class WikiPage {
                 }
 
                 const linkText = s.substring(s.substring(i + 4).indexOf("+") + 5 + i, idx);
+
+                res += `<a href="/spud-wiki${link}${searchTermSection}">${linkText}</a>`;
 
                 i = idx + 1;                                                                                                                                       // + 1 , because linkCloser is 2 char long
             }
@@ -488,8 +491,14 @@ function CreateHtmlFileString(page) {
 }
 
 
-function CreateNavigatorSidebar() {
-  let s = '<div id="side-nav"><a href="/spud-wiki/">Main Page</a><a href="/spud-wiki/credits.html">Credits</a><div class="div-sep"></div>';
+function CreateNavigatorSidebar(is_dev) {
+  let s = '<div id="side-nav">';
+  
+if (is_dev) {
+  a+='<a href="/spud-wiki/test.html">TEST</a>';
+}
+
+  a+='<a href="/spud-wiki/">Main Page</a><a href="/spud-wiki/credits.html">Credits</a><div class="div-sep"></div>';
   const l = ALL_ARTICLES.length;
   for (let i = 0; i < l; i++) {
     const article = ALL_ARTICLES[i];
@@ -524,7 +533,7 @@ async function Build(is_dev) {
       article.page = WikiPage.ParseFromFile(article.fpath);
     }
 
-    NAVIGATOR_SIDEBAR = CreateNavigatorSidebar();
+    NAVIGATOR_SIDEBAR = CreateNavigatorSidebar(is_dev);
 
     for (let i = 0; i < l; i++) {
       const article = ALL_ARTICLES[i];
@@ -547,13 +556,10 @@ async function Build(is_dev) {
     return s;
   })), { encoding: "utf8", flush: true });
 
-  //const page = WikiPage.ParseFromFile("./docs/stream_start.txt");
+  if (is_dev) {
+  writeFileSync("./build/test.html", CreateHtmlFileString(WikiPage.ParseFromFile("./docs/test.txt")), { encoding: "utf8", flush: true });
 
-  // console.log("SXXXXX", JSON.stringify(page, null, 2));
-
-  //writeFileSync("./build/test.html", CreateHtmlFileString(page), { encoding: "utf8", flush: true });
-
-
+  }
 }
 
 

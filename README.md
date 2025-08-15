@@ -56,3 +56,11 @@ Add the following lines to 'settings.json' located in the '.vscode' directory:
 ### Step 4: Profit
 
 Now you can test the Wiki locally on your browser by pressing "Go Live", found on the right side of VS Code's bottom panel.
+
+## Testing an article
+
+A webpage where contributors will be able to test their own articles is currently in the making (it's actually not, but it's a great idea, innit?).
+
+For now, you can use a file named 'test.txt' inside the docs subdirectory. It will only be built with the development build and it is set to be ignored by git.
+
+Your test page will always show on top of the navigation panel on the left as 'TEST', not matter what title you give it.
