@@ -11,3 +11,4 @@ special pages class
 !category <- to help group up stuff
 !tags <- to help with search indexing
 !redirect <- for other words that get redirected to a certain page, also searchable through those
+change all sync file operations to async ones

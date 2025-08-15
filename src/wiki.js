@@ -18,14 +18,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 // This is the only javascript file that is deployed to GitHub Pages
-// TODO: In the future it will be minified during production builds
+// TODO: In the future it will be minified in production builds
 // All webpages of the wiki have this script inside <head>
 // This script also undergoes a building process:
 //   - some constants will be added on top (e.g. THEMES)
 //   - all code in this will be included inside an IIFE, so don't worry
 //     about polluting the global object
 
-// TODO: add this in the build process
+// TODO: add this constant during the build process
 const THEMES = [
   "dark", "light"
 ];

@@ -18,9 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import { readFileSync, readdirSync, existsSync, mkdirSync, writeFileSync, cpSync, copyFileSync, rm, statSync } from "fs";
-import path from "path";
 import process from "process";
-//import { Parser, Builder } from "xml2js";
 
 // A big thanks to every single one of you. <3
 const CONTRIBUTORS = {};
@@ -358,39 +356,6 @@ class WikiPage {
   }
 }
 
-/*async function ReadXmlFile(fpath) {
-  const txt = ReadFileAsText(fpath);
-  if (!txt) return;
-
-  const parser = new Parser({ trim: true, normalizeTags: true, normalize: true, explicitRoot: true, explicitArray: true })
-
-
-  return parser.parseStringPromise(txt);
-}
-
-function XmlToHtmlString(xml) {
-  const builder = new Builder({
-    headless: true,
-    renderOpts: { pretty: false }
-  });
-
-  return builder.buildObject(xml);
-}*/
-
-/*async function LoadAllHtmlTemplates() {
-  const FILES = [
-    "header",
-  ];
-
-
-
-  return Promise.all(FILES.map(s => `./src/html_templates/${s}.xml`).map(ReadXmlFile)).then(function (res) {
-    const l = res.length;
-    for (let i = 0; i < l; i++) {
-      HTML_TEMPLATES[FILES[i]] = XmlToHtmlString(res[i]);
-    }
-  });
-}*/
 
 function ReadJsonFile(fpath) {
   const txt = ReadFileAsText(fpath);
@@ -529,8 +494,6 @@ function CreateNavigatorSidebar(is_dev) {
 
 async function Build(is_dev) {
   Object.assign(CONTRIBUTORS, ReadJsonFile("./src/contributors.json"));
-
-  //await LoadAllHtmlTemplates();
 
   if (!existsSync("./build")) {
     mkdirSync("./build");
