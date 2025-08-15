@@ -71,11 +71,11 @@ a {
 }
 
 a:visited {
-  color: var(--link-color-visited);
+  color: var(--link-color-txt-visited);
 }
 
 a:visited:hover {
-  color: var(--link-color-visited-hover);
+  color: var(--link-color-txt-visited-hover);
 }
 
 a:hover {
