@@ -28,20 +28,20 @@ const COPYRIGHT_COMMENT = `<!--Spud Wiki Engine\nCopyright (C) ${(new Date()).ge
 const HTML_TEMPLATES = {};
 const ALL_ARTICLES = (function () {
 
-  let files = readdirSync("./docs", { recursive: true }).map(s => s.replaceAll("\\", "/"));
+  let files = readdirSync("./docs", { recursive: true }).map(s => s.replaceAll("\\", "/"));                             // reads every file in /docs and puts them into files
 
-  const special_files = [
+  const special_files = [                                                                                               
     "main.txt",
     "credits.txt",
   ];
 
-  for (const f of special_files) {
+  for (const f of special_files) {                                                                                      // removes special_files elements from files
     const idx = files.indexOf(f);
     if (-1 === idx) continue;
 
     files.splice(idx, 1);
   }
-  return files.map(function (s) {
+  return files.map(function (s) {                                                                                       // files elements consist now of {name: path name or .txt file, fpath: path to .txt file, name_no_ext: path name or .txt file without extension, dpath: path of resulting .html file}
     return {
       name: s,
       fpath: `./docs/${s}`,
@@ -90,7 +90,8 @@ const additional_args = (function ParseAdditionalArgs(argv) {
   return o;
 })(process.argv);
 
-
+const linkInitiator ="§a"                                                                                       // defines the two characters who begin the link - Spammer92
+const linkCloser = "§c"                                                                                         // defines the two characters end begin the link - Spammer92
 
 function ReadFileAsText(fpath) {
   try {
@@ -185,6 +186,49 @@ class WikiPage {
           i = idx;
         }
       }
+      else if (c === linkInitiator[0] && (i === 0 || (i > 0 && s[i - 1] !== "\\"))) {                           // evil words of Spammer92                          example link syntax §a=+altf4+TEXT§c
+        if (i + 6 < l && s[i + 1] === linkInitiator[1]) {
+            if (s.substring(i + 2, i + 4) === "=+") {
+
+                const idx = s.indexOf(linkCloser, i + 5);
+                if (-1 === idx) {
+                    console.warn("Link does not end.");
+                    continue;
+                }
+
+                let searchTerm = s.substring(i + 4, s.substring(i + 4).indexOf("+") + 4 + i);
+                const searchTermSectionMarker = searchTerm.indexOf("#");
+                let searchTermSection = "";
+
+                if (searchTermSectionMarker !== -1) {
+                    searchTermSection = searchTerm.substring(searchTermSectionMarker);
+                    searchTerm = searchTerm.substring(0, searchTermSectionMarker);
+                }
+
+                let link;
+
+                for (const element of ALL_ARTICLES) {
+                    if (element.name_no_ext.substring(element.name_no_ext.lastIndexOf("/") + 1) === searchTerm) {
+                        link = element.dpath.substring(7);
+                        break;
+                    }
+                }
+
+                const linkText = s.substring(s.substring(i + 4).indexOf("+") + 5 + i, idx);
+
+                i = idx + 1;                                                                                                                                       // + 1 , because linkCloser is 2 char long
+            }
+            else {
+                console.warn("Link is not forMATTYed correctly.");
+                continue;
+            }
+        }
+        else {
+            console.warn("Link is not initialized.");
+            continue;
+        }
+
+      }                                                                                                         //end of the evil script
       else {
         res += c;
       }
@@ -376,11 +420,11 @@ function CreateHtmlFileString(page) {
   // head start
   s += '<meta charset="utf-8">';
   s += `<title>${title}</title>`;
-  s += '<link rel="stylesheet" href="/spud-wiki/style.css">';
+  s += '<link rel="stylesheet" href="/style.css">';
   s += '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">';
   s += '<meta name="application-name" content="Spud Wiki">';
   s += `<meta name="title" content="${title}">`;
-  s += '<link rel="icon" href="/spud-wiki/assets/logo.png">';
+  s += '<link rel="icon" href="/assets/logo.png">';
 
   // head end
   s += "</head><body>";
@@ -421,7 +465,7 @@ function CreateHtmlFileString(page) {
   // contributors
 
   if (page.contributors.length) {
-    s += '<div id="footer-contributors">The content of this page is licensed under <a target="_blank" rel="noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> and it was written by ';
+    s += '<div id="footer-contributors">This article is licensed under <a target="_blank" rel="noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>. It was written by ';
 
     const c = page.contributors, l = c.length;
     for (let i = 0; i < l; i++) {
@@ -444,12 +488,12 @@ function CreateHtmlFileString(page) {
 
 
 function CreateNavigatorSidebar() {
-  let s = '<div id="side-nav"><a href="/spud-wiki/">Main Page</a><a href="/spud-wiki/credits.html">Credits</a><div class="div-sep"></div>';
+  let s = '<div id="side-nav"><a href="/">Main Page</a><a href="/credits.html">Credits</a><div class="div-sep"></div>';
   const l = ALL_ARTICLES.length;
   for (let i = 0; i < l; i++) {
     const article = ALL_ARTICLES[i];
 
-    s += `<a href="/spud-wiki/${article.name_no_ext}.html">${article.page.title}</a>`;
+    s += `<a href="/${article.name_no_ext}.html">${article.page.title}</a>`;
 
 
   }
