@@ -420,11 +420,11 @@ function CreateHtmlFileString(page) {
   // head start
   s += '<meta charset="utf-8">';
   s += `<title>${title}</title>`;
-  s += '<link rel="stylesheet" href="/style.css">';
+  s += '<link rel="stylesheet" href="/spud-wiki/style.css">';
   s += '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">';
   s += '<meta name="application-name" content="Spud Wiki">';
   s += `<meta name="title" content="${title}">`;
-  s += '<link rel="icon" href="/assets/logo.png">';
+  s += '<link rel="icon" href="/spud-wiki/assets/logo.png">';
 
   // head end
   s += "</head><body>";
@@ -465,7 +465,7 @@ function CreateHtmlFileString(page) {
   // contributors
 
   if (page.contributors.length) {
-    s += '<div id="footer-contributors">This article is licensed under <a target="_blank" rel="noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>. It was written by ';
+    s += '<div id="footer-contributors">The content of this page is licensed under <a target="_blank" rel="noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> and it was written by ';
 
     const c = page.contributors, l = c.length;
     for (let i = 0; i < l; i++) {
@@ -488,12 +488,12 @@ function CreateHtmlFileString(page) {
 
 
 function CreateNavigatorSidebar() {
-  let s = '<div id="side-nav"><a href="/">Main Page</a><a href="/credits.html">Credits</a><div class="div-sep"></div>';
+  let s = '<div id="side-nav"><a href="/spud-wiki/">Main Page</a><a href="/spud-wiki/credits.html">Credits</a><div class="div-sep"></div>';
   const l = ALL_ARTICLES.length;
   for (let i = 0; i < l; i++) {
     const article = ALL_ARTICLES[i];
 
-    s += `<a href="/${article.name_no_ext}.html">${article.page.title}</a>`;
+    s += `<a href="/spud-wiki/${article.name_no_ext}.html">${article.page.title}</a>`;
 
 
   }
