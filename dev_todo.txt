@@ -6,9 +6,3 @@ chat commands (!cowboy, !time, !celtic, !kawaii and so on) in the search bar
 add last modified on the bottom
 add recent changes in main page
 special pages class
-!redirect cmd in markup
-!nosearchindex cmd
-!category <- to help group up stuff
-!tags <- to help with search indexing
-!redirect <- for other words that get redirected to a certain page, also searchable through those
-change all sync file operations to async ones
