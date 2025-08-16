@@ -21,8 +21,7 @@ import { readFileSync, readdirSync, existsSync, mkdirSync, writeFileSync, cpSync
 import process from "process";
 import { SpudTextContext } from "./spudtext.js";
 
-// A big thanks to every single one of you. <3
-const CONTRIBUTORS = {};
+
 const COPYRIGHT_COMMENT = `<!--Spud Wiki Engine\nCopyright (C) ${(new Date()).getFullYear()}  SpikyTater\n\nThis program is free software; you can redistribute it and/or modify\nit under the terms of the GNU General Public License as published by\nthe Free Software Foundation; either version 2 of the License, or\n(at your option) any later version.\n\nThis program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along\nwith this program; if not, write to the Free Software Foundation, Inc.,\n51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.-->\n`;
 //const HTML_TEMPLATES = {};
 const ALL_ARTICLES = (function () {
@@ -494,7 +493,7 @@ function CreateNavigatorSidebar(is_dev) {
 }
 
 async function Build(is_dev) {
-  Object.assign(CONTRIBUTORS, ReadJsonFile("./src/contributors.json"));
+  //Object.assign(CONTRIBUTORS, ReadJsonFile("./src/contributors.json"));
 
   if (!existsSync("./build")) {
     mkdirSync("./build");
@@ -556,31 +555,31 @@ switch (process.argv[2]) {
   }
   case "parser_test": {
 
-    /*const text = `
+    const text = `
 !title = Nugget
 !contributor = Spammer92
 
 **Nugget**, also known as "Pearl's Cuddly/Snuggly Boy", is one of Pearl's cats. He is a black not so shorthaired cat, who is very snuggly towards Pearl and only towards Pearl. Pearl has adopted Nugget on the 4th or 11th December 2021 (Hermitcraft Season 8){1} and since then he has made multiple appearances in livestreams and social media posts.
 
-!section = Name
+== Name ==
 \\*\\\\
 Nugget originates as a black cat for Halloween decor on the Hermitcraft Season 8 server.{2} According to Pearl it was troublesome to move him, so he was called nugget, which ended up being his name.{1}{2} Later that year Pearl adopted a black kitten, which she named Nugget after this cat.
 
-!note1= thi*s is a ha*rd o** dfd[[https://www.youtube.com/watch?v=iODst6Jm9j0&t=1285s Hermitcraft S8, E17]]**-ne right?
+!note1 = thi*s is a ha*rd o** dfd[[https://www.youtube.com/watch?v=iODst6Jm9j0&t=1285s Hermitcraft S8, E17]]**-ne right?
 !note2 =[Connor]
 
-lemme see if t*his creates problems...*`;*/
+lemme see if t*his creates problems...*`;
 
-const text =`!title = GeminiTay
+/*const text =`!title = GeminiTay
 !contributor = BlueStrategosJ
 
 **GeminiTay** is one of Pearl’s best friends in the content creator community, fellow Hermit and recently Twitch Stream Mod. She commonly watches Pearl’s Twitch Streams and either talks trough Stream Chat or the in-game Minecraft chat with Pearl over various topics.
 
-In one case, Pearl had to mod her chat during a stream and Gem offered to become a Mod to help her out. Pearl accepted after mentioning that Gem would lose her VIP status. **GemMod** was born that fateful day. Since then, Gem gets greeted by a wall of "Hi GemMod" alongside the usual "Hi Gem". Gem has several times threatened to use her mod powers to ban chatters and some chatters hide or scatter when she arrives. (For example, by changing their name colour in chat).
-`;
+In one case, Pearl{1} had to mod her chat during a stream and Gem offered to become a Mod to help her out. Pearl accepted after mentioning that Gem would lose her VIP status. **GemMod** was born that fateful day. Since then, Gem gets greeted by a wall of "Hi GemMod" alongside the usual "Hi Gem". Gem has several times threatened to use her mod powers to ban chatters and some chatters hide or scatter when she arrives. (For example, by changing their name colour in chat).
+`;*/
 
 const ctx = new SpudTextContext(text);
-const xxx = ctx.GetHtmlString();
+const xxx = ctx.GetSpudText();
   //  const xxx = SpudTextParser.ParseFromString(text);
 
     break;

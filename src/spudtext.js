@@ -1,6 +1,21 @@
+/*
+Spud Wiki Engine
+Copyright (C) 2025  SpikyTater
 
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
 
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
 /**
  * @typedef Token
  * @property {number | undefined} raw_token_length 
@@ -24,6 +39,7 @@ const TOKENS = {
     is_processed_token: true,
     started_by: "em",
     ended_by: "em",
+    needs_children: true,
   },
   bold: {
     raw_token_length: 2,
@@ -33,6 +49,7 @@ const TOKENS = {
     is_processed_token: true,
     started_by: "bold",
     ended_by: "bold",
+    needs_children: true,
   },
   embold: {
     raw_token_length: 3,
@@ -42,6 +59,7 @@ const TOKENS = {
     is_processed_token: true,
     started_by: "embold",
     ended_by: "embold",
+    needs_children: true,
   },
   strikethrough: {
     raw_token_length: 1,
@@ -51,6 +69,7 @@ const TOKENS = {
     is_processed_token: true,
     started_by: "strikethrough",
     ended_by: "strikethrough",
+    needs_children: true,
   },
   blockquote: {
     raw_token_length: 1,
@@ -60,13 +79,13 @@ const TOKENS = {
     is_processed_token: true,
     started_by: "blockquote",
     ended_by: "blockquote",
+    needs_children: true,
   },
   directive_start: {},
   directive: {
     can_have_children: true,
     is_processed_token: true,
     must_be_child_of_root: true,
-    children_cant_have_children: true,
     started_by: "directive_start",
     ended_by: "newline",
   },
@@ -76,6 +95,7 @@ const TOKENS = {
     children_cant_have_children: true,
     started_by: "internal_link_start",
     ended_by: "internal_link_end",
+    needs_children: true,
   },
   internal_link_start: {
     raw_token_length: 1,
@@ -89,6 +109,7 @@ const TOKENS = {
     children_cant_have_children: true,
     started_by: "external_link_start",
     ended_by: "external_link_end",
+    needs_children: true,
   },
   external_link_start: {
     raw_token_length: 2,
@@ -102,6 +123,7 @@ const TOKENS = {
     children_cant_have_children: true,
     started_by: "embedded_file_start",
     ended_by: "embedded_file_end",
+    needs_children: true,
   },
   embedded_file_start: {
     raw_token_length: 3,
@@ -115,6 +137,7 @@ const TOKENS = {
     children_cant_have_children: true,
     started_by: "note_ref_start",
     ended_by: "note_ref_end",
+    needs_children: true,
   },
   note_ref_start: {
     raw_token_length: 1,
@@ -129,14 +152,51 @@ const TOKENS = {
     can_have_children: true,
     is_processed_token: true,
   },
+  ast_root: {
+    can_have_children: true,
+    is_processed_token: true,
+  },
+  heading2: {
+    raw_token_length: 2,
+  },
+  heading3: {
+    raw_token_length: 3,
+  },
+  heading4: {
+    raw_token_length: 4,
+  },
+  heading5: {
+    raw_token_length: 5,
+  },
+  heading6: {
+    raw_token_length: 6,
+  },
+  heading2_aggregate: {
+    must_be_child_of_root: true,
+    started_by: "heading2",
+    ended_by: "heading2",
+  },
+  heading3_aggregate: {
+    must_be_child_of_root: true,
+    started_by: "heading3",
+    ended_by: "heading3",
+  },
+  heading4_aggregate: {
+    must_be_child_of_root: true,
+    started_by: "heading4",
+    ended_by: "heading4",
+  },
+  heading5_aggregate: {
+    must_be_child_of_root: true,
+    started_by: "heading5",
+    ended_by: "heading5",
+  },
+  heading6_aggregate: {
+    must_be_child_of_root: true,
+    started_by: "heading6",
+    ended_by: "heading6",
+  },
 };
-
-/*
-todo:
-
-
-
-*/
 
 function PostProcessTokensGlobal() {
   for (const token_name in TOKENS) {
@@ -162,14 +222,6 @@ function PostProcessTokensGlobal() {
 }
 
 PostProcessTokensGlobal();
-
-let XXXXX = 10;
-function RUN_XXXXX_TIMES(f) {
-  if (XXXXX >= 0) {
-    XXXXX--;
-    f();
-  }
-}
 
 class TokenInstance {
 
@@ -201,12 +253,35 @@ class TokenInstance {
   /**
    * @type {TokenInstance}
    */
+  parent;
+
+  /**
+   * @type {TokenInstance}
+   */
+  next_sibling;
+
+  /**
+   * @type {TokenInstance}
+   */
+  prev_sibling;
+
+  /**
+   * @type {TokenInstance}
+   */
   aggregate_starter_token_instance;
 
   /**
    * @type {TokenInstance}
    */
   aggregate_ender_token_instance;
+
+  /**
+   * @param {any} raw_token any of the values inside the global constant TOKENS
+   */
+  constructor(raw_token) {
+    this.raw_token = raw_token;
+    this.name = raw_token.name;
+  }
 
   GetTokenLength() {
     return this.code_point_array?.length ?? 0;
@@ -229,8 +304,8 @@ class TokenInstance {
    * @param {RawTokenInstance} raw_token_instance
    */
   static CreateFromRawInstance(ctx, raw_token_instance) {
-    const token_inst = new TokenInstance();
-    token_inst.raw_token = raw_token_instance.raw_token;
+    const token_inst = new TokenInstance(raw_token_instance.raw_token);
+    //token_inst.raw_token = raw_token_instance.raw_token;
     token_inst.code_point_array = ctx.src_text.slice(raw_token_instance.start_index, raw_token_instance.end_index);
     token_inst.original_src_start_index = raw_token_instance.start_index;
     token_inst.original_src_end_index = raw_token_instance.end_index;
@@ -242,8 +317,8 @@ class TokenInstance {
    * @param {any} raw_token any of the values inside the global constant TOKENS
    */
   static CreateFromRawToken(raw_token) {
-    const token_inst = new TokenInstance();
-    token_inst.raw_token = raw_token;
+    const token_inst = new TokenInstance(raw_token);
+    //token_inst.raw_token = raw_token;
 
     return token_inst;
   }
@@ -257,7 +332,101 @@ class TokenInstance {
       throw 0;
     }
 
+    const last_child = this.GetLastChild();
+    if (last_child) {
+      last_child.next_sibling = token_instance;
+      token_instance.prev_sibling = last_child;
+    }
+
     this.children.push(token_instance);
+    token_instance.parent = this;
+  }
+
+  GetFirstChild() {
+    return this.children.length ? this.children[0] : undefined;
+  }
+
+  GetLastChild() {
+    return this.children.length ? this.children[this.children.length - 1] : undefined;
+  }
+
+  HasGrandchildren() {
+    return this.children.length && this.children.find(child => child.children.length);
+  }
+
+  RemoveSelfAndChildrenFromAST() {
+    const { parent, next_sibling, prev_sibling } = this;
+    if (parent) {
+      const idx = parent.children.indexOf(this);
+      parent.children.splice(idx, 1);
+      delete this.parent;
+    }
+
+    if (next_sibling) {
+      next_sibling.prev_sibling = prev_sibling;
+      delete this.next_sibling;
+    }
+
+    if (prev_sibling) {
+      prev_sibling.next_sibling = next_sibling;
+      delete this.prev_sibling;
+    }
+  }
+
+  DepthFirstPostOrderFirst() {
+    // assuming this is the AST root
+    if (!this.IsInstanceOf(TOKENS.ast_root)) {
+      console.error("NO.");
+      throw 0;
+    }
+
+    let n = this;
+
+    while (n.GetFirstChild()) {
+      n = n.GetFirstChild();
+    }
+
+    return n;
+  }
+
+  DepthFirstPostOrderNext() {
+    if (this.next_sibling) {
+      let n = this.next_sibling;
+
+      while (n.GetFirstChild()) {
+        n = n.GetFirstChild();
+      }
+
+      return n;
+    } else {
+      // no next sibing, use parent
+      return this.parent;
+    }
+  }
+
+  ReverseDepthFirstPostOrderFirst() {
+    // assuming this is the AST root
+    if (!this.IsInstanceOf(TOKENS.ast_root)) {
+      console.error("NO.");
+      throw 0;
+    }
+    return this;
+  }
+
+  ReverseDepthFirstPostOrderNext() {
+    if (this.children.length) {
+      return this.children[this.children.length - 1];
+    }
+    if (this.prev_sibling) {
+      return this.prev_sibling;
+    }
+
+    let n = this.parent;
+    while (n && !n.prev_sibling) {
+      n = n.parent;
+    }
+
+    return n?.prev_sibling;
   }
 }
 
@@ -319,7 +488,67 @@ class RawTokenInstance {
  * This class contains the processed SpudText, ready to be turned into HTML
  */
 class SpudText {
+  title = "";
 
+  /**
+   * @type {TokenInstance[]}
+   */
+  directive_instances = [];
+
+  /**
+   * @type {Map<string, TokenInstance[]>}
+   */
+  directive_instances_map = new Map();
+
+  /**
+   * Sets the title of this page
+   * @param {string} title_string 
+   */
+  SetTitle(title_string) {
+    if (!title_string || typeof title_string !== "string" || !(title_string instanceof String)) {
+      console.error("Dev error, again.");
+      throw 0;
+    }
+    if (this.title.length) {
+      console.error("What are you even doing.");
+      throw 0;
+    }
+    this.title = title_string;
+  }
+
+  /**
+   * @param {TokenInstance} directive_instance 
+   */
+  AddAndElaborateDirectiveInstance(directive_instance) {
+    if (!directive_instance.IsInstanceOf(TOKENS.directive)) {
+      console.error("Pls no.");
+      throw 0;
+    }
+
+    let real_directive_name = directive_instance.aggregate_starter_token_instance.GetRawString().substring(1);
+
+    let real_directive_subname = "";
+    console.log("DIRECTIVE", real_directive_name)
+
+    if (real_directive_name.startsWith("note")) {
+      // it's a note
+      real_directive_subname = real_directive_name.substring(4);
+      real_directive_name = "note";
+    }
+
+    directive_instance.real_directive_name = real_directive_name;
+    directive_instance.real_directive_subname = real_directive_subname;
+
+    this.directive_instances.push(directive_instance);
+
+    const mapped_array = this.directive_instances_map.get(real_directive_name);
+
+    if (mapped_array) {
+      mapped_array.push(directive_instance);
+    } else {
+      this.directive_instances_map.set(real_directive_name, [directive_instance]);
+    }
+  }
 }
 
 /**
@@ -373,9 +602,11 @@ class SpudTextContext {
   tokens = [];
 
   /**
-   * @type {TokenInstance[]}
+   * @type {TokenInstance}
    */
-  ast = [];
+  ast = TokenInstance.CreateFromRawToken(TOKENS.ast_root);
+
+  spudtext = new SpudText();
 
   /**
    * @param {string} src_text 
@@ -544,8 +775,6 @@ class SpudTextContext {
     let i = 0, c;
 
     for (i = 0; i < l; i++) {
-      // ^^ the only place where i is incremented
-      // it may be decremented elsewhere in the loop
       c = code_point_array[i];
 
       if (c === 10) {
@@ -610,6 +839,51 @@ class SpudTextContext {
           } else {
             // em
             this.#AddToken(TOKENS.em, i);
+          }
+          continue;
+        case 61: // =
+          // headings
+          if (this.#PreviousTokenEquals(TOKENS.backslash)) {
+            t.pop();
+            this.#MergeSameOrAddToken(TOKENS.text, i);
+            continue;
+          }
+          // Larry forgive me for this...
+          if (i + 1 < l && 61 === code_point_array[i + 1]) {
+            // heading23456
+            if (i + 2 < l && 61 === code_point_array[i + 2]) {
+              // heading3456
+              if (i + 3 < l && 61 === code_point_array[i + 3]) {
+                // heading456
+                if (i + 4 < l && 61 === code_point_array[i + 4]) {
+                  // heading456
+                  if (i + 4 < l && 61 === code_point_array[i + 4]) {
+                    // heading6
+                    this.#AddToken(TOKENS.heading6, i);
+                    i += 5;
+                  } else {
+                    // heading5
+                    this.#AddToken(TOKENS.heading5, i);
+                    i += 4;
+                  }
+                } else {
+                  // heading4
+                  this.#AddToken(TOKENS.heading4, i);
+                  i += 3;
+                }
+              } else {
+                // heading3
+                this.#AddToken(TOKENS.heading3, i);
+                i += 2;
+              }
+            } else {
+              // heading2
+              this.#AddToken(TOKENS.heading2, i);
+              i += 1;
+            }
+          } else {
+            // text
+            this.#MergeSameOrAddToken(TOKENS.text, i);
           }
           continue;
         case 62: // >
@@ -738,22 +1012,17 @@ class SpudTextContext {
   }
 
   #MakeASTFromTokens() {
-    const { ast, tokens } = this, aggregate_stack = [], l = tokens.length;
-
+    const { ast, tokens } = this, aggregate_stack = [ast], l = tokens.length;
     /**
-     * @type {TokenInstance | undefined}
+     * @type {TokenInstance}
      */
-    let stack_top_token_instance;
+    let stack_top_token_instance = ast;
 
     /**
      * @param {TokenInstance} token_instance 
      */
     function add_to_stack_top_or_ast(token_instance) {
-      if (stack_top_token_instance) {
-        stack_top_token_instance.AddChild(token_instance);
-      } else {
-        ast.push(token_instance);
-      }
+      stack_top_token_instance.AddChild(token_instance);
     }
 
     /**
@@ -767,14 +1036,14 @@ class SpudTextContext {
     function aggregate_stack_pop() {
       aggregate_stack.pop();
 
-      stack_top_token_instance = aggregate_stack.length ? aggregate_stack[aggregate_stack.length - 1] : undefined;
+      stack_top_token_instance = aggregate_stack[aggregate_stack.length - 1];
     }
 
     for (let i = 0; i < l; i++) {
       const token = tokens[i], { raw_token } = token;
 
       // first check if the current aggregate can be ended by the current token
-      if (stack_top_token_instance?.IsInstanceOf(raw_token.ends)) {
+      if (stack_top_token_instance.IsInstanceOf(raw_token.ends)) {
         // yes it can. it also means there's a current aggregate stack top
         // set current token instance as aggregate ender
         stack_top_token_instance.aggregate_ender_token_instance = token;
@@ -800,7 +1069,7 @@ class SpudTextContext {
     } // for loop end
 
 
-    if (aggregate_stack.length) {
+    if (aggregate_stack.length > 1) {
       /**
        * @type {TokenInstance}
        */
@@ -852,8 +1121,107 @@ class SpudTextContext {
     return (this.end_timestamp - this.start_timestamp).toFixed(3) + " ms";
   }
 
-  GetHtmlString() {
-    const start_timestamp = this.start_timestamp = performance.now();
+  /**
+   * @returns {boolean}
+   */
+  #CheckAST() {
+    // children_cant_have_children
+    for (const token_instance of this.#ASTIteratorDepthFirstPostOrder()) {
+      if (token_instance.raw_token.children_cant_have_children) {
+        const who_has_grandchildren = token_instance.HasGrandchildren();
+        if (who_has_grandchildren) {
+          this.LogError(`You can't add a '${who_has_grandchildren.raw_token.name}' inside of a '${token_instance.raw_token.name}'.`);
+          return true;
+        }
+      }
+    }
+
+    // must_be_child_of_root will be checked inside #ParseDirectives
+
+    // needs_children
+    for (const token_instance of this.#ASTIteratorDepthFirstPostOrder()) {
+      if (token_instance.raw_token.needs_children && !token_instance.children.length) {
+        // can be safely removed inside this loop... hopefully
+        token_instance.RemoveSelfAndChildrenFromAST();
+        this.LogWarn(`'${token_instance.raw_token.name}' (found at index ${token_instance.aggregate_starter_token_instance.original_src_start_index}) without any non-whitespace characters inside are useless.`);
+      }
+    }
+
+    return false;
+  }
+
+  *#ASTIteratorDepthFirstPostOrder() {
+    let n = this.ast.DepthFirstPostOrderFirst(), next;
+    do {
+      next = n.DepthFirstPostOrderNext();
+      yield n;
+      n = next;
+    } while (n);
+  }
+
+  *#ASTIteratorReverseDepthFirstPostOrder() {
+    let n = this.ast.ReverseDepthFirstPostOrderFirst();
+    do {
+      yield n;
+    } while (n = n.ReverseDepthFirstPostOrderNext());
+  }
+
+  #ParseDirectives() {
+    /**
+     * @type {TokenInstance[]}
+     */
+    const directive_instances = [];
+
+    for (const token_instance of this.#ASTIteratorDepthFirstPostOrder()) {
+      if (token_instance.IsInstanceOf(TOKENS.directive)) {
+        if (!token_instance.parent.IsInstanceOf(TOKENS.ast_root)) {
+          this.LogError(`Directives cannot be placed inside other aggregates.`);
+          return true;
+        }
+        directive_instances.push(token_instance);
+      }
+    }
+
+    for (const directive_instance of directive_instances) {
+      directive_instance.RemoveSelfAndChildrenFromAST();
+      this.spudtext.AddAndElaborateDirectiveInstance(directive_instance)
+    }
+
+    return false;
+  }
+
+  #TrimNewlines() {
+    const starting_newlines = [];
+
+    for (const token_instance of this.#ASTIteratorDepthFirstPostOrder()) {
+      if (token_instance.IsInstanceOf(TOKENS.newline)) {
+        starting_newlines.push(token_instance);
+      } else {
+        break;
+      }
+    }
+
+    starting_newlines.forEach(ti => ti.RemoveSelfAndChildrenFromAST());
+
+    const ending_newlines = [];
+
+    const gen = this.#ASTIteratorReverseDepthFirstPostOrder();
+
+    // skip ast_root, which is the first node
+    gen.next();
+    for (const token_instance of gen) {
+      if (token_instance.IsInstanceOf(TOKENS.newline)) {
+        ending_newlines.push(token_instance);
+      } else {
+        break;
+      }
+    }
+
+    ending_newlines.forEach(ti => ti.RemoveSelfAndChildrenFromAST());
+  }
+
+  GetSpudText() {
+    this.start_timestamp = performance.now();
     this.#TokenizeSource();
 
     this.#CheckForProcessedTokens();
@@ -867,11 +1235,22 @@ class SpudTextContext {
       return;
     }
 
-    this.end_timestamp = performance.now();
+    if (this.#CheckAST()) {
+      return;
+    }
 
-    this.#DebugPrintTokens(this.ast);
+    if (this.#ParseDirectives()) {
+      return;
+    }
+
+    this.#TrimNewlines();
+
+    this.end_timestamp = performance.now();
+    this.#DebugPrintTokens(this.ast.children);
 
     console.log(`Time elapsed: ${this.GetTimeElapsedString()}.`);
+
+
 
     return "not yet";
   }
