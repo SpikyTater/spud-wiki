@@ -19,6 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import { readFileSync, readdirSync, existsSync, mkdirSync, writeFileSync, cpSync, copyFileSync, rm, statSync } from "fs";
 import process from "process";
+import { SpudTextContext } from "./spudtext.js";
 
 // A big thanks to every single one of you. <3
 const CONTRIBUTORS = {};
@@ -562,15 +563,16 @@ switch (process.argv[2]) {
 **Nugget**, also known as "Pearl's Cuddly/Snuggly Boy", is one of Pearl's cats. He is a black not so shorthaired cat, who is very snuggly towards Pearl and only towards Pearl. Pearl has adopted Nugget on the 4th or 11th December 2021 (Hermitcraft Season 8){1} and since then he has made multiple appearances in livestreams and social media posts.
 
 !section = Name
-
+\\*\\\\
 Nugget originates as a black cat for Halloween decor on the Hermitcraft Season 8 server.{2} According to Pearl it was troublesome to move him, so he was called nugget, which ended up being his name.{1}{2} Later that year Pearl adopted a black kitten, which she named Nugget after this cat.
 
 !note1= thi*s is a ha*rd o** #outlink("Hermitcraft S8, E17", "https://www.youtube.com/watch?v=iODst6Jm9j0&t=1285s")**-ne right?
 !note2 =<a target="_blank" rel="noopener noreferrer" href="https://www.youtube.com/watch?v=6rc4ozvhZDI&t=70s">Hermitcraft S8, E12</a>
 `;
 
-
-    const xxx = SpudTextParser.ParseFromString(text);
+const ctx = new SpudTextContext(text);
+const xxx = ctx.GetHtmlString();
+  //  const xxx = SpudTextParser.ParseFromString(text);
 
     break;
   }

@@ -1,230 +1,408 @@
-class SpudText {
 
-  directives_arr = [];
-  directives_map = new Map();
 
-  notes_map = new Map();
 
-  contributors_set = new Set();
+/**
+ * @typedef Token
+ * @property {number | undefined} raw_token_length 
+ */
+const TOKENS = {
+  newline: {
+    raw_token_length: 1,
+  },
+  text: {
+    raw_token_length: 1,
+  },
+  backslash: {
+    raw_token_length: 1,
+  },
+  em: {
+    raw_token_length: 1,
+  },
+  bold: {
+    raw_token_length: 2,
+  },
+  embold: {
+    raw_token_length: 3,
+  },
+  blockquote: {
+    raw_token_length: 1,
+  },
+  directive_start: {},
+  directive: {
+    can_have_children: true,
+    is_processed_token: true,
+  },
+  special: {
+    can_have_children: true,
+    is_processed_token: true,
+  },
+  special_start: {
+    raw_token_length: 1,
+  },
+  special_args_start: {
+    raw_token_length: 1,
+  },
+  special_args_end: {
+    raw_token_length: 1,
+  },
+  note_ref: {
+    can_have_children: true,
+    is_processed_token: true,
+  },
+  note_ref_start: {
+    raw_token_length: 1,
+  },
+  note_ref_end: {
+    raw_token_length: 1,
+  },
+  html_ready: {
+    is_processed_token: true,
+  },
+  html_container: {
+    can_have_children: true,
+    is_processed_token: true,
+  },
+};
 
-  AddDirective(token) {
-    // unsafe function
-    this.directives_arr.push(token);
-
-    const arr = this.directives_map.get(token.name);
-    if (arr) {
-      arr.push(token);
-    } else {
-      this.directives_map.set(token.name, [token]);
-    }
+function PostProcessTokensGlobal() {
+  for (const token_name in TOKENS) {
+    TOKENS[token_name].name = token_name;
   }
 }
 
-const TOKENS = {};
+PostProcessTokensGlobal();
 
-const DIRECTIVES = [
-  "title",
-  "contributor",
-  "redirect",
-  "nosearchindex",
-  "category",
-  "tag",
-  "section",
-  "note",
-];
-
-function CreateHtmlElement(tag_name, content, attrs) {
-  let s = `<${tag_name}`;
-  content ||= "";
-  attrs ||= {};
-
-  for (const k in attrs) {
-    s += ` ${k}="${attrs[k]}"`;
+let XXXXX = true;
+function RUN_ONCE(f) {
+  if (XXXXX) {
+    XXXXX = false;
+    f();
   }
-
-  return `${s}>${content}</${tag_name}>`;
 }
 
-// don't give a negative number to this function, for larry's sake
-function IndexNumberToIndexLetter(num) {
-  let res = "";
-  do {
-    res = String.fromCharCode(97 + num % 26);
-  } while (num = (num / 26 | 0));
-  return res;
-}
-
-class Token {
-  /**
-   * @type {string}
-   */
-  name;
+class TokenInstance {
 
   /**
-   * @type {boolean}
+   * @type {any} any of the values inside the global constant TOKENS
    */
-  must_be_coupled;
+  raw_token;
+
+  /**
+   * @type {number[]}
+   */
+  code_point_array;
 
   /**
    * @type {number}
    */
-  length;
+  original_src_start_index;
 
   /**
-   * @param {string} name 
-   * @param {{}} options 
+   * @type {number}
    */
-  constructor(name, options) {
-    this.name = name;
-    this.must_be_coupled = !!options.must_be_coupled;
-    this.length = options.length || 1;
+  original_src_end_index;
+
+  /**
+   * @type {TokenInstance[]}
+   */
+  children;
+
+  /**
+   * @param {SpudTextContext} ctx
+   * @param {RawTokenInstance} raw_token_instance
+   */
+  constructor(ctx, raw_token_instance) {
+    this.raw_token = raw_token_instance.raw_token;
+    this.code_point_array = ctx.src_text.slice(raw_token_instance.start_index, raw_token_instance.end_index);
+    this.original_src_start_index = raw_token_instance.start_index;
+    this.original_src_end_index = raw_token_instance.end_index;
+    this.children = [];
   }
 
-  static Create(name, options) {
-    if (Object.hasOwn(TOKENS, name)) {
-      throw `Not on my watch. '${name}' is already the name of a token.`;
-    }
-    const token = new Token(name, options || {
-      must_be_coupled: false,
-      length: 1,
-    });
-    TOKENS[name] = token;
+  GetTokenLength() {
+    return this.code_point_array.length;
   }
 
-  CreateInstance(i_start, i_end) {
-    return {
-      token: this,
-      start: i_start,
-      end: i_end
-    }
+  GetRawString() {
+    return String.fromCodePoint(...this.code_point_array);
   }
+
+  /**
+   * @param {any} raw_token any of the values inside the global constant TOKENS
+   * @returns {boolean}
+   */
+  IsInstanceOf(raw_token) {
+    return raw_token === this.raw_token;
+  }
+
 }
 
-Token.Create("newline");
-Token.Create("text");
-Token.Create("backslash");
-
-
-
-Token.Create("em", { must_be_coupled: true });
-Token.Create("bold", { must_be_coupled: true, length: 2 });
-Token.Create("embold", { must_be_coupled: true, length: 3 });
-Token.Create("blockquote");
-Token.Create("directive_start");
-Token.Create("directive");
-
-/*for (const directive of DIRECTIVES) {
-  Token.Create(`directive_${directive}`);
-}*/
-
-Token.Create("special");
-Token.Create("special_start");
-Token.Create("special_end");
-Token.Create("note_ref");
-Token.Create("note_ref_start");
-Token.Create("note_ref_end");
-Token.Create("html_ready");
-Token.Create("html_cont");
-
-
-class SpudTextParser {
+class RawTokenInstance {
   /**
-   * 
-   * @param {string} s 
-   * @param {{} | undefined} options 
-   * @returns {SpudText | undefined}
+   * @type {any} any of the values inside the global constant TOKENS
    */
-  static ParseFromString(s, options) {
-    options ||= {};
+  raw_token;
 
-    if (typeof options !== "object") {
-      console.error("Invalid 'options'.");
-      return;
+  /**
+   * @type {number}
+   */
+  start_index;
+
+  /**
+   * @type {number}
+   */
+  end_index;
+
+  /**
+   * @param {any} raw_token any of the values inside the global constant TOKENS
+   * @param {number} src_index
+   * @param {number | undefined} raw_token_length
+   */
+  constructor(raw_token, src_index, raw_token_length) {
+    // I don't care if 'raw_token' is valid, performance and lazyness reasons
+    // src_index will be checked inside Finalize()
+
+    raw_token_length ??= raw_token.raw_token_length;
+    if (typeof raw_token_length !== "number") {
+      console.error("SpudTextContext: raw_token_length is not a number", { raw_token, src_index, raw_token_length });
+      throw 0;
     }
 
-    if (typeof s !== "string" && !(s instanceof String)) {
-      console.error("Invalid 's'.");
-      return;
-    }
-
-    const parser = new SpudTextParser(s, options);
-
-    if (parser.#Tokenize()) {
-      return;
-    }
-
-    parser.#ParseDirectives();
-
-    if (parser.#ParseNotes()) {
-      // ABORK
-    }
-
-    if (parser.#ParseContributors()) {
-      // ABORK
-    }
-
-    parser.#DebugPrintTokens();
-
-    console.log(parser.result);
-
-    return parser.result;
-  }
-
-  constructor(s, options) {
-    this.orig_string = s;
-    this.options = options || {};
-    this.result = new SpudText();
+    this.raw_token = raw_token;
+    this.start_index = src_index;
+    this.end_index = src_index + raw_token_length;
   }
 
   /**
-   * @type {string}
+   * @param {SpudTextContext}
+   * @returns {TokenInstance}
    */
-  orig_string;
+  GetFinalizedInstance(ctx) {
+    return new TokenInstance(ctx, this);
+  }
 
   /**
-   * @type {{}}
+   * @param {any} raw_token any of the values inside the global constant TOKENS
+   * @returns {boolean}
    */
-  options;
+  IsInstanceOf(raw_token) {
+    return raw_token === this.raw_token;
+  }
+
+}
+
+class SpudTextContext {
+  static SEGMENTER = Intl?.Segmenter && new Intl.Segmenter("en", { granularity: "grapheme" });
+
+  static LOG_LEVEL_VERBOSE = 0;
+  static LOG_LEVEL_WARN = 1;
+  static LOG_LEVEL_ERROR = 2;
 
   /**
-   * @type {SpudText}
+   * @type {number[]}
    */
-  result;
+  src_text;
 
-  // token instances
+  /**
+   * @type {Function[]}
+   */
+  verbose_callbacks = [];
+
+  /**
+   * @type {Function[]}
+   */
+  warn_callbacks = [];
+
+  /**
+   * @type {Function[]}
+   */
+  error_callbacks = [];
+
+  /**
+   * @type {RawTokenInstance[]}
+   */
+  raw_tokens = [];
+
+  /**
+   * @type {TokenInstance[]}
+   */
   tokens = [];
 
-  #AddToken(token, i) {
-    this.tokens.push(token.CreateInstance(i, i + token.length));
+  /**
+   * @type {TokenInstance[]}
+   */
+  ast = [];
+
+  /**
+   * @param {string} src_text 
+   * @param {any} options 
+   */
+  constructor(src_text, options) {
+    const DEFAULT_OPTIONS = {
+      verbose_callbacks: [],
+      warn_callbacks: [
+        function (data) {
+          console.warn(`SpudTextContext: ${data}`);
+        }
+      ],
+      error_callbacks: [
+        function (data) {
+          console.error(`SpudTextContext: ${data}`);
+        }
+      ],
+    };
+
+    options ||= DEFAULT_OPTIONS;
+    options.verbose_callbacks ||= DEFAULT_OPTIONS.verbose_callbacks;
+    options.warn_callbacks ||= DEFAULT_OPTIONS.warn_callbacks;
+    options.error_callbacks ||= DEFAULT_OPTIONS.error_callbacks;
+
+    if (typeof src_text !== "string" && !(src_text instanceof String)) {
+      console.error(`SpudTextContext: 'src_text' must be a string, but instead it is`, src_text);
+      throw 0;
+    }
+
+    /**
+     * We use this function to account for complex unicode characters
+     * Also soory, I ain't adding lodash just to use its split function
+     * @param {string} src_text 
+     * @returns {number[]}
+     */
+    function GetCodePointArray(src_text) {
+      if (SpudTextContext.SEGMENTER) {
+        const segments = SpudTextContext.SEGMENTER.segment(src_text);
+        return [...segments].map(s => s.segment.codePointAt(0));
+      }
+      return Array.from(src_text).map(c => c.codePointAt(0));
+    }
+
+    this.src_text = GetCodePointArray(src_text);
+
+    function CheckIfArrayOfFunctions(arr) {
+      if (!Array.isArray(arr)) {
+        console.error("SpudTextContext: not an array.");
+        throw 0;
+      }
+
+      for (const fn of arr) {
+        if (typeof fn !== "function") {
+          console.error("SpudTextContext: callback is not a function.");
+          throw 0;
+        }
+      }
+
+      return arr;
+    }
+
+    this.verbose_callbacks = CheckIfArrayOfFunctions(options.verbose_callbacks);
+    this.warn_callbacks = CheckIfArrayOfFunctions(options.warn_callbacks);
+    this.error_callbacks = CheckIfArrayOfFunctions(options.error_callbacks);
   }
 
-  #PreviousTokenEquals(token) {
-    const t = this.tokens, l = t.length;
-    if (l === 0) return false;
-    return t[l - 1].token.name === token.name;
+  /**
+   * @param {number} log_level 
+   * @param {string} message 
+   */
+  #LogInternal(log_level, message) {
+    let s;
+
+    /**
+     * @type {any[]}
+     */
+    let cbs;
+    switch (log_level) {
+      case SpudTextContext.LOG_LEVEL_VERBOSE:
+        cbs = this.verbose_callbacks;
+        s = "Verbose: " + message;
+        break;
+      case SpudTextContext.LOG_LEVEL_WARN:
+        cbs = this.warn_callbacks;
+        s = "Warning: " + message;
+        break;
+      case SpudTextContext.LOG_LEVEL_ERROR:
+        cbs = this.error_callbacks;
+        s = "Error:   " + message;
+        break;
+      default:
+        console.error("Why did this even happen.");
+        throw 0;
+    }
+
+    for (const cb of cbs) {
+      cb(s);
+    }
   }
 
-  #MergeSameOrAddToken(token, i) {
-    const t = this.tokens, l = t.length;
+  /**
+   * @param {string} message 
+   */
+  LogVerbose(message) {
+    this.#LogInternal(SpudTextContext.LOG_LEVEL_VERBOSE, message);
+  }
+
+  /**
+   * @param {string} message 
+   */
+  LogWarn(message) {
+    this.#LogInternal(SpudTextContext.LOG_LEVEL_WARN, message);
+  }
+
+  /**
+   * @param {string} message 
+   */
+  LogError(message) {
+    this.#LogInternal(SpudTextContext.LOG_LEVEL_ERROR, message);
+  }
+
+  /**
+   * @param {any} raw_token any of the values inside the global constant TOKENS
+   * @param {number} src_index
+   * @param {number | undefined} raw_token_length
+   */
+  #AddToken(raw_token, src_index, raw_token_length) {
+    this.raw_tokens.push(new RawTokenInstance(raw_token, src_index, raw_token_length));
+  }
+
+  /**
+   * @param {any} raw_token any of the values inside the global constant TOKENS
+   */
+  #PreviousTokenEquals(raw_token) {
+    const t = this.raw_tokens, l = t.length;
+    return l !== 0 && t[l - 1].IsInstanceOf(raw_token);
+  }
+
+  /**
+   * @param {any} raw_token any of the values inside the global constant TOKENS
+   * @param {number} src_index
+   * @param {number | undefined} raw_token_length
+   */
+  #MergeSameOrAddToken(raw_token, src_index, raw_token_length) {
+    const t = this.raw_tokens, l = t.length;
     if (0 === l) {
-      this.#AddToken(token, i);
+      this.#AddToken(raw_token, src_index, raw_token_length);
       return;
     }
     const lt = t[l - 1];
-    if (lt.token.name !== token.name) {
-      this.#AddToken(token, i);
+    if (lt.IsInstanceOf(raw_token) && lt.end_index === src_index) {
+      // the argument 'raw_token_length' can still be undefined
+      lt.end_index += raw_token_length ?? raw_token.raw_token_length;
     } else {
-      lt.end += token.length;
+      this.#AddToken(raw_token, src_index, raw_token_length);
     }
   }
 
-  #Tokenize() {
-    const t = this.tokens, s = this.orig_string, l = s.length;
+  /**
+   * There is no possibility of this function failing.
+   * Or at least I hope so...
+   */
+  #TokenizeSource() {
+    const t = this.raw_tokens, code_point_array = this.src_text, l = code_point_array.length;
     let i = 0, c;
 
     for (i = 0; i < l; i++) {
-      // the only place where i is incremented
-      c = s.charCodeAt(i);
+      // ^^ the only place where i is incremented
+      // it may be decremented elsewhere in the loop
+      c = code_point_array[i];
 
       if (c === 10) {
         this.#AddToken(TOKENS.newline, i);
@@ -243,7 +421,18 @@ class SpudTextParser {
         case 33: // !
           // directives
           if (i === 0 || this.#PreviousTokenEquals(TOKENS.newline)) {
-            this.#AddToken(TOKENS.directive_start, i);
+            const start_index = i;
+
+            // at i we have !, now let's skip until a whitespace or EOF
+            while (++i < l && code_point_array[i] > 32);
+
+            // code_point_array[i] is now either a whitespace or EOF
+            // so token ends at i, including the code point just before it
+            this.#AddToken(TOKENS.directive_start, start_index, i - start_index);
+
+            // decrease i because we want to tokenize the eventual whitespace
+            // since it could be a newline
+            i--;
           } else {
             this.#MergeSameOrAddToken(TOKENS.text, i);
           }
@@ -254,7 +443,7 @@ class SpudTextParser {
             t.pop();
             this.#MergeSameOrAddToken(TOKENS.text, i);
           } else {
-            this.#AddToken(TOKENS.special, i);
+            this.#AddToken(TOKENS.special_start, i);
           }
           continue;
         case 40: // (
@@ -262,7 +451,7 @@ class SpudTextParser {
             t.pop();
             this.#MergeSameOrAddToken(TOKENS.text, i);
           } else {
-            this.#AddToken(TOKENS.special_start, i);
+            this.#AddToken(TOKENS.special_args_start, i);
           }
           continue;
         case 41: // )
@@ -270,7 +459,7 @@ class SpudTextParser {
             t.pop();
             this.#MergeSameOrAddToken(TOKENS.text, i);
           } else {
-            this.#AddToken(TOKENS.special_end, i);
+            this.#AddToken(TOKENS.special_args_end, i);
           }
           continue;
         case 42: // *
@@ -280,9 +469,9 @@ class SpudTextParser {
             this.#MergeSameOrAddToken(TOKENS.text, i);
             continue;
           }
-          if (i + 1 < l && 42 === s.charCodeAt(i + 1)) {
+          if (i + 1 < l && 42 === code_point_array[i + 1]) {
             // bold or embold
-            if (i + 2 < l && 42 === s.charCodeAt(i + 2)) {
+            if (i + 2 < l && 42 === code_point_array[i + 2]) {
               // embold
               this.#AddToken(TOKENS.embold, i);
               i += 2;
@@ -331,43 +520,32 @@ class SpudTextParser {
           this.#MergeSameOrAddToken(TOKENS.text, i);
           continue;
       }
-    } // big while end
+    } // big for end
 
     // directives end with new lines, this is to help when the last
     // line of a file is a directive
-    this.orig_string += "\n";
+    this.src_text.push(10);
     this.#AddToken(TOKENS.newline, i);
-
-    return false;
   }
 
+  /**
+   * @param {TokenInstance[] | undefined} tokens 
+   * @param {number | undefined} indent
+   */
   #StringifyTokens(tokens, indent) {
-    indent ||= 0;
     tokens ||= this.tokens;
+    indent ||= 0;
 
     const indent_str = " ".repeat(indent);
 
     let s = "";
     for (const token of tokens) {
-      s += `${indent_str}${token.token.name} - ${token.start}, ${token.end}`
 
-      switch (token.token.name) {
-        case "directive":
-          switch (token.name) {
-            case "section":
-              s += ` - section -> '${token.arg}'`;
-              break;
-            case "title":
-              s += ` - title -> '${token.arg}'`
-              break;
-            case "contributor":
-              s += ` - contributor -> '${token.arg}'`
-              break;
-          }
-          break;
-        case "note_ref":
-          console.log("GUGU", token)
-          break;
+
+      s += `${indent_str}${token.raw_token.name} - ${token.original_src_start_index}, ${token.original_src_end_index}`
+
+      if (!token.IsInstanceOf(TOKENS.newline) && token.GetTokenLength() < 20) {
+        s += " - '" + token.GetRawString() + "'";
       }
 
       s += "\n";
@@ -379,294 +557,27 @@ class SpudTextParser {
     return s;
   }
 
+  /**
+   * @param {TokenInstance[] | undefined} tokens 
+   */
   #DebugPrintTokens(tokens) {
     console.log(this.#StringifyTokens(tokens));
   }
 
-  #ParseDirectives() {
-    const t = this.tokens, l = t.length, s = this.orig_string;
-
-    const new_t = [];
-
-    const directives = [];
-
-    let is_outside_directive = true;
-
-    for (let i = 0; i < l; i++) {
-      const { token } = t[i];
-
-      if (is_outside_directive) {
-        // not inside a directive, state can only be changed by directive_start
-        if ("directive_start" === token.name) {
-          directives.push([]);
-          is_outside_directive = false;
-        } else {
-          // not directive_start, still needs to be parsed later
-          new_t.push(t[i]);
-        }
-      } else {
-        // inside a directive
-        if ("newline" === token.name) {
-          const curr_directive = directives[directives.length - 1];
-          if (0 === curr_directive.length) {
-            // empty directive... warn
-            // TODO: warn
-            new_t.push(t[i]);
-          } else {
-            const o = {
-              token: TOKENS.directive,
-              start: curr_directive[0].start,
-              end: curr_directive[curr_directive.length - 1].end,
-              old_tokens: curr_directive
-            };
-            new_t.push(o);
-            directives[directives.length - 1] = o;
-          }
-          is_outside_directive = true;
-        } else {
-          // directive keeps going
-          directives[directives.length - 1].push(t[i]);
-        }
-      }
-    } // for loop end
-
-    this.tokens = new_t; // tokens that still need to be parsed
-
-    const { result } = this, { directives_arr, directives_map } = result;
-
-    for (const d of directives) {
-      // d is a directive token instance
-
-      const dir_string = s.substring(d.start, d.end), dl = dir_string.length;
-      let i = 0;
-      for (; i < dl; i++) {
-        const c = dir_string.charCodeAt(i)
-        if (c <= 32 || 61 === c) {
-          // 61 -> =
-          break;
-        }
-      }
-      let directive_name = dir_string.substring(0, i);
-
-      if (directive_name.startsWith("note")) {
-        d.subname = directive_name.substring(4);
-        directive_name = "note";
-      }
-
-      for (; i < dl; i++) {
-        const c = dir_string.charCodeAt(i)
-        if (c > 32 && 61 !== c) {
-          // 61 -> =
-          break;
-        }
-      }
-      const directive_arg = dir_string.substring(i);
-
-      d.name = directive_name;
-      d.arg = directive_arg;
-
-      // add directives to result
-
-
-
-      directives_arr.push(d);
-
-      if (directives_map.has(directive_name)) {
-        directives_map.get(directive_name).push(d);
-      } else {
-        directives_map.set(directive_name, [d]);
-      }
-
-      //console.log("DIRSTR: " + directive_name, directive_arg);
-    }
-  }
-
-  #ParseNotes() {
-    const t = this.tokens, l = t.length, s = this.orig_string;
-
-    const note_refs = [];
-
-    // i < (l - 2) because notes are made up of 3 tokens
-    for (let i = 0; i < l - 2; i++) {
-      if ("note_ref_start" === t[i].token.name) {
-        if ("text" === t[i + 1].token.name && "note_ref_end" === t[i + 2].token.name) {
-          // good note
-          const token = t[i + 1];
-          const str = s.substring(token.start, token.end).trim();
-
-          const o = {
-            token: TOKENS.note_ref,
-            start: t[i].start,
-            end: t[i + 2].end,
-            name: str
-          };
-          note_refs.push({
-            index: i,
-            token: o
-          });
-
-          // skip text and note_ref_end
-          i += 2;
-        } else {
-          // bad syntax, abork parsing
-          // TODO: warn better
-          console.warn("Bad syntax", i);
-          return true;
-        }
-      }
-    } // for loop end
-
-    const nl = note_refs.length;
-    const { notes_map, directives_map, directives_arr } = this.result;
-    for (let i = nl - 1; i >= 0; i--) {
-      const note = note_refs[i], { index, token } = note;
-      t.splice(index, 3, token);
-
-      const o = notes_map.get(token.name);
-      if (o) {
-        // already present
-        o.refs.push(token);
-      } else {
-        // to add
-        notes_map.set(token.name, {
-          refs: [token],
-          actual_note: undefined
-        });
-      }
-    }
-
-    // parsing note directives
-    const note_directives = directives_map.get("note") || [];
-    for (const note_directive of note_directives) {
-      const { subname } = note_directive;
-
-      const single_note = notes_map.get(subname);
-      if (!single_note) {
-        console.warn("Note directive was not used.");
-        continue;
-      }
-      if (single_note.actual_note) {
-        console.warn("Duplicate note directive.");
-        continue;
-      }
-      single_note.actual_note = note_directive;
-    }
-
-    // remove note directives from directives_map and directives_arr
-    directives_map.delete("note");
-
-    for (let i = directives_arr.length - 1; i >= 0; i--) {
-      if ("note" === directives_arr[i].name) {
-        directives_arr.splice(i, 1);
-      }
-    }
-
-    const notes_to_add = [];
-
-    for (const [key, note] of notes_map) {
-      const { actual_note, refs } = note;
-      if (actual_note) {
-        // note is safe
-        // convert refs to html_ready tokens -> <sup></sup>
-        const nrefs = refs.length;
-        for (let i = 0; i < nrefs; i++) {
-          const ref_token = refs[i];
-          ref_token.html = this.#CreateHtmlReadyNoteRefFromName(ref_token.name, IndexNumberToIndexLetter(i));
-          ref_token.token = TOKENS.html_ready;
-        }
-
-
-        // remove note's directive token
-        t.splice(t.indexOf(actual_note), 1);
-
-        notes_to_add.push([key, note]);
-      } else {
-        console.warn("No note available for 1 or more refs.");
-
-        // remove refs from tokens
-        for (const ref_token of refs) {
-          t.splice(t.indexOf(ref_token), 1);
-        }
-      }
-    }
-
-    if (notes_to_add.length) {
-      // convert note directives to one !section + list of raw_text
-
-      // add !section directive at the end of the list of tokens
-      const new_section = {
-        token: TOKENS.directive,
-        name: "section",
-        arg: "Notes",
-      };
-
-      // TODO:
-
-      const cont_token = {
-        token: TOKENS.html_cont,
-        children: [],
-        tag_name: "div",
-      };
-
-      // need to add these in reverse order
-      for (let i = notes_to_add.length - 1; i >= 0; i--) {
-        const [note_name, note_obj] = notes_to_add[i];
-        const { refs, actual_note } = note_obj;
-        console.log("AAAAAAAAAAAAAAAA", { note_name, refs, actual_note })
-
-        const single_note_outer_token = {
-          token: TOKENS.html_cont,
-          children: [],
-          tag_name: "div",
-          id: `bottom-ref-${note_name}`,
-        };
-
-        const note_name_token = {
-          token: TOKENS.html_ready,
-          html: CreateHtmlElement("div", `${note_name}:`)
-        };
-        const note_content_cont_token = {
-          token: TOKENS.html_cont,
-          children: [],
-          tag_name: "div",
-        }
-
-        const nrefs = refs.length;
-        for (let i = 0; i < nrefs; i++) {
-          const letter_idx = IndexNumberToIndexLetter(i);
-          const token = {
-            token: TOKENS.html_ready,
-            html: CreateHtmlElement("a", letter_idx, { href: `ref-${note_name}-${letter_idx}` }),
-          };
-
-          note_content_cont_token.children.push(token);
-        }
-
-        note_content_cont_token.children.push(...actual_note.old_tokens);
-
-        single_note_outer_token.children.push(note_name_token, note_content_cont_token);
-        console.log("AUG", single_note_outer_token)
-        cont_token.children.push(single_note_outer_token);
-      }
-
-      this.result.AddDirective(new_section);
-      t.push(new_section, cont_token);
-    }
-
-    return false;
-  }
-
-  #CreateHtmlReadyNoteRefFromName(name, letter_idx) {
-    const a = CreateHtmlElement("a", name, { href: `#bottom-ref-${name}` });
-    return CreateHtmlElement("sup", a, { id: `ref-${name}-${letter_idx}`, class: "article-ref" });
-  }
-
-  #ParseContributors() {
+  #MakeASTFromTokens() {
 
   }
 
+  GetHtmlString() {
+    this.#TokenizeSource();
 
+    // we have raw tokens, they can be finalized now
+    this.tokens = this.raw_tokens.map(raw_token_instance => raw_token_instance.GetFinalizedInstance(this));
 
+    this.#DebugPrintTokens();
+
+    return "not yet";
+  }
 }
 
-export { SpudTextParser };
+export { SpudTextContext };
