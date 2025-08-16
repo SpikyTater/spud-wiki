@@ -23,14 +23,14 @@ class SpudText {
 const TOKENS = {};
 
 const DIRECTIVES = [
-  "title",
-  "contributor",
+  "title", // done
+  "contributor", // done
   "redirect",
   "nosearchindex",
   "category",
   "tag",
-  "section",
-  "note",
+  "section", // removed, we have headings now
+  "note", // done
 ];
 
 function CreateHtmlElement(tag_name, content, attrs) {

@@ -16,6 +16,9 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+import { CONTRIBUTORS } from "./contributors.js";
+
 /**
  * @typedef Token
  * @property {number | undefined} raw_token_length 
@@ -92,7 +95,7 @@ const TOKENS = {
   internal_link: {
     can_have_children: true,
     is_processed_token: true,
-    children_cant_have_children: true,
+    only_one_text_child_allowed: true,
     started_by: "internal_link_start",
     ended_by: "internal_link_end",
     needs_children: true,
@@ -106,7 +109,7 @@ const TOKENS = {
   external_link: {
     can_have_children: true,
     is_processed_token: true,
-    children_cant_have_children: true,
+    only_one_text_child_allowed: true,
     started_by: "external_link_start",
     ended_by: "external_link_end",
     needs_children: true,
@@ -120,7 +123,7 @@ const TOKENS = {
   embedded_file: {
     can_have_children: true,
     is_processed_token: true,
-    children_cant_have_children: true,
+    only_one_text_child_allowed: true,
     started_by: "embedded_file_start",
     ended_by: "embedded_file_end",
     needs_children: true,
@@ -134,7 +137,7 @@ const TOKENS = {
   note_ref: {
     can_have_children: true,
     is_processed_token: true,
-    children_cant_have_children: true,
+    only_one_text_child_allowed: true,
     started_by: "note_ref_start",
     ended_by: "note_ref_end",
     needs_children: true,
@@ -145,11 +148,14 @@ const TOKENS = {
   note_ref_end: {
     raw_token_length: 1,
   },
-  html_ready: {
+  html_element: {
     is_processed_token: true,
   },
   html_container: {
     can_have_children: true,
+    is_processed_token: true,
+  },
+  html_text: {
     is_processed_token: true,
   },
   ast_root: {
@@ -172,26 +178,41 @@ const TOKENS = {
     raw_token_length: 6,
   },
   heading2_aggregate: {
+    only_one_text_child_allowed: true,
+    can_have_children: true,
+    is_processed_token: true,
     must_be_child_of_root: true,
     started_by: "heading2",
     ended_by: "heading2",
   },
   heading3_aggregate: {
+    only_one_text_child_allowed: true,
+    can_have_children: true,
+    is_processed_token: true,
     must_be_child_of_root: true,
     started_by: "heading3",
     ended_by: "heading3",
   },
   heading4_aggregate: {
+    only_one_text_child_allowed: true,
+    can_have_children: true,
+    is_processed_token: true,
     must_be_child_of_root: true,
     started_by: "heading4",
     ended_by: "heading4",
   },
   heading5_aggregate: {
+    only_one_text_child_allowed: true,
+    can_have_children: true,
+    is_processed_token: true,
     must_be_child_of_root: true,
     started_by: "heading5",
     ended_by: "heading5",
   },
   heading6_aggregate: {
+    only_one_text_child_allowed: true,
+    can_have_children: true,
+    is_processed_token: true,
     must_be_child_of_root: true,
     started_by: "heading6",
     ended_by: "heading6",
@@ -324,21 +345,43 @@ class TokenInstance {
   }
 
   /**
+   * Adds a new child at index 'index',while shifting all children 
+   * from 'index' until the end by one. Leaving 'index' undefined
+   * will add it at the end of the children array.
+   * 
    * @param {TokenInstance} token_instance 
+   * @param {number | undefined} index 
    */
-  AddChild(token_instance) {
+  AddChild(token_instance, index) {
     if (!this.raw_token.can_have_children) {
-      console.error("Trying to add a child to a token instance that cannot have children.");
+      console.error(`Trying to add a child (${token_instance.raw_token.name} at index ${token_instance.original_src_start_index}) to a token instance that cannot have children. ('${this.raw_token.name}')`);
       throw 0;
     }
 
-    const last_child = this.GetLastChild();
-    if (last_child) {
-      last_child.next_sibling = token_instance;
-      token_instance.prev_sibling = last_child;
+    const { children } = this;
+    index ??= children.length;
+
+    if (typeof index !== "number") {
+      console.error("C'mon now, how.");
+      throw 0;
     }
 
-    this.children.push(token_instance);
+    const prev_index = index - 1, next_index = index + 1;
+
+    children.splice(index, 0, token_instance);
+
+    if (prev_index >= 0) {
+      const prev_child = children[prev_index];
+      prev_child.next_sibling = token_instance;
+      token_instance.prev_sibling = prev_child;
+    }
+
+    if (next_index < children.length) {
+      const next_child = children[next_index];
+      next_child.prev_sibling = token_instance;
+      token_instance.next_sibling = next_child;
+    }
+
     token_instance.parent = this;
   }
 
@@ -350,25 +393,40 @@ class TokenInstance {
     return this.children.length ? this.children[this.children.length - 1] : undefined;
   }
 
-  HasGrandchildren() {
-    return this.children.length && this.children.find(child => child.children.length);
-  }
-
-  RemoveSelfAndChildrenFromAST() {
+  /**
+   * @param {TokenInstance} token_instance_to_switch_with 
+   */
+  RemoveSelfAndChildrenFromAST(token_instance_to_switch_with) {
     const { parent, next_sibling, prev_sibling } = this;
     if (parent) {
       const idx = parent.children.indexOf(this);
-      parent.children.splice(idx, 1);
+
+      if (token_instance_to_switch_with) {
+        parent.children.splice(idx, 1, token_instance_to_switch_with);
+        token_instance_to_switch_with.parent = parent;
+      } else {
+        parent.children.splice(idx, 1);
+      }
       delete this.parent;
     }
 
     if (next_sibling) {
-      next_sibling.prev_sibling = prev_sibling;
+      if (token_instance_to_switch_with) {
+        next_sibling.prev_sibling = token_instance_to_switch_with;
+        token_instance_to_switch_with.next_sibling = next_sibling;
+      } else {
+        next_sibling.prev_sibling = prev_sibling;
+      }
       delete this.next_sibling;
     }
 
     if (prev_sibling) {
-      prev_sibling.next_sibling = next_sibling;
+      if (token_instance_to_switch_with) {
+        prev_sibling.next_sibling = token_instance_to_switch_with;
+        token_instance_to_switch_with.prev_sibling = prev_sibling;
+      } else {
+        prev_sibling.next_sibling = next_sibling;
+      }
       delete this.prev_sibling;
     }
   }
@@ -501,11 +559,16 @@ class SpudText {
   directive_instances_map = new Map();
 
   /**
+   * @type {any[]} array of contributors from 'CONTRIBUTORS' in contributors.js
+   */
+  contributors = [];
+
+  /**
    * Sets the title of this page
    * @param {string} title_string 
    */
   SetTitle(title_string) {
-    if (!title_string || typeof title_string !== "string" || !(title_string instanceof String)) {
+    if (typeof title_string !== "string" && !(title_string instanceof String)) {
       console.error("Dev error, again.");
       throw 0;
     }
@@ -528,7 +591,6 @@ class SpudText {
     let real_directive_name = directive_instance.aggregate_starter_token_instance.GetRawString().substring(1);
 
     let real_directive_subname = "";
-    console.log("DIRECTIVE", real_directive_name)
 
     if (real_directive_name.startsWith("note")) {
       // it's a note
@@ -549,6 +611,14 @@ class SpudText {
       this.directive_instances_map.set(real_directive_name, [directive_instance]);
     }
   }
+
+  /**
+   * @param {any} contributor this comes straight from 'CONTRIBUTORS'
+   */
+  AddContributor(contributor) {
+    this.contributors.push(contributor);
+  }
+
 }
 
 /**
@@ -1125,12 +1195,12 @@ class SpudTextContext {
    * @returns {boolean}
    */
   #CheckAST() {
-    // children_cant_have_children
+    // only_one_text_child_allowed
     for (const token_instance of this.#ASTIteratorDepthFirstPostOrder()) {
-      if (token_instance.raw_token.children_cant_have_children) {
-        const who_has_grandchildren = token_instance.HasGrandchildren();
-        if (who_has_grandchildren) {
-          this.LogError(`You can't add a '${who_has_grandchildren.raw_token.name}' inside of a '${token_instance.raw_token.name}'.`);
+      if (token_instance.raw_token.only_one_text_child_allowed) {
+        const { children } = token_instance;
+        if (children.length !== 1 || !children[0].IsInstanceOf(TOKENS.text)) {
+          this.LogError(`You are only allowed to have pure text inside of a '${token_instance.raw_token.name}'`);
           return true;
         }
       }
@@ -1220,6 +1290,375 @@ class SpudTextContext {
     ending_newlines.forEach(ti => ti.RemoveSelfAndChildrenFromAST());
   }
 
+  /**
+   * @returns {boolean}
+   */
+  #ParseTitle() {
+    const title_directives = this.spudtext.directive_instances_map.get("title");
+    const directive_instances = this.spudtext.directive_instances;
+    if (!title_directives || 0 === title_directives.length) {
+      this.LogError("There needs to be one title directive in the page.");
+      return true;
+    }
+
+    if (title_directives.length > 1) {
+      this.LogWarn(`There can be only one title in a page. There are ${title_directives.length} in this one. Only the first one will be used and the others will be ignored.`);
+    }
+
+    const token_instance = title_directives[0];
+
+    for (const inst of title_directives) {
+      directive_instances.splice(directive_instances.indexOf(inst), 1);
+    }
+    this.spudtext.directive_instances_map.delete("title");
+
+    if (token_instance.children.length > 1) {
+      this.LogError(`Title directives can only have text inside them.`);
+      return true;
+    }
+
+    const text_token = token_instance.children[0];
+
+    if (!text_token.IsInstanceOf(TOKENS.text)) {
+      this.LogError(`Title directives can only have text inside them.`);
+      return true;
+    }
+
+    const title = text_token.GetRawString().trim();
+
+    this.spudtext.SetTitle(title);
+
+    const html_element_token_instance = TokenInstance.CreateFromRawToken(TOKENS.html_element);
+
+    html_element_token_instance.tag = "h1";
+    html_element_token_instance.id = "_title";
+    html_element_token_instance.content = title;
+
+    this.ast.AddChild(html_element_token_instance, 0);
+
+    return false;
+  }
+
+  /**
+   * @returns {boolean}
+   */
+  #ParseContributors() {
+    const { directive_instances, directive_instances_map } = this.spudtext;
+    const contributor_directives = directive_instances_map.get("contributor") || [];
+    directive_instances_map.delete("contributor");
+
+    const contributors = new Set();
+
+    for (const contributor_directive_token_instance of contributor_directives) {
+      directive_instances.splice(directive_instances.indexOf(contributor_directive_token_instance), 1);
+
+      if (contributor_directive_token_instance.children.length > 1) {
+        this.LogError(`Contributor directives can only have text inside them.`);
+        return true;
+      }
+
+      const text_token = contributor_directive_token_instance.children[0];
+      if (!text_token.IsInstanceOf(TOKENS.text)) {
+        this.LogError(`Contributor directives can only have text inside them.`);
+        return true;
+      }
+
+      const contributor_username = text_token.GetRawString().trim().toLowerCase();
+      const contributor = CONTRIBUTORS.get(contributor_username)
+      if (!contributor) {
+        this.LogWarn(`Contributor '${contributor_username}' does not exist in the database located in './src/contributors.js'. If you are sure you haven't made a spelling mistake, please contact a Wiki mantainer or make a pull request to add that contributor to the list.`);
+        continue;
+      }
+
+      if (contributors.has(contributor)) {
+        this.LogWarn(`Contributor '${contributor_username}' has already been added in another directive, rendering this one (at index ${text_token.original_src_start_index}) useless.`);
+        continue;
+      }
+
+      contributors.add(contributor);
+      this.spudtext.AddContributor(contributor);
+    }
+
+    return false;
+  }
+
+  #ParseNotes() {
+    /**
+     * @type {TokenInstance[]}
+     */
+    const all_note_ref_token_instances = [];
+
+    for (const token_instance of this.#ASTIteratorDepthFirstPostOrder()) {
+      if (token_instance.IsInstanceOf(TOKENS.note_ref)) {
+        all_note_ref_token_instances.push(token_instance);
+      }
+    }
+
+    /**
+     * @type {Map<string,{refs:TokenInstance[], note: TokenInstance | undefined}>}
+     */
+    const note_data_map = new Map();
+
+    for (const note_ref of all_note_ref_token_instances) {
+      // they have only one text node, checked earlier
+      const note_name = note_ref.children[0].GetRawString().trim();
+
+      const note_data = note_data_map.get(note_name);
+      if (note_data) {
+        note_data.refs.push(note_ref);
+      } else {
+        note_data_map.set(note_name, {
+          refs: [note_ref]
+        });
+      }
+    }
+
+    const { directive_instances, directive_instances_map } = this.spudtext;
+    const note_directives = directive_instances_map.get("note") || [];
+    directive_instances_map.delete("note");
+
+    for (const note_directive of note_directives) {
+      directive_instances.splice(directive_instances.indexOf(note_directive), 1);
+
+      const note_name = note_directive.real_directive_subname;
+      if ((typeof note_name !== "string" && !(note_name instanceof String)) || 0 === note_name.length) {
+        this.LogWarn(`'Note' directive at index ${note_directive.aggregate_starter_token_instance.original_src_start_index} does not have a valid note name. It will be ignored.`);
+        continue;
+      }
+
+      const note_data = note_data_map.get(note_name);
+
+      if (!note_data) {
+        this.LogWarn(`'Note' directive '${note_name}' at index ${note_directive.aggregate_starter_token_instance.original_src_start_index} is never used inside the article. It will be ignored.`);
+        continue;
+      }
+
+      if (note_data.note) {
+        this.LogWarn(`'Note' directive '${note_name}' at index ${note_directive.aggregate_starter_token_instance.original_src_start_index} is a duplicate of another 'note' directive. It will be ignored.`);
+        continue;
+      }
+
+      note_data.note = note_directive;
+    }
+
+    let number_of_ok_notes = 0;
+    for (const [note_name, { refs, note }] of note_data_map) {
+      // there could be notes without a corresponding note directive
+      // they will be ignored
+      if (!note) {
+        this.LogWarn(`Note reference(s) named '${note_name}' do not have a corresponding note. They will be removed.`);
+        for (const note_ref of refs) {
+          note_ref.RemoveSelfAndChildrenFromAST();
+        }
+
+        note_data_map.delete(note_name);
+        continue;
+      } else {
+        // this note is ok
+        number_of_ok_notes++;
+      }
+    }
+
+    // and finally...
+    if (number_of_ok_notes) {
+      // first of all, append a dang heading2 named 'Notes' to root
+
+      const html_element_token_instance = TokenInstance.CreateFromRawToken(TOKENS.html_element);
+      html_element_token_instance.tag = "h2";
+      html_element_token_instance.id = "_notes";
+      html_element_token_instance.content = "Notes";
+
+      this.ast.AddChild(html_element_token_instance);
+
+      function index_to_letter_index(n) {
+        let res = "";
+        do {
+          res = String.fromCharCode(97 + n % 26);
+        } while (n = (n / 26 | 0));
+        return res;
+      }
+
+      // change all note refs to <sup> elements containing an <a> element linking to the note at the bottom of the page
+      // iterate note_data in the given order. all elements are now ok
+      for (const [note_name, { refs, note }] of note_data_map) {
+        const nrefs = refs.length;
+
+        const note_backlink_div = TokenInstance.CreateFromRawToken(TOKENS.html_container);
+        note_backlink_div.tag = "div";
+        note_backlink_div.class = "page-note-backlink";
+
+        const note_text_div = TokenInstance.CreateFromRawToken(TOKENS.html_container);
+        note_text_div.tag = "div";
+        note_text_div.class = "page-note-text";
+        note_text_div.children = note.children;
+        for (const token of note.children) {
+          token.parent = note_text_div;
+        }
+
+        const note_name_div = TokenInstance.CreateFromRawToken(TOKENS.html_element);
+        note_name_div.tag = "div";
+        note_name_div.class = "page-note-name";
+        note_name_div.content = `${note_name}:`;
+
+        const note_content_div = TokenInstance.CreateFromRawToken(TOKENS.html_container);
+        note_content_div.tag = "div";
+        note_content_div.class = "page-note-content";
+        note_content_div.AddChild(note_backlink_div);
+        note_content_div.AddChild(note_text_div);
+
+        const note_container = TokenInstance.CreateFromRawToken(TOKENS.html_container);
+        note_container.tag = "div";
+        note_container.id = `_note-${note_name}`;
+        note_container.class = "page-note";
+        note_container.AddChild(note_name_div);
+        note_container.AddChild(note_content_div);
+
+        this.ast.AddChild(note_container);
+
+        for (let i = 0; i < nrefs; i++) {
+          const letter_index = index_to_letter_index(i);
+
+          const id = `_note-ref-${note_name}-${letter_index}`;
+
+          const note_ref_a = TokenInstance.CreateFromRawToken(TOKENS.html_element);
+          note_ref_a.tag = "a";
+          note_ref_a.class = "page-note-ref-a";
+          note_ref_a.content = `[${note_name}]`;
+          note_ref_a.href = `#_note-${note_name}`;
+
+          const note_ref_sup = TokenInstance.CreateFromRawToken(TOKENS.html_container);
+          note_ref_sup.tag = "sup";
+          note_ref_sup.id = id;
+          note_ref_sup.class = "page-note-ref-sup";
+          note_ref_sup.AddChild(note_ref_a);
+
+          refs[i].RemoveSelfAndChildrenFromAST(note_ref_sup);
+
+          // create backlinks
+
+          const note_backlink = TokenInstance.CreateFromRawToken(TOKENS.html_element);
+          note_backlink.tag = "a";
+          note_backlink.class = "page-note-backlink";
+          note_backlink.content = `[${letter_index}]`;
+          note_backlink.href = `#${id}`;
+
+          note_backlink_div.AddChild(note_backlink);
+        }
+      }
+    }
+  }
+
+  #HandleStyles() {
+    for (const token_instance of this.#ASTIteratorDepthFirstPostOrder()) {
+      switch (token_instance.raw_token) {
+        case TOKENS.em_aggregate: {
+          const html_container = TokenInstance.CreateFromRawToken(TOKENS.html_container);
+          html_container.tag = "i";
+          html_container.children = token_instance.children;
+          for (const token of token_instance.children) {
+            token.parent = html_container;
+          }
+
+          token_instance.RemoveSelfAndChildrenFromAST(html_container);
+          break;
+        }
+        case TOKENS.bold_aggregate: {
+          const html_container = TokenInstance.CreateFromRawToken(TOKENS.html_container);
+          html_container.tag = "b";
+          html_container.children = token_instance.children;
+          for (const token of token_instance.children) {
+            token.parent = html_container;
+          }
+
+          token_instance.RemoveSelfAndChildrenFromAST(html_container);
+          break;
+        }
+        case TOKENS.text: {
+          const html_text = TokenInstance.CreateFromRawToken(TOKENS.html_text);
+          html_text.content = token_instance.GetRawString();
+
+          token_instance.RemoveSelfAndChildrenFromAST(html_text);
+          break;
+        }
+        case TOKENS.heading2_aggregate: {
+          const html_container = TokenInstance.CreateFromRawToken(TOKENS.html_container);
+          html_container.tag = "h2";
+          html_container.children = token_instance.children;
+          for (const token of token_instance.children) {
+            token.parent = html_container;
+          }
+
+          token_instance.RemoveSelfAndChildrenFromAST(html_container);
+          break;
+        }
+        case TOKENS.newline: {
+          const html_element = TokenInstance.CreateFromRawToken(TOKENS.html_element);
+          html_element.tag = "div";
+          html_element.class = "newline";
+          html_element.content = "";
+
+          token_instance.RemoveSelfAndChildrenFromAST(html_element);
+          break;
+        }
+
+      }
+    }
+  }
+
+  #WarnAboutRemainingDirectives() {
+    const directive_instances = this.spudtext.directive_instances, l = directive_instances.length;
+
+    for (let i = 0; i < l; i++) {
+      const directive_instance = directive_instances[i];
+      this.LogWarn(`Unknown directive '${directive_instance.real_directive_name}' at index ${directive_instance.aggregate_starter_token_instance.original_src_start_index}.`);
+    }
+  }
+
+  /**
+   * 
+   * @param {TokenInstance[]} html_tokens 
+   * @returns {string}
+   */
+  #MakeHtmlString(html_tokens) {
+    let s = "";
+
+    for (const token of html_tokens) {
+      switch (token.raw_token) {
+        case TOKENS.html_container:
+          s += `<${token.tag} ${token.id ? 'id="' + token.id + '"' : ""} ${token.class ? 'class="' + token.class + '"' : ""} ${token.href ? 'href="' + token.href + '"' : ""}>`;
+          s += this.#MakeHtmlString(token.children);
+          s += `</${token.tag}>`
+          break;
+        case TOKENS.html_element:
+          s += `<${token.tag} ${token.id ? 'id="' + token.id + '"' : ""} ${token.class ? 'class="' + token.class + '"' : ""} ${token.href ? 'href="' + token.href + '"' : ""}>`;
+          s += token.content;
+          s += `</${token.tag}>`
+          break;
+        case TOKENS.html_text:
+          s += token.content;
+          break;
+        default: throw "YOU CAN'T BE HERE, C'MON!"
+      }
+    }
+
+    return s;
+    /*let s = "";
+    for (const [token_instance, is_entering] of this.#ASTIteratorDepthFirstPostOrder()) {
+      switch (token_instance.raw_token) {
+        case TOKENS.html_container:
+        case TOKENS.html_element:
+          s+=`<${token_instance.tag} ${token_instance.id?'id="' + token_instance.id +'"'  :""} ${token_instance.class?'class="' + token_instance.class +'"'  :""} ${token_instance.href?'href="' + token_instance.href +'"'  :""}>`;
+          s+=
+        case TOKENS.html_text:
+          s += token_instance.content;
+          break;
+        default: throw "YOU CAN'T BE HERE, C'MON!"
+      }
+    }
+
+    return s;*/
+  }
+
   GetSpudText() {
     this.start_timestamp = performance.now();
     this.#TokenizeSource();
@@ -1245,14 +1684,28 @@ class SpudTextContext {
 
     this.#TrimNewlines();
 
+    if (this.#ParseTitle()) {
+      return;
+    }
+
+    if (this.#ParseContributors()) {
+      return;
+    }
+
+    this.#ParseNotes();
+
+    this.#HandleStyles();
+
+    this.#WarnAboutRemainingDirectives();
+
     this.end_timestamp = performance.now();
     this.#DebugPrintTokens(this.ast.children);
 
     console.log(`Time elapsed: ${this.GetTimeElapsedString()}.`);
 
+    return this.#MakeHtmlString(this.ast.children);
 
-
-    return "not yet";
+    //return "not yet";
   }
 }
 

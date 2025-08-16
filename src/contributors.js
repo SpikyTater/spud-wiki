@@ -71,6 +71,4 @@ function ContributorsPostProcess() {
 
 ContributorsPostProcess();
 
-console.log({ CONTRIBUTORS_ARR, CONTRIBUTORS })
-
 export { CONTRIBUTORS_ARR, CONTRIBUTORS };

@@ -20,8 +20,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import { readFileSync, readdirSync, existsSync, mkdirSync, writeFileSync, cpSync, copyFileSync, rm, statSync } from "fs";
 import process from "process";
 import { SpudTextContext } from "./spudtext.js";
+import { CONTRIBUTORS } from "./contributors.js";
 
-
+CONTRIBUTORS
 const COPYRIGHT_COMMENT = `<!--Spud Wiki Engine\nCopyright (C) ${(new Date()).getFullYear()}  SpikyTater\n\nThis program is free software; you can redistribute it and/or modify\nit under the terms of the GNU General Public License as published by\nthe Free Software Foundation; either version 2 of the License, or\n(at your option) any later version.\n\nThis program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along\nwith this program; if not, write to the Free Software Foundation, Inc.,\n51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.-->\n`;
 //const HTML_TEMPLATES = {};
 const ALL_ARTICLES = (function () {
@@ -405,7 +406,14 @@ function CreateHtmlFileString(page) {
   s += NAVIGATOR_SIDEBAR;
 
   s += '<div class="content">';
-  if (page.center_title) {
+
+
+s+=page;
+
+
+
+
+ /* if (page.center_title) {
     s += `<div class="article-title-centered" id="article-title">${page.title}</div>`;
   } else {
     s += `<div id="article-title">${page.title}</div>`;
@@ -421,6 +429,14 @@ function CreateHtmlFileString(page) {
   if (page.notes_html?.length) {
     s += '<div class="article-secttitle">Notes:</div>' + page.notes_html;
   }
+*/
+
+
+
+
+
+
+
   s += '</div>';
 
   s += '<div id="right-sidebar"></div>'
@@ -433,7 +449,7 @@ function CreateHtmlFileString(page) {
 
   // contributors
 
-  if (page.contributors.length) {
+  /*if (page.contributors.length) {
     s += '<div id="footer-contributors">The content of this page is licensed under <a target="_blank" rel="noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> and it was written by ';
 
     const c = page.contributors, l = c.length;
@@ -449,7 +465,7 @@ function CreateHtmlFileString(page) {
 
 
     s += '</div>';
-  }
+  }*/
 
   // themes
 
@@ -537,7 +553,44 @@ async function Build(is_dev) {
   })), { encoding: "utf8", flush: true });
 
   if (is_dev) {
-    writeFileSync("./build/test.html", CreateHtmlFileString(WikiPage.ParseFromFile("./docs/test.txt")), { encoding: "utf8", flush: true });
+    
+
+    const text = `
+!title  Nugget
+!contributor  Spammer92
+
+**Nugget**, also known as "Pearl's C*uddly/Snugg**ly Boy", is one of **Pearl's cat*s. He is a black not so shorthaired cat, who is very snuggly towards Pearl and only towards Pearl. Pearl has adopted Nugget on the 4th or 11th December 2021 (Hermitcraft Season 8){1} and since then he has made multiple appearances in livestreams and social media posts.
+
+== Name ==
+\\*\\\\
+Nugget originates as a black cat for Halloween decor on the Hermitcraft Season 8 server.{2} According to Pearl it was troublesome to move him, so he was called nugget, which ended up being his name.{1}{2} Later that year Pearl adopted a black kitten, which she named Nugget after this cat.
+
+!note1 thi*s is a ha*rd o** dfdhttps://www.youtube.com/watch?v=iODst6Jm9j0&t=1285s Hermitcraft S8, E17**-ne right?
+!note2 Connor
+
+lemme see if t*his creates problems...*`;
+
+/*const text =`!title = GeminiTay
+!contributor = BlueStrategosJ
+
+**GeminiTay** is one of Pearl’s best friends in the content creator community, fellow Hermit and recently Twitch Stream Mod. She commonly watches Pearl’s Twitch Streams and either talks trough Stream Chat or the in-game Minecraft chat with Pearl over various topics.
+
+In one case, Pearl{1} had to mod her chat during a stream and Gem offered to become a Mod to help her out. Pearl accepted after mentioning that Gem would lose her VIP status. **GemMod** was born that fateful day. Since then, Gem gets greeted by a wall of "Hi GemMod" alongside the usual "Hi Gem". Gem has several times threatened to use her mod powers to ban chatters and some chatters hide or scatter when she arrives. (For example, by changing their name colour in chat).
+`;*/
+
+const ctx = new SpudTextContext(text);
+
+
+             writeFileSync("./build/test.html", CreateHtmlFileString(ctx.GetSpudText()), { encoding: "utf8", flush: true });
+
+
+
+
+
+
+
+
+
 
   }
 }
@@ -556,17 +609,17 @@ switch (process.argv[2]) {
   case "parser_test": {
 
     const text = `
-!title = Nugget
-!contributor = Spammer92
+!title  Nugget
+!contributor  Spammer92
 
-**Nugget**, also known as "Pearl's Cuddly/Snuggly Boy", is one of Pearl's cats. He is a black not so shorthaired cat, who is very snuggly towards Pearl and only towards Pearl. Pearl has adopted Nugget on the 4th or 11th December 2021 (Hermitcraft Season 8){1} and since then he has made multiple appearances in livestreams and social media posts.
+**Nugget**, also known as "Pearl's C*uddly/Snugg**ly Boy", is one of **Pearl's cat*s. He is a black not so shorthaired cat, who is very snuggly towards Pearl and only towards Pearl. Pearl has adopted Nugget on the 4th or 11th December 2021 (Hermitcraft Season 8){1} and since then he has made multiple appearances in livestreams and social media posts.
 
 == Name ==
 \\*\\\\
 Nugget originates as a black cat for Halloween decor on the Hermitcraft Season 8 server.{2} According to Pearl it was troublesome to move him, so he was called nugget, which ended up being his name.{1}{2} Later that year Pearl adopted a black kitten, which she named Nugget after this cat.
 
-!note1 = thi*s is a ha*rd o** dfd[[https://www.youtube.com/watch?v=iODst6Jm9j0&t=1285s Hermitcraft S8, E17]]**-ne right?
-!note2 =[Connor]
+!note1 thi*s is a ha*rd o** dfdhttps://www.youtube.com/watch?v=iODst6Jm9j0&t=1285s Hermitcraft S8, E17**-ne right?
+!note2 Connor
 
 lemme see if t*his creates problems...*`;
 
@@ -579,8 +632,9 @@ In one case, Pearl{1} had to mod her chat during a stream and Gem offered to bec
 `;*/
 
 const ctx = new SpudTextContext(text);
-const xxx = ctx.GetSpudText();
-  //  const xxx = SpudTextParser.ParseFromString(text);
+
+
+             writeFileSync("./build/test.html", CreateHtmlFileString(ctx.GetSpudText()), { encoding: "utf8", flush: true });
 
     break;
   }
