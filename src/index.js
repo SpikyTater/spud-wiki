@@ -556,7 +556,7 @@ switch (process.argv[2]) {
   }
   case "parser_test": {
 
-    const text = `
+    /*const text = `
 !title = Nugget
 !contributor = Spammer92
 
@@ -566,8 +566,17 @@ switch (process.argv[2]) {
 \\*\\\\
 Nugget originates as a black cat for Halloween decor on the Hermitcraft Season 8 server.{2} According to Pearl it was troublesome to move him, so he was called nugget, which ended up being his name.{1}{2} Later that year Pearl adopted a black kitten, which she named Nugget after this cat.
 
-!note1= thi*s is a ha*rd o** #outlink("Hermitcraft S8, E17", "https://www.youtube.com/watch?v=iODst6Jm9j0&t=1285s")**-ne right?
-!note2 =<a target="_blank" rel="noopener noreferrer" href="https://www.youtube.com/watch?v=6rc4ozvhZDI&t=70s">Hermitcraft S8, E12</a>
+!note1= thi*s is a ha*rd o** dfd[[https://www.youtube.com/watch?v=iODst6Jm9j0&t=1285s Hermitcraft S8, E17]]**-ne right?
+!note2 =[Connor]
+
+lemme see if t*his creates problems...*`;*/
+
+const text =`!title = GeminiTay
+!contributor = BlueStrategosJ
+
+**GeminiTay** is one of Pearl’s best friends in the content creator community, fellow Hermit and recently Twitch Stream Mod. She commonly watches Pearl’s Twitch Streams and either talks trough Stream Chat or the in-game Minecraft chat with Pearl over various topics.
+
+In one case, Pearl had to mod her chat during a stream and Gem offered to become a Mod to help her out. Pearl accepted after mentioning that Gem would lose her VIP status. **GemMod** was born that fateful day. Since then, Gem gets greeted by a wall of "Hi GemMod" alongside the usual "Hi Gem". Gem has several times threatened to use her mod powers to ban chatters and some chatters hide or scatter when she arrives. (For example, by changing their name colour in chat).
 `;
 
 const ctx = new SpudTextContext(text);

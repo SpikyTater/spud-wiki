@@ -17,9 +17,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-// This is the only javascript file that is deployed to GitHub Pages
+// This is the only javascript file that is deployed to ALL PAGES OF THE WIKI inside their <head> element
 // TODO: In the future it will be minified in production builds
-// All webpages of the wiki have this script inside <head>
 // This script also undergoes a building process:
 //   - some constants will be added on top (e.g. THEMES)
 //   - all code in this will be included inside an IIFE, so don't worry
@@ -49,7 +48,6 @@ function AfterDomLoaded() {
       case "theme-select":
         // theme has changed, save it
         localStorage.setItem("spud-wiki-theme", target.value);
-        console.log("testing...");
         break;
     }
   }, { passive: true });
