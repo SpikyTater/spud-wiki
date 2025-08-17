@@ -11,7 +11,6 @@ add ARIA for accessibility
 404.html
 mobile layout
 a single '#' is used too much (hashtags) to be able to be used as the beginning of strikethrough. use 2#
-add h3 to h6, you lazy smile
 add embold, you lazy smile
 add internal links, you lazy smile
 add embedded media (at least images), you lazy smile
@@ -32,3 +31,11 @@ redesign the welcome page
 see if index.js can be cleaned up somehow
 for larry's sake add some testing, especially to spudtext.js (which needs a lot of it)
 cleanup spudtext.js, most of it is extremely redundant
+add // and /**/ comments to spudtext
+once !nosearchindex and !redirect get added, add !nosearchindex to Sup Face and maybe add some easter eggs for it, like 4 random characters that appear between sup and face, and idk how to search index for it
+license the SpudText format
+make a SpudText format documentation
+add warning for weird characters like microsoft word's ' " ", god I hate these
+add about.html page
+add some way to prettify spudtext, maybe maybe maybe even a way to do it in VS Code
+allow contributors to be written in different cases than what is correct (Kawaiitron/kawaiitron) and even use the secondary (?) ones (Spammer92/Spammer_92) whilst always showing the same thing when parsed
