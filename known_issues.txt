@@ -1,1 +1,1 @@
-- one paragraph gets added before a blockquote and one after, no idea why
+- one paragraph gets added before blockquotes and headings and one after, no idea why
