@@ -1,5 +1,4 @@
-/*
-Spud Wiki Engine
+/*Spud Wiki Engine
 Copyright (C) 2025  SpikyTater
 
 This program is free software; you can redistribute it and/or modify
@@ -14,12 +13,8 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
-51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*/
 // A big thanks to every single one of you. <3
-// Uh, except me, maybe. It's a bit awkward to thank myself.
-
-
 const CONTRIBUTORS_ARR = [
   {
     username: "19_meg_91",
@@ -73,8 +68,8 @@ function ContributorsPostProcess() {
 
 ContributorsPostProcess();
 
-function GetContributorHtmlString(contributor) {
-  return `<a target="_blank" rel="noopener noreferrer" class="tw-name" href="https://www.twitch.tv/${contributor.twitch_username}" style="color:#${contributor.color}">${contributor.username}</a>`;
+function GetContributorHtmlString(contributor, forced_color) {
+  return `<a target="_blank" rel="noopener noreferrer" class="tw-name" href="https://www.twitch.tv/${contributor.twitch_username}" style="color:#${forced_color ? forced_color : contributor.color}">${contributor.username}</a>`;
 
 }
 

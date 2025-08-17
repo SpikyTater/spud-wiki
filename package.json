@@ -9,7 +9,8 @@
   "scripts": {
     "build": "node src/index.js build",
     "build:dev": "node src/index.js build:dev",
-    "clean": "node src/index.js clean"
+    "clean": "node src/index.js clean",
+    "test_doc": "node src/index.js test_doc"
   },
   "repository": {
     "type": "git",

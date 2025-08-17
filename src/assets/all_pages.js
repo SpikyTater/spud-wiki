@@ -1,5 +1,4 @@
-/*
-Spud Wiki Engine
+/*Spud Wiki Engine
 Copyright (C) 2025  SpikyTater
 
 This program is free software; you can redistribute it and/or modify
@@ -14,20 +13,15 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
-51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*/
 
 // This is the only javascript file that is deployed to ALL PAGES OF THE WIKI inside their <head> element
-// TODO: In the future it will be minified in production builds
 // This script also undergoes a building process:
 //   - some constants will be added on top (e.g. THEMES)
 //   - all code in this will be included inside an IIFE, so don't worry
 //     about polluting the global object
 
-// TODO: add this constant during the build process
-const THEMES = [
-  "dark", "light"
-];
+THEME=THEMES.map(t=>t.toLowerCase());
 
 let theme = localStorage.getItem("spud-wiki-theme");
 if (!theme || !THEMES.includes(theme)) {

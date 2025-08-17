@@ -19,7 +19,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 html,
 body,
 p,
-blockquote,h1,h2,h3,h4,h5,h6 {
+blockquote,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin: 0;
   padding: 0;
 }
@@ -201,7 +207,7 @@ blockquote {
     var(--color-bg-1-lighter);
   margin-left: .6rem;
   background-color: var(--color-bg-blockquote);
-  padding: .1rem .6rem;
+  padding: .8rem 1.5rem;
 }
 
 #bottom-refs {
@@ -238,9 +244,50 @@ blockquote {
 /************************************/
 
 h1 {
-    font-size: 1.8em;
-    font-family: 'Linux Libertine', 'Georgia', 'Times', 'Source Serif Pro', serif;
-    line-height: 1.375;
-    border-bottom: 1px solid var(--color-section-border);
-    font-weight: normal;
+  font-size: 1.8em;
+  font-family: 'Linux Libertine', 'Georgia', 'Times', 'Source Serif Pro', serif;
+  line-height: 1.375;
+  border-bottom: 1px solid var(--color-section-border);
+  font-weight: normal;
+  margin-block-end: 1em;
+}
+
+h2 {
+  font-size: 1.5em;
+  font-family: 'Linux Libertine', 'Georgia', 'Times', 'Source Serif Pro', serif;
+  line-height: 1.375;
+  border-bottom: 1px solid var(--color-section-border);
+  font-weight: normal;
+}
+
+blockquote>p {
+  line-height: 2;
+}
+
+.content>p {
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  line-height: 1.5;
+  text-align: justify;
+}
+
+#_notes-container {
+  display: grid;
+  grid-template-columns: min-content auto;
+  padding-inline: 1.4em;
+  column-gap: 1em;
+  row-gap: .6em;
+  padding-block-start: .8em;
+}
+
+.page-note {
+  display: contents;
+}
+
+.do_center_title>h1 {
+  text-align: center;
+}
+
+p.credits-contributor {
+  text-align: center;
 }

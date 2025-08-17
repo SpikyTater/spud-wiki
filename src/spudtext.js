@@ -1,5 +1,4 @@
-/*
-Spud Wiki Engine
+/*Spud Wiki Engine
 Copyright (C) 2025  SpikyTater
 
 This program is free software; you can redistribute it and/or modify
@@ -14,30 +13,15 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
-51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
-
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*/
 import { CONTRIBUTORS } from "./contributors.js";
-
-/*
-//TODO: DIRECTIVES TO ADD
-
- "redirect",
-  "nosearchindex",
-  "category",
-  "tag",
-
-
-  // TODO: turn portions of text into paragraphs to avoid the awkwardness of handling newline
-
-*/
 
 /**
  * @typedef Token
  * @property {number | undefined} raw_token_length 
  */
 const TOKENS = {
-  newline: { // TODO
+  newline: {
     must_be_child_of_root: true,
     raw_token_length: 1,
   },
@@ -81,7 +65,7 @@ const TOKENS = {
   strikethrough: {
     raw_token_length: 1,
   },
-  strikethrough_aggregate: { // TODO
+  strikethrough_aggregate: {
     can_have_children: true,
     is_processed_token: true,
     started_by: "strikethrough",
@@ -89,13 +73,15 @@ const TOKENS = {
     needs_children: true,
   },
   blockquote: {
+    must_be_child_of_root: true,
     raw_token_length: 1,
   },
-  blockquote_aggregate: { // TODO
+  blockquote_aggregate: {
     can_have_children: true,
+    must_be_child_of_root: true,
     is_processed_token: true,
     started_by: "blockquote",
-    ended_by: "blockquote",
+    ended_by: "newline",
     needs_children: true,
   },
   directive_start: {},
@@ -120,7 +106,7 @@ const TOKENS = {
   internal_link_end: {
     raw_token_length: 1,
   },
-  external_link: { // TODO
+  external_link: {
     can_have_children: true,
     is_processed_token: true,
     only_one_text_child_allowed: true,
@@ -593,6 +579,16 @@ class SpudText {
   html_string;
 
   /**
+   * @type {boolean}
+   */
+  do_center_title = false;
+
+  /**
+   * @type {boolean}
+   */
+  make_blue_red = false;
+
+  /**
    * Sets the title of this page
    * @param {string} title_string 
    */
@@ -693,7 +689,12 @@ class SpudText {
           s += `</${token.tag}>`
           break;
         case TOKENS.html_element:
-          s += `<${token.tag} ${token.id ? 'id="' + token.id + '"' : ""} ${token.class ? 'class="' + token.class + '"' : ""} ${token.href ? 'href="' + token.href + '"' : ""}>`;
+          s += `<${token.tag} ${token.id ? 'id="' + token.id + '"' : ""} ${token.class ? 'class="' + token.class + '"' : ""} ${token.href ? 'href="' + token.href + '"' : ""}`;
+
+          if (token.ext_link) {
+            s += ' target="_blank" rel="noopener noreferrer"';
+          }
+          s += ">";
           s += token.content;
           s += `</${token.tag}>`
           break;
@@ -702,7 +703,7 @@ class SpudText {
           break;
         default:
           //sigh
-        //  console.error("why...", this.title);
+          //  console.error("why...", this.title);
 
           throw "YOU CAN'T BE HERE, C'MON!"
       }
@@ -1207,7 +1208,8 @@ class SpudTextContext {
       const token = tokens[i], { raw_token } = token;
 
       // first check if the current aggregate can be ended by the current token
-      if (stack_top_token_instance.IsInstanceOf(raw_token.ends)) {
+      //if (stack_top_token_instance.IsInstanceOf(raw_token.ends)) {
+      if (stack_top_token_instance.raw_token.ended_by === raw_token) {
         // yes it can. it also means there's a current aggregate stack top
         // set current token instance as aggregate ender
         stack_top_token_instance.aggregate_ender_token_instance = token;
@@ -1591,11 +1593,11 @@ class SpudTextContext {
         const nrefs = refs.length;
 
         const note_backlink_div = TokenInstance.CreateFromRawToken(TOKENS.html_container);
-        note_backlink_div.tag = "div";
+        note_backlink_div.tag = "span";
         note_backlink_div.class = "page-note-backlinks";
 
         const note_text_div = TokenInstance.CreateFromRawToken(TOKENS.html_container);
-        note_text_div.tag = "div";
+        note_text_div.tag = "span";
         note_text_div.class = "page-note-text";
         note_text_div.children = note.children;
         for (const token of note.children) {
@@ -1603,12 +1605,12 @@ class SpudTextContext {
         }
 
         const note_name_div = TokenInstance.CreateFromRawToken(TOKENS.html_element);
-        note_name_div.tag = "div";
+        note_name_div.tag = "span";
         note_name_div.class = "page-note-name";
         note_name_div.content = `${note_name}:`;
 
         const note_content_div = TokenInstance.CreateFromRawToken(TOKENS.html_container);
-        note_content_div.tag = "div";
+        note_content_div.tag = "span";
         note_content_div.class = "page-note-content";
         note_content_div.AddChild(note_backlink_div);
         note_content_div.AddChild(note_text_div);
@@ -1698,16 +1700,7 @@ class SpudTextContext {
           token_instance.RemoveSelfAndChildrenFromAST(html_container);
           break;
         }
-        case TOKENS.newline: { // TODO: NO, create paragraphs
-          const html_element = TokenInstance.CreateFromRawToken(TOKENS.html_element);
-          html_element.tag = "div";
-          html_element.class = "newline";
-          html_element.content = "";
-
-          token_instance.RemoveSelfAndChildrenFromAST(html_element);
-          break;
-        }
-        case TOKENS.external_link: {
+        /*case TOKENS.external_link: {
           // *cries*
           const html_element = TokenInstance.CreateFromRawToken(TOKENS.html_element);
           html_element.tag = "span";
@@ -1715,10 +1708,21 @@ class SpudTextContext {
 
           token_instance.RemoveSelfAndChildrenFromAST(html_element);
           break;
-        }
+        }*/
         case TOKENS.strikethrough_aggregate: {
           const html_container = TokenInstance.CreateFromRawToken(TOKENS.html_container);
           html_container.tag = "s";
+          html_container.children = token_instance.children;
+          for (const token of token_instance.children) {
+            token.parent = html_container;
+          }
+
+          token_instance.RemoveSelfAndChildrenFromAST(html_container);
+          break;
+        }
+        case TOKENS.blockquote_aggregate: {
+          const html_container = TokenInstance.CreateFromRawToken(TOKENS.html_container);
+          html_container.tag = "blockquote";
           html_container.children = token_instance.children;
           for (const token of token_instance.children) {
             token.parent = html_container;
@@ -1741,49 +1745,195 @@ class SpudTextContext {
     }
   }
 
-  /**
-   * 
-   * @param {TokenInstance[]} html_tokens 
-   * @returns {string}
-   */
-  #MakeHtmlString(html_tokens) {
-    let s = "";
+  #ParseBlockquotes() {
+    const token_instances = this.ast.children;
 
-    for (const token of html_tokens) {
-      switch (token.raw_token) {
-        case TOKENS.html_container:
-          s += `<${token.tag} ${token.id ? 'id="' + token.id + '"' : ""} ${token.class ? 'class="' + token.class + '"' : ""} ${token.href ? 'href="' + token.href + '"' : ""}>`;
-          s += this.#MakeHtmlString(token.children);
-          s += `</${token.tag}>`
-          break;
-        case TOKENS.html_element:
-          s += `<${token.tag} ${token.id ? 'id="' + token.id + '"' : ""} ${token.class ? 'class="' + token.class + '"' : ""} ${token.href ? 'href="' + token.href + '"' : ""}>`;
-          s += token.content;
-          s += `</${token.tag}>`
-          break;
-        case TOKENS.html_text:
-          s += token.content;
-          break;
-        default: throw "YOU CAN'T BE HERE, C'MON!"
+    let is_prev_blockquote = false, l = token_instances.length;
+
+    for (let i = 0; i < l; i++) {
+      const token_instance = token_instances[i],
+        is_curr_blockquote = token_instance.IsInstanceOf(TOKENS.blockquote_aggregate);
+
+      if (is_curr_blockquote) {
+        // since a blockquote ends with a newline token, all its children are in one line and that must be kept
+        const html_container = TokenInstance.CreateFromRawToken(TOKENS.html_container);
+        html_container.tag = "p";
+        html_container.children = token_instance.children;
+        for (const token of token_instance.children) {
+          token.parent = html_container;
+        }
+        token_instance.children = [html_container];
+        html_container.parent = token_instance;
+
+        if (is_prev_blockquote) {
+          // merge em
+          const prev_token_instance = token_instances[i - 1], prev_token_child = prev_token_instance.children[prev_token_instance.children.length - 1];
+          // remove current token from AST
+          token_instance.RemoveSelfAndChildrenFromAST();
+
+          prev_token_child.next_sibling = html_container;
+          html_container.prev_sibling = prev_token_child;
+          html_container.parent = prev_token_instance;
+          prev_token_instance.children.push(html_container);
+
+          i--; l--;
+        }
+      }
+
+      is_prev_blockquote = is_curr_blockquote;
+    }
+  }
+
+  #ParseParagraphs() {
+    const token_instances = this.ast.children;
+
+    let curr_paragraph_start = 0, i = 0;
+
+    const make_into_a_paragraph = (ends_in_newline) => {
+      const token_instance = token_instances[i];
+
+      if (!token_instance || token_instance.IsInstanceOf(TOKENS.newline)) {
+        // end current paragraph
+        const paragraph_length = i - curr_paragraph_start;
+
+        if (0 === paragraph_length) {
+          // remove current newline as it is superfluous
+          token_instance.RemoveSelfAndChildrenFromAST();
+          // curr_paragraph_start stays the same
+          i--;
+          return;
+        }
+
+        const html_container = TokenInstance.CreateFromRawToken(TOKENS.html_container);
+        html_container.tag = "p";
+        html_container.class = "paragraph";
+        html_container.parent = this.ast;
+
+        // we have to splice paragraph_length + 1 (newline as well) token instances, and we switch it with the paragraph
+        const spliced_token_instances = token_instances.splice(curr_paragraph_start, paragraph_length + !!ends_in_newline, html_container);
+        // get rid of that newline, nobody likes it
+        if (ends_in_newline) {
+          const hateful_new_line = spliced_token_instances.pop();
+
+          html_container.next_sibling = hateful_new_line.next_sibling;
+          if (html_container.next_sibling) {
+            html_container.next_sibling.prev_sibling = html_container;
+          }
+        }
+        html_container.prev_sibling = spliced_token_instances[0].prev_sibling;
+        if (html_container.prev_sibling) {
+          html_container.prev_sibling.next_sibling = html_container;
+        }
+
+        html_container.children = spliced_token_instances;
+
+        spliced_token_instances[0].prev_sibling = undefined;
+        spliced_token_instances[paragraph_length - 1].next_sibling = undefined;
+
+        for (const ti of spliced_token_instances) {
+          ti.parent = html_container;
+        }
+
+        // newline will be removed and not added back
+
+
+        curr_paragraph_start++;
+        i -= paragraph_length + 1;
+
       }
     }
 
-    return s;
-    /*let s = "";
-    for (const [token_instance, is_entering] of this.#ASTIteratorDepthFirstPostOrder()) {
-      switch (token_instance.raw_token) {
-        case TOKENS.html_container:
-        case TOKENS.html_element:
-          s+=`<${token_instance.tag} ${token_instance.id?'id="' + token_instance.id +'"'  :""} ${token_instance.class?'class="' + token_instance.class +'"'  :""} ${token_instance.href?'href="' + token_instance.href +'"'  :""}>`;
-          s+=
-        case TOKENS.html_text:
-          s += token_instance.content;
+    for (; i < token_instances.length; i++) {
+      make_into_a_paragraph(true);
+    }
+
+    make_into_a_paragraph(false);
+  }
+
+  #ParseExternalLinks() {
+    for (const token_instance of this.#ASTIteratorDepthFirstPostOrder()) {
+      if (token_instance.IsInstanceOf(TOKENS.external_link)) {
+        // always has only one text child
+        const text_token_instance = token_instance.children[0],
+          { code_point_array } = text_token_instance;
+
+        const first_non_whitespace = code_point_array.findIndex(c => c > 32);
+        if (-1 === first_non_whitespace) {
+          this.LogWarn(`External link empty at index ${text_token_instance.original_src_start_index}.`);
+          continue;
+        }
+
+        const first_whitespace_after_that = first_non_whitespace + code_point_array.slice(first_non_whitespace).findIndex(c => c <= 32);
+
+        let link, label;
+        if (first_whitespace_after_that === first_non_whitespace - 1) {
+          // use link as label
+          label = link = String.fromCodePoint(...code_point_array.slice(first_non_whitespace));
+        } else {
+          link = String.fromCodePoint(...code_point_array.slice(first_non_whitespace, first_whitespace_after_that));
+          label = String.fromCodePoint(...code_point_array.slice(first_whitespace_after_that)).trim();
+        }
+
+
+
+        const html_element = TokenInstance.CreateFromRawToken(TOKENS.html_element);
+        html_element.tag = "a";
+        html_element.content = label;
+        html_element.href = link;
+        html_element.ext_link = true;
+
+        token_instance.RemoveSelfAndChildrenFromAST(html_element);
+
+
+      }
+    }
+  }
+
+  /*
+  "redirect",
+  "nosearchindex",
+  "category",
+  "tag",
+center_title
+  
+  */
+  #ParseFlagDirectives() {
+    const { spudtext } = this, { directive_instances, directive_instances_map } = spudtext;
+
+    const to_delete = [];
+
+    for (const [directive_name, token_instances] of directive_instances_map) {
+      switch (directive_name) {
+        case "center_title": {
+          if (token_instances.length > 1) {
+            this.LogWarn(`Only one '${directive_name}' directive is needed.`);
+          }
+          spudtext.do_center_title = true;
+          to_delete.push(directive_name);
           break;
-        default: throw "YOU CAN'T BE HERE, C'MON!"
+        }
+        case "make_blue_red": {
+          if (token_instances.length > 1) {
+            this.LogWarn(`Only one '${directive_name}' directive is needed.`);
+          }
+          spudtext.make_blue_red = true;
+          to_delete.push(directive_name);
+          break;
+        }
+
       }
     }
 
-    return s;*/
+    for (const directive_name of to_delete) {
+      directive_instances_map.delete(directive_name);
+      for (let i = directive_instances.length - 1; i >= 0; i--) {
+        if (directive_name === directive_instances[i].real_directive_name) {
+          directive_instances.splice(i, 1);
+        }
+      }
+
+    }
+
   }
 
   GetSpudText() {
@@ -1800,9 +1950,10 @@ class SpudTextContext {
     this.#OptimizeTextTokens();
 
     if (this.#MakeASTFromTokens()) {
+      this.#DebugPrintTokens(this.ast.children);
       return;
     }
-    //this.#DebugPrintTokens(this.ast.children);
+
 
     if (this.#CheckAST()) {
       return;
@@ -1812,7 +1963,13 @@ class SpudTextContext {
       return;
     }
 
+    this.#ParseBlockquotes();
+
     this.#TrimNewlines();
+
+    this.#ParseParagraphs();
+
+    // this.#DebugPrintTokens(this.ast.children);
 
 
     if (this.#ParseTitle()) {
@@ -1825,12 +1982,16 @@ class SpudTextContext {
 
     this.#ParseNotes();
 
+    this.#ParseExternalLinks();
+
     this.#HandleStyles();
+
+    this.#ParseFlagDirectives();
 
     this.#WarnAboutRemainingDirectives();
 
     this.end_timestamp = performance.now();
-   // this.#DebugPrintTokens(this.ast.children);
+    // this.#DebugPrintTokens(this.ast.children);
 
     // console.log(`Time elapsed: ${this.GetTimeElapsedString()}.`);
 

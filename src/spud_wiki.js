@@ -1,3 +1,19 @@
+/*Spud Wiki Engine
+Copyright (C) 2025  SpikyTater
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*/
 import CleanCSS from "clean-css";
 import { existsSync, mkdirSync, readdirSync } from "fs";
 import { readFile, stat, writeFile } from "fs/promises";
@@ -118,6 +134,10 @@ class SpudWikiAsset {
         return this;
       }
       case SpudWikiAsset.JS: {
+        if (this.options.on_before_processing) {
+          data = this.options.on_before_processing(data)
+        }
+
         if (spud_wiki.is_dev_build) {
           // no minify
           this.data = data;
@@ -188,8 +208,7 @@ class SpudWikiAsset {
         s += '<link rel="icon" href="/spud-wiki/media/logo.png">';
 
 
-        // TODO:
-        //   s += '<script src="/spud-wiki/assets/main.js"></script>';
+        s += '<script src="/spud-wiki/assets/main.js"></script>';
 
         // close head, start body
         s += "</head><body>";
@@ -204,10 +223,14 @@ class SpudWikiAsset {
         s += spud_wiki.site_map_html_string;
 
         // start content section
-        s += '<div class="content">';
+        // TODO: do_center_title should go inside spudtext
+        s += `<div class="content${data.do_center_title ? " do_center_title" : ""}">`;
 
         s += data.GetHtmlString();
 
+        if (this.options.append_to_content) {
+          s += this.options.append_to_content;
+        }
 
         // end content section
         s += '</div>';
@@ -229,12 +252,21 @@ class SpudWikiAsset {
 
           const c = data.contributors, l = c.length;
           for (let i = 0; i < l; i++) {
+            const contributor = c[i];
+            let forced_color;
+
+            if (contributor.username === "BlueStrategosJ" && data.make_blue_red) {
+              forced_color = "f77";
+            }
+
+            const contributor_html_string = GetContributorHtmlString(c[i], forced_color);
+
             if (l - i >= 3) {
-              s += GetContributorHtmlString(c[i]) + ", ";
+              s += contributor_html_string + ", ";
             } else if (l - i === 2) {
-              s += GetContributorHtmlString(c[i]) + " and ";
+              s += contributor_html_string + " and ";
             } else {
-              s += GetContributorHtmlString(c[i]) + ".";
+              s += contributor_html_string + ".";
             }
           }
 
@@ -244,7 +276,7 @@ class SpudWikiAsset {
 
         // theme
         {
-          // themes
+          // TODO: themes
 
           s += '<div id="theme-cont">Theme: <select id="theme-select">'
 
@@ -272,6 +304,7 @@ class SpudWikiAsset {
 }
 
 export default class SpudWiki {
+  static THEMES = ["Dark", "Light"];
   /**
    * @type {Promise<SpudWikiAsset>[]}
    */
@@ -538,7 +571,7 @@ export default class SpudWiki {
 
     this.#CreateSiteMapHtmlString();
 
-    // TODO: article navigator
+    // TODO: article navigator ?? what is this. I can't remember what I meant and I'm too scared to delete this todo
 
 
 
