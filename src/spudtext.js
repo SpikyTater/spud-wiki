@@ -19,12 +19,26 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import { CONTRIBUTORS } from "./contributors.js";
 
+/*
+//TODO: DIRECTIVES TO ADD
+
+ "redirect",
+  "nosearchindex",
+  "category",
+  "tag",
+
+
+  // TODO: turn portions of text into paragraphs to avoid the awkwardness of handling newline
+
+*/
+
 /**
  * @typedef Token
  * @property {number | undefined} raw_token_length 
  */
 const TOKENS = {
-  newline: {
+  newline: { // TODO
+    must_be_child_of_root: true,
     raw_token_length: 1,
   },
   text: {
@@ -37,7 +51,7 @@ const TOKENS = {
   em: {
     raw_token_length: 1,
   },
-  em_aggregate: {
+  em_aggregate: { // handled
     can_have_children: true,
     is_processed_token: true,
     started_by: "em",
@@ -47,7 +61,7 @@ const TOKENS = {
   bold: {
     raw_token_length: 2,
   },
-  bold_aggregate: {
+  bold_aggregate: { // handled
     can_have_children: true,
     is_processed_token: true,
     started_by: "bold",
@@ -57,7 +71,7 @@ const TOKENS = {
   embold: {
     raw_token_length: 3,
   },
-  embold_aggregate: {
+  embold_aggregate: { // TODO
     can_have_children: true,
     is_processed_token: true,
     started_by: "embold",
@@ -67,7 +81,7 @@ const TOKENS = {
   strikethrough: {
     raw_token_length: 1,
   },
-  strikethrough_aggregate: {
+  strikethrough_aggregate: { // TODO
     can_have_children: true,
     is_processed_token: true,
     started_by: "strikethrough",
@@ -77,7 +91,7 @@ const TOKENS = {
   blockquote: {
     raw_token_length: 1,
   },
-  blockquote_aggregate: {
+  blockquote_aggregate: { // TODO
     can_have_children: true,
     is_processed_token: true,
     started_by: "blockquote",
@@ -92,7 +106,7 @@ const TOKENS = {
     started_by: "directive_start",
     ended_by: "newline",
   },
-  internal_link: {
+  internal_link: { // TODO
     can_have_children: true,
     is_processed_token: true,
     only_one_text_child_allowed: true,
@@ -106,7 +120,7 @@ const TOKENS = {
   internal_link_end: {
     raw_token_length: 1,
   },
-  external_link: {
+  external_link: { // TODO
     can_have_children: true,
     is_processed_token: true,
     only_one_text_child_allowed: true,
@@ -120,7 +134,7 @@ const TOKENS = {
   external_link_end: {
     raw_token_length: 2,
   },
-  embedded_file: {
+  embedded_file: { // TODO
     can_have_children: true,
     is_processed_token: true,
     only_one_text_child_allowed: true,
@@ -134,7 +148,7 @@ const TOKENS = {
   embedded_file_end: {
     raw_token_length: 3,
   },
-  note_ref: {
+  note_ref: { // handled
     can_have_children: true,
     is_processed_token: true,
     only_one_text_child_allowed: true,
@@ -148,14 +162,14 @@ const TOKENS = {
   note_ref_end: {
     raw_token_length: 1,
   },
-  html_element: {
+  html_element: { // handled
     is_processed_token: true,
   },
-  html_container: {
+  html_container: { // handled
     can_have_children: true,
     is_processed_token: true,
   },
-  html_text: {
+  html_text: { // handled
     is_processed_token: true,
   },
   ast_root: {
@@ -177,7 +191,7 @@ const TOKENS = {
   heading6: {
     raw_token_length: 6,
   },
-  heading2_aggregate: {
+  heading2_aggregate: { // handled
     only_one_text_child_allowed: true,
     can_have_children: true,
     is_processed_token: true,
@@ -185,7 +199,7 @@ const TOKENS = {
     started_by: "heading2",
     ended_by: "heading2",
   },
-  heading3_aggregate: {
+  heading3_aggregate: { // TODO
     only_one_text_child_allowed: true,
     can_have_children: true,
     is_processed_token: true,
@@ -193,7 +207,7 @@ const TOKENS = {
     started_by: "heading3",
     ended_by: "heading3",
   },
-  heading4_aggregate: {
+  heading4_aggregate: { // TODO
     only_one_text_child_allowed: true,
     can_have_children: true,
     is_processed_token: true,
@@ -201,7 +215,7 @@ const TOKENS = {
     started_by: "heading4",
     ended_by: "heading4",
   },
-  heading5_aggregate: {
+  heading5_aggregate: { // TODO
     only_one_text_child_allowed: true,
     can_have_children: true,
     is_processed_token: true,
@@ -209,7 +223,7 @@ const TOKENS = {
     started_by: "heading5",
     ended_by: "heading5",
   },
-  heading6_aggregate: {
+  heading6_aggregate: { // TODO
     only_one_text_child_allowed: true,
     can_have_children: true,
     is_processed_token: true,
@@ -1195,8 +1209,8 @@ class SpudTextContext {
    * @returns {boolean}
    */
   #CheckAST() {
-    // only_one_text_child_allowed
     for (const token_instance of this.#ASTIteratorDepthFirstPostOrder()) {
+      // only_one_text_child_allowed
       if (token_instance.raw_token.only_one_text_child_allowed) {
         const { children } = token_instance;
         if (children.length !== 1 || !children[0].IsInstanceOf(TOKENS.text)) {
@@ -1204,18 +1218,24 @@ class SpudTextContext {
           return true;
         }
       }
-    }
+      // must_be_child_of_root
+      if (token_instance.raw_token.must_be_child_of_root) {
+        if (!token_instance.parent.IsInstanceOf(TOKENS.ast_root)) {
+          this.LogError(`'${token_instance.raw_token.name}' cannot be placed inside other aggregates.`);
+          return true;
+        }
+      }
 
-    // must_be_child_of_root will be checked inside #ParseDirectives
-
-    // needs_children
-    for (const token_instance of this.#ASTIteratorDepthFirstPostOrder()) {
+      // needs_children
       if (token_instance.raw_token.needs_children && !token_instance.children.length) {
         // can be safely removed inside this loop... hopefully
         token_instance.RemoveSelfAndChildrenFromAST();
         this.LogWarn(`'${token_instance.raw_token.name}' (found at index ${token_instance.aggregate_starter_token_instance.original_src_start_index}) without any non-whitespace characters inside are useless.`);
       }
+
     }
+
+
 
     return false;
   }
@@ -1244,10 +1264,10 @@ class SpudTextContext {
 
     for (const token_instance of this.#ASTIteratorDepthFirstPostOrder()) {
       if (token_instance.IsInstanceOf(TOKENS.directive)) {
-        if (!token_instance.parent.IsInstanceOf(TOKENS.ast_root)) {
+        /*if (!token_instance.parent.IsInstanceOf(TOKENS.ast_root)) {
           this.LogError(`Directives cannot be placed inside other aggregates.`);
           return true;
-        }
+        }*/
         directive_instances.push(token_instance);
       }
     }
@@ -1470,6 +1490,13 @@ class SpudTextContext {
 
       this.ast.AddChild(html_element_token_instance);
 
+      const notes_container = TokenInstance.CreateFromRawToken(TOKENS.html_container);
+      notes_container.tag = "div";
+      notes_container.id = "_notes-container";
+
+      this.ast.AddChild(notes_container);
+
+
       function index_to_letter_index(n) {
         let res = "";
         do {
@@ -1485,7 +1512,7 @@ class SpudTextContext {
 
         const note_backlink_div = TokenInstance.CreateFromRawToken(TOKENS.html_container);
         note_backlink_div.tag = "div";
-        note_backlink_div.class = "page-note-backlink";
+        note_backlink_div.class = "page-note-backlinks";
 
         const note_text_div = TokenInstance.CreateFromRawToken(TOKENS.html_container);
         note_text_div.tag = "div";
@@ -1513,7 +1540,7 @@ class SpudTextContext {
         note_container.AddChild(note_name_div);
         note_container.AddChild(note_content_div);
 
-        this.ast.AddChild(note_container);
+        notes_container.AddChild(note_container);
 
         for (let i = 0; i < nrefs; i++) {
           const letter_index = index_to_letter_index(i);
@@ -1591,7 +1618,7 @@ class SpudTextContext {
           token_instance.RemoveSelfAndChildrenFromAST(html_container);
           break;
         }
-        case TOKENS.newline: {
+        case TOKENS.newline: { // TODO: NO, create paragraphs
           const html_element = TokenInstance.CreateFromRawToken(TOKENS.html_element);
           html_element.tag = "div";
           html_element.class = "newline";
@@ -1699,7 +1726,7 @@ class SpudTextContext {
     this.#WarnAboutRemainingDirectives();
 
     this.end_timestamp = performance.now();
-    this.#DebugPrintTokens(this.ast.children);
+    // this.#DebugPrintTokens(this.ast.children);
 
     console.log(`Time elapsed: ${this.GetTimeElapsedString()}.`);
 

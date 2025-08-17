@@ -1,8 +1,12 @@
 rework navigation
-make a proper parser/lexer
-what could go on the right side of the middle section
+what could go on the right side of the middle section -> page navigation, preomputed and presented as html
+site map on the left side
 search functionality
 chat commands (!cowboy, !time, !celtic, !kawaii and so on) in the search bar
-add last modified on the bottom
-add recent changes in main page
+add last modified on the bottom of every page unless !nolastmodified
+add recent changes to main page
 special pages class
+add redirected from ?redirect=#DeathForTheSpiders -> escape space # " < > [ \ ] ^ `
+use html elements -> small, sub, sup, textarea, hgroup (for redirect), main, nav, p, s, button, footer, header, address (for contributors), abbr
+add ARIA for accessibility
+please, please switch to promises when handling filesystem stuff

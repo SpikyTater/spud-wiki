@@ -408,28 +408,28 @@ function CreateHtmlFileString(page) {
   s += '<div class="content">';
 
 
-s+=page;
+  s += page;
 
 
 
 
- /* if (page.center_title) {
-    s += `<div class="article-title-centered" id="article-title">${page.title}</div>`;
-  } else {
-    s += `<div id="article-title">${page.title}</div>`;
-  }
-  s += `<div id="article-content">${page.content}`;
-
-  if (page.special_page_handler) {
-    s += page.special_page_handler(page);
-  }
-
-  s += "</div>"
-
-  if (page.notes_html?.length) {
-    s += '<div class="article-secttitle">Notes:</div>' + page.notes_html;
-  }
-*/
+  /* if (page.center_title) {
+     s += `<div class="article-title-centered" id="article-title">${page.title}</div>`;
+   } else {
+     s += `<div id="article-title">${page.title}</div>`;
+   }
+   s += `<div id="article-content">${page.content}`;
+ 
+   if (page.special_page_handler) {
+     s += page.special_page_handler(page);
+   }
+ 
+   s += "</div>"
+ 
+   if (page.notes_html?.length) {
+     s += '<div class="article-secttitle">Notes:</div>' + page.notes_html;
+   }
+ */
 
 
 
@@ -553,7 +553,7 @@ async function Build(is_dev) {
   })), { encoding: "utf8", flush: true });
 
   if (is_dev) {
-    
+
 
     const text = `
 !title  Nugget
@@ -565,24 +565,27 @@ async function Build(is_dev) {
 \\*\\\\
 Nugget originates as a black cat for Halloween decor on the Hermitcraft Season 8 server.{2} According to Pearl it was troublesome to move him, so he was called nugget, which ended up being his name.{1}{2} Later that year Pearl adopted a black kitten, which she named Nugget after this cat.
 
+
+testestest
 !note1 thi*s is a ha*rd o** dfdhttps://www.youtube.com/watch?v=iODst6Jm9j0&t=1285s Hermitcraft S8, E17**-ne right?
 !note2 Connor
 
 lemme see if t*his creates problems...*`;
 
-/*const text =`!title = GeminiTay
-!contributor = BlueStrategosJ
+    /*const text =`!title = GeminiTay
+    !contributor = BlueStrategosJ
+    
+    **GeminiTay** is one of Pearl’s best friends in the content creator community, fellow Hermit and recently Twitch Stream Mod. She commonly watches Pearl’s Twitch Streams and either talks trough Stream Chat or the in-game Minecraft chat with Pearl over various topics.
+    
+    In one case, Pearl{1} had to mod her chat during a stream and Gem offered to become a Mod to help her out. Pearl accepted after mentioning that Gem would lose her VIP status. **GemMod** was born that fateful day. Since then, Gem gets greeted by a wall of "Hi GemMod" alongside the usual "Hi Gem". Gem has several times threatened to use her mod powers to ban chatters and some chatters hide or scatter when she arrives. (For example, by changing their name colour in chat).
+    `;*/
 
-**GeminiTay** is one of Pearl’s best friends in the content creator community, fellow Hermit and recently Twitch Stream Mod. She commonly watches Pearl’s Twitch Streams and either talks trough Stream Chat or the in-game Minecraft chat with Pearl over various topics.
+    const ctx = new SpudTextContext(text);
+    const xxx = ctx.GetSpudText();
 
-In one case, Pearl{1} had to mod her chat during a stream and Gem offered to become a Mod to help her out. Pearl accepted after mentioning that Gem would lose her VIP status. **GemMod** was born that fateful day. Since then, Gem gets greeted by a wall of "Hi GemMod" alongside the usual "Hi Gem". Gem has several times threatened to use her mod powers to ban chatters and some chatters hide or scatter when she arrives. (For example, by changing their name colour in chat).
-`;*/
-
-const ctx = new SpudTextContext(text);
-
-
-             writeFileSync("./build/test.html", CreateHtmlFileString(ctx.GetSpudText()), { encoding: "utf8", flush: true });
-
+    if (xxx) {
+      writeFileSync("./build/test.html", CreateHtmlFileString(xxx), { encoding: "utf8", flush: true });
+    }
 
 
 
@@ -623,18 +626,18 @@ Nugget originates as a black cat for Halloween decor on the Hermitcraft Season 8
 
 lemme see if t*his creates problems...*`;
 
-/*const text =`!title = GeminiTay
-!contributor = BlueStrategosJ
+    /*const text =`!title = GeminiTay
+    !contributor = BlueStrategosJ
+    
+    **GeminiTay** is one of Pearl’s best friends in the content creator community, fellow Hermit and recently Twitch Stream Mod. She commonly watches Pearl’s Twitch Streams and either talks trough Stream Chat or the in-game Minecraft chat with Pearl over various topics.
+    
+    In one case, Pearl{1} had to mod her chat during a stream and Gem offered to become a Mod to help her out. Pearl accepted after mentioning that Gem would lose her VIP status. **GemMod** was born that fateful day. Since then, Gem gets greeted by a wall of "Hi GemMod" alongside the usual "Hi Gem". Gem has several times threatened to use her mod powers to ban chatters and some chatters hide or scatter when she arrives. (For example, by changing their name colour in chat).
+    `;*/
 
-**GeminiTay** is one of Pearl’s best friends in the content creator community, fellow Hermit and recently Twitch Stream Mod. She commonly watches Pearl’s Twitch Streams and either talks trough Stream Chat or the in-game Minecraft chat with Pearl over various topics.
-
-In one case, Pearl{1} had to mod her chat during a stream and Gem offered to become a Mod to help her out. Pearl accepted after mentioning that Gem would lose her VIP status. **GemMod** was born that fateful day. Since then, Gem gets greeted by a wall of "Hi GemMod" alongside the usual "Hi Gem". Gem has several times threatened to use her mod powers to ban chatters and some chatters hide or scatter when she arrives. (For example, by changing their name colour in chat).
-`;*/
-
-const ctx = new SpudTextContext(text);
+    const ctx = new SpudTextContext(text);
 
 
-             writeFileSync("./build/test.html", CreateHtmlFileString(ctx.GetSpudText()), { encoding: "utf8", flush: true });
+    writeFileSync("./build/test.html", CreateHtmlFileString(ctx.GetSpudText()), { encoding: "utf8", flush: true });
 
     break;
   }

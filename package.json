@@ -9,8 +9,7 @@
   "scripts": {
     "build": "node src/index.js build",
     "build:dev": "node src/index.js build:dev",
-    "clean": "node src/index.js clean",
-    "parser_test": "node src/index.js parser_test"
+    "clean": "node src/index.js clean"
   },
   "repository": {
     "type": "git",
