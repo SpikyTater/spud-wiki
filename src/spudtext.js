@@ -185,7 +185,7 @@ const TOKENS = {
     started_by: "heading2",
     ended_by: "heading2",
   },
-  heading3_aggregate: { // TODO
+  heading3_aggregate: {
     only_one_text_child_allowed: true,
     can_have_children: true,
     is_processed_token: true,
@@ -193,7 +193,7 @@ const TOKENS = {
     started_by: "heading3",
     ended_by: "heading3",
   },
-  heading4_aggregate: { // TODO
+  heading4_aggregate: {
     only_one_text_child_allowed: true,
     can_have_children: true,
     is_processed_token: true,
@@ -201,7 +201,7 @@ const TOKENS = {
     started_by: "heading4",
     ended_by: "heading4",
   },
-  heading5_aggregate: { // TODO
+  heading5_aggregate: {
     only_one_text_child_allowed: true,
     can_have_children: true,
     is_processed_token: true,
@@ -209,7 +209,7 @@ const TOKENS = {
     started_by: "heading5",
     ended_by: "heading5",
   },
-  heading6_aggregate: { // TODO
+  heading6_aggregate: {
     only_one_text_child_allowed: true,
     can_have_children: true,
     is_processed_token: true,
@@ -1700,15 +1700,50 @@ class SpudTextContext {
           token_instance.RemoveSelfAndChildrenFromAST(html_container);
           break;
         }
-        /*case TOKENS.external_link: {
-          // *cries*
-          const html_element = TokenInstance.CreateFromRawToken(TOKENS.html_element);
-          html_element.tag = "span";
-          html_element.content = "[ext links not implemented]";
+        case TOKENS.heading3_aggregate: {
+          const html_container = TokenInstance.CreateFromRawToken(TOKENS.html_container);
+          html_container.tag = "h3";
+          html_container.children = token_instance.children;
+          for (const token of token_instance.children) {
+            token.parent = html_container;
+          }
 
-          token_instance.RemoveSelfAndChildrenFromAST(html_element);
+          token_instance.RemoveSelfAndChildrenFromAST(html_container);
           break;
-        }*/
+        }
+        case TOKENS.heading4_aggregate: {
+          const html_container = TokenInstance.CreateFromRawToken(TOKENS.html_container);
+          html_container.tag = "h4";
+          html_container.children = token_instance.children;
+          for (const token of token_instance.children) {
+            token.parent = html_container;
+          }
+
+          token_instance.RemoveSelfAndChildrenFromAST(html_container);
+          break;
+        }
+        case TOKENS.heading5_aggregate: {
+          const html_container = TokenInstance.CreateFromRawToken(TOKENS.html_container);
+          html_container.tag = "h5";
+          html_container.children = token_instance.children;
+          for (const token of token_instance.children) {
+            token.parent = html_container;
+          }
+
+          token_instance.RemoveSelfAndChildrenFromAST(html_container);
+          break;
+        }
+        case TOKENS.heading6_aggregate: {
+          const html_container = TokenInstance.CreateFromRawToken(TOKENS.html_container);
+          html_container.tag = "h6";
+          html_container.children = token_instance.children;
+          for (const token of token_instance.children) {
+            token.parent = html_container;
+          }
+
+          token_instance.RemoveSelfAndChildrenFromAST(html_container);
+          break;
+        }
         case TOKENS.strikethrough_aggregate: {
           const html_container = TokenInstance.CreateFromRawToken(TOKENS.html_container);
           html_container.tag = "s";

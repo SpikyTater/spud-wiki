@@ -260,6 +260,15 @@ h2 {
   font-weight: normal;
 }
 
+h3 {
+  font-size: 1.25em;
+  line-height: 1.375;
+  font-weight: normal;
+  padding-inline-start: .7em;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+}
+
 blockquote>p {
   line-height: 2;
 }
