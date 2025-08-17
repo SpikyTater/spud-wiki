@@ -1,5 +1,6 @@
-!title = GeminiTay
-!contributor = BlueStrategosJ
+!title GeminiTay
+!contributor BlueStrategosJ
+!make_blue_red
 
 **GeminiTay** is one of Pearl’s best friends in the content creator community, fellow Hermit and recently Twitch Stream Mod. She commonly watches Pearl’s Twitch Streams and either talks trough Stream Chat or the in-game Minecraft chat with Pearl over various topics.
 

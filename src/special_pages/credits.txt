@@ -1,4 +1,4 @@
-!title = Credits
+!title Credits
 
 This page contains the credits for anybody who has contributed to this wiki, either by writing an article or by making any of the resources used, unless they explicitly stated they did not want to be named.
 A very big thanks to every single one of you for making this project possible! <3

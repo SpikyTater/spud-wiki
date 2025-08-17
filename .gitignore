@@ -4,5 +4,5 @@
 /node_modules
 /dev
 /docs_to_convert
-b.cmd
-/docs/test.txt
+*.cmd
+notes.txt

@@ -9,7 +9,8 @@
   "scripts": {
     "build": "node src/index.js build",
     "build:dev": "node src/index.js build:dev",
-    "clean": "node src/index.js clean"
+    "clean": "node src/index.js clean",
+    "test_doc": "node src/index.js test_doc"
   },
   "repository": {
     "type": "git",
@@ -21,5 +22,8 @@
     "url": "https://github.com/SpikyTater/spud-wiki/issues"
   },
   "homepage": "https://github.com/SpikyTater/spud-wiki#readme",
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "clean-css": "^5.3.3"
+  }
 }
