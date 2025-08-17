@@ -21,5 +21,8 @@
     "url": "https://github.com/SpikyTater/spud-wiki/issues"
   },
   "homepage": "https://github.com/SpikyTater/spud-wiki#readme",
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "clean-css": "^5.3.3"
+  }
 }

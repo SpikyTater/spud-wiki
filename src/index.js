@@ -17,12 +17,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { readFileSync, readdirSync, existsSync, mkdirSync, writeFileSync, cpSync, copyFileSync, rm, statSync } from "fs";
+import { readFileSync, readdirSync, existsSync, mkdirSync, writeFileSync, cpSync, copyFileSync, rm, statSync, rmSync } from "fs";
 import process from "process";
 import { SpudTextContext } from "./spudtext.js";
 import { CONTRIBUTORS } from "./contributors.js";
+import SpudWiki from "./spud_wiki.js";
 
-CONTRIBUTORS
 const COPYRIGHT_COMMENT = `<!--Spud Wiki Engine\nCopyright (C) ${(new Date()).getFullYear()}  SpikyTater\n\nThis program is free software; you can redistribute it and/or modify\nit under the terms of the GNU General Public License as published by\nthe Free Software Foundation; either version 2 of the License, or\n(at your option) any later version.\n\nThis program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along\nwith this program; if not, write to the Free Software Foundation, Inc.,\n51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.-->\n`;
 //const HTML_TEMPLATES = {};
 const ALL_ARTICLES = (function () {
@@ -357,20 +357,6 @@ class WikiPage {
   }
 }
 
-
-function ReadJsonFile(fpath) {
-  const txt = ReadFileAsText(fpath);
-  if (!txt) return;
-  try {
-    return JSON.parse(txt, function (_key, value) {
-      return (typeof value === "string" || value instanceof String) ? value.trim() : value;
-    });
-  } catch (e) {
-    console.error(e);
-    return;
-  }
-}
-
 function GetContributorHtml(name) {
   if (!Object.hasOwn(CONTRIBUTORS, name)) {
     console.error("Unknown contributor.");
@@ -599,13 +585,40 @@ lemme see if t*his creates problems...*`;
 }
 
 
+async function Build_NEW(is_dev_build) {
+  const wiki = new SpudWiki(is_dev_build);
+
+  wiki.AddAllPagesInsideDocs();
+  wiki.AddCssFile("./src/assets/style.css");
+
+  wiki.AddSpecialPage("./src/special_pages/main.txt", { dst_path: "./build/main.html" });
+  wiki.AddSpecialPage("./src/special_pages/credits.txt", { dst_path: "./build/credits.html" });
+
+  wiki.AddMediaFile("./src/media/logo.png");
+  wiki.AddMediaFile("./src/media/favicon.ico", { dst_path: "./build/favicon.ico" });
+
+  // TODO: js
+
+
+  await wiki.WaitForReadingCompletion();
+
+
+  wiki.ParseWikiPages();
+  wiki.PrepareForBuild();
+
+  await wiki.Build();
+}
 
 switch (process.argv[2]) {
-  case "build": Build(false); break;
-  case "build:dev": Build(true); break;
+  case "build": Build_NEW(false); break;
+  case "build:dev": Build_NEW(true); break;
   case "clean": {
     if (existsSync("./build")) {
-      rm("./build", { recursive: true }, function () { });
+      //rm("./build", { recursive: true }, function () { });
+      rmSync("./build", { recursive: true });
+      console.log("Cleaning successful.");
+    } else {
+      console.log("No cleaning was needed.");
     }
     break;
   }

@@ -1,5 +1,5 @@
-!title = TheOnionSound
-!contributor = BlueStrategosJ
+!title   TheOnionSound
+!contributor BlueStrategosJ
 
 On the 10th of July 2025, several YouTubers were invited to a F1 Sim Racing Event in London that was also streamed on Twitch{1}. Among them were several of Pearl’s friends, like Grian, Jimmy/SolidarityGaming and **Oli**/**TheOrionSound**.
 
@@ -7,4 +7,4 @@ For unknown reasons the announcer at the event was unable to pronounce any of th
 
 Chat has started to adopt this version as a humorous way to refer to Oli, especially during situations were Oli gets mocked by chat and/or Pearl. Occasionally TheOnionSound also gets shortened to Onion.
 
-!note1 = <a target="_blank" rel="noopener noreferrer" href="https://www.twitch.tv/videos/2502699893?t=0h31m5s">https://www.twitch.tv/videos/2502699893?t=0h31m5s</a>
+!note1 [[https://www.twitch.tv/videos/2502699893?t=0h31m5s]]

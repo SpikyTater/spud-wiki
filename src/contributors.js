@@ -18,6 +18,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 // A big thanks to every single one of you. <3
 // Uh, except me, maybe. It's a bit awkward to thank myself.
+
+
 const CONTRIBUTORS_ARR = [
   {
     username: "19_meg_91",
@@ -71,4 +73,9 @@ function ContributorsPostProcess() {
 
 ContributorsPostProcess();
 
-export { CONTRIBUTORS_ARR, CONTRIBUTORS };
+function GetContributorHtmlString(contributor) {
+  return `<a target="_blank" rel="noopener noreferrer" class="tw-name" href="https://www.twitch.tv/${contributor.twitch_username}" style="color:#${contributor.color}">${contributor.username}</a>`;
+
+}
+
+export { CONTRIBUTORS_ARR, CONTRIBUTORS, GetContributorHtmlString };

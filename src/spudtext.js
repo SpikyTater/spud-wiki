@@ -578,6 +578,21 @@ class SpudText {
   contributors = [];
 
   /**
+   * @type {TokenInstance}
+   */
+  html_tree_root;
+
+  /**
+   * @type {number}
+   */
+  time_taken;
+
+  /**
+   * @type {string | undefined}
+   */
+  html_string;
+
+  /**
    * Sets the title of this page
    * @param {string} title_string 
    */
@@ -631,6 +646,69 @@ class SpudText {
    */
   AddContributor(contributor) {
     this.contributors.push(contributor);
+  }
+
+  /**
+   * @param {TokenInstance} tree 
+   */
+  SetHtmlTree(tree) {
+    this.html_tree_root = tree;
+  }
+
+  /**
+   * @param {number} ms 
+   */
+  SetTimeTakenMs(ms) {
+    this.time_taken = ms;
+  }
+
+  /**
+   * @returns {string}
+   */
+  GetTimeTakenMsString() {
+    return this.time_taken.toFixed(3) + " ms";
+  }
+
+  GetHtmlString() {
+    if (this.html_string) {
+      return this.html_string;
+    }
+
+    return this.html_string = this.#Htmlify(this.html_tree_root.children);
+  }
+
+  /**
+   * 
+   * @param {TokenInstance} html_tokens 
+   * @returns {string}
+   */
+  #Htmlify(html_tokens) {
+    let s = "";
+
+    for (const token of html_tokens) {
+      switch (token.raw_token) {
+        case TOKENS.html_container:
+          s += `<${token.tag} ${token.id ? 'id="' + token.id + '"' : ""} ${token.class ? 'class="' + token.class + '"' : ""} ${token.href ? 'href="' + token.href + '"' : ""}>`;
+          s += this.#Htmlify(token.children);
+          s += `</${token.tag}>`
+          break;
+        case TOKENS.html_element:
+          s += `<${token.tag} ${token.id ? 'id="' + token.id + '"' : ""} ${token.class ? 'class="' + token.class + '"' : ""} ${token.href ? 'href="' + token.href + '"' : ""}>`;
+          s += token.content;
+          s += `</${token.tag}>`
+          break;
+        case TOKENS.html_text:
+          s += token.content;
+          break;
+        default:
+          //sigh
+        //  console.error("why...", this.title);
+
+          throw "YOU CAN'T BE HERE, C'MON!"
+      }
+    }
+
+    return s;
   }
 
 }
@@ -862,18 +940,20 @@ class SpudTextContext {
       c = code_point_array[i];
 
       if (c === 10) {
+        // \n
         this.#AddToken(TOKENS.newline, i);
         continue;
       } else if (c === 13) {
-        // ignored
+        // \r, would like to ignore, but everything stopped working. I have no idea why
+        this.#AddToken(TOKENS.newline, i);
         continue;
       } else if (c <= 32) {
+        // other whitespaces
         this.#MergeSameOrAddToken(TOKENS.text, i);
         continue;
       }
 
       // not a whitespace
-
       switch (c) {
         case 33: // !
           // directives
@@ -1073,11 +1153,11 @@ class SpudTextContext {
 
     let s = "";
     for (const token of tokens) {
-      s += `${indent_str}${token.raw_token.name} - ${token.original_src_start_index}, ${token.original_src_end_index}`
+      s += `${indent_str}${token.raw_token.name} - ${token.original_src_start_index || token.start_index}, ${token.original_src_end_index || token.end_index}`
 
-      if (!token.IsInstanceOf(TOKENS.newline) && token.GetTokenLength() < 20) {
+      /*if (!token.IsInstanceOf(TOKENS.newline) && token.GetTokenLength() < 20) {
         s += " - '" + token.GetRawString() + "'";
-      }
+      }*/
 
       s += "\n";
       if (Array.isArray(token.children)) {
@@ -1627,6 +1707,26 @@ class SpudTextContext {
           token_instance.RemoveSelfAndChildrenFromAST(html_element);
           break;
         }
+        case TOKENS.external_link: {
+          // *cries*
+          const html_element = TokenInstance.CreateFromRawToken(TOKENS.html_element);
+          html_element.tag = "span";
+          html_element.content = "[ext links not implemented]";
+
+          token_instance.RemoveSelfAndChildrenFromAST(html_element);
+          break;
+        }
+        case TOKENS.strikethrough_aggregate: {
+          const html_container = TokenInstance.CreateFromRawToken(TOKENS.html_container);
+          html_container.tag = "s";
+          html_container.children = token_instance.children;
+          for (const token of token_instance.children) {
+            token.parent = html_container;
+          }
+
+          token_instance.RemoveSelfAndChildrenFromAST(html_container);
+          break;
+        }
 
       }
     }
@@ -1695,11 +1795,14 @@ class SpudTextContext {
     // we have raw tokens, they can be finalized now
     this.tokens = this.raw_tokens.map(raw_token_instance => raw_token_instance.GetFinalizedInstance(this));
 
+    //this.#DebugPrintTokens(this.raw_tokens);
+
     this.#OptimizeTextTokens();
 
     if (this.#MakeASTFromTokens()) {
       return;
     }
+    //this.#DebugPrintTokens(this.ast.children);
 
     if (this.#CheckAST()) {
       return;
@@ -1710,6 +1813,7 @@ class SpudTextContext {
     }
 
     this.#TrimNewlines();
+
 
     if (this.#ParseTitle()) {
       return;
@@ -1726,14 +1830,20 @@ class SpudTextContext {
     this.#WarnAboutRemainingDirectives();
 
     this.end_timestamp = performance.now();
-    // this.#DebugPrintTokens(this.ast.children);
+   // this.#DebugPrintTokens(this.ast.children);
 
-    console.log(`Time elapsed: ${this.GetTimeElapsedString()}.`);
+    // console.log(`Time elapsed: ${this.GetTimeElapsedString()}.`);
 
-    return this.#MakeHtmlString(this.ast.children);
+    this.spudtext.SetTimeTakenMs(this.end_timestamp - this.start_timestamp);
+    this.spudtext.SetHtmlTree(this.ast);
+
+    return this.spudtext;
+
+    // return this.#MakeHtmlString(this.ast.children);
+
 
     //return "not yet";
   }
 }
 
-export { SpudTextContext };
+export { SpudTextContext, SpudText, TokenInstance, RawTokenInstance, TOKENS };

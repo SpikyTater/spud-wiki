@@ -1,12 +1,13 @@
-!title = LAMP
-!contributor = Matty5957
+!title LAMP
+!contributor Matty5957
 
 **LAMP** is a chat phoenomena that started during Pearl's Plate Up stream collab with Tango that took place on July 11th 2025{1}. A chatter's autocorrect changed a simple "LMAO" to "LAMP" which, thanks to the mysterious ways of chat, quickly blew out of proportions.
 
 Almost immediately a multitude of spuds started repeating the accursed word over and over again, then praises towards LAMP began to be heard and soon enough a cult formed. Indeed, normal stuff.
 
-<span class="text-strike">Thankfully</span> Sadly Pearl did not share chat's appreciation for the LAMP and asked chat to calm down.
+use strike
+Thankfully Sadly Pearl did not share chat's appreciation for the LAMP and asked chat to calm down.
 
 Thus the legend of the LAMP began and ended in a very short time span.
 
-!note1 = <a target="_blank" rel="noopener noreferrer" href="https://youtu.be/o04Tkjg7G-I?t=5929">https://youtu.be/o04Tkjg7G-I?t=5929</a>
+!note1 [[https://youtu.be/o04Tkjg7G-I?t=5929]]
