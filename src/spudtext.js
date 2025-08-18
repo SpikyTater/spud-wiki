@@ -675,6 +675,18 @@ class SpudText {
 
   /**
    * 
+   * @param {string} s 
+   * @returns {string}
+   */
+  #EscapeContent(s) {
+    s=s.replaceAll("<", "&lt;");
+    s=s.replaceAll(">", "&gt;");
+
+    return s;
+  }
+
+  /**
+   * 
    * @param {TokenInstance} html_tokens 
    * @returns {string}
    */
@@ -695,11 +707,11 @@ class SpudText {
             s += ' target="_blank" rel="noopener noreferrer"';
           }
           s += ">";
-          s += token.content;
+          s += this.#EscapeContent(token.content);
           s += `</${token.tag}>`
           break;
         case TOKENS.html_text:
-          s += token.content;
+          s += this.#EscapeContent(token.content);
           break;
         default:
           //sigh
