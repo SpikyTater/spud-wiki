@@ -300,3 +300,46 @@ blockquote>p {
 p.credits-contributor {
   text-align: center;
 }
+
+.page-note-text a {
+  word-break: break-all;
+}
+
+@media screen and (max-width: 640px) {
+  #search-cont {
+    display: none;
+  }
+
+  #section-middle {
+    display: flex;
+    flex-direction: column;
+    padding-inline: 1.5rem;
+    padding-block: 1rem;
+    row-gap: 1.5rem;
+  }
+
+  #side-nav {
+    padding: 0;
+  }
+
+  .content {
+    padding: 0;
+    border-top: 1px solid var(--color-section-border);
+  }
+
+  #right-sidebar {
+    display: none;
+  }
+
+  #header {
+    padding-inline: 0;
+    justify-content: center;
+  }
+
+  #footer {
+    flex-direction: column;
+    padding-inline: 1.5rem;
+    row-gap: 1rem;
+    padding-block: 1rem;
+  }
+}
