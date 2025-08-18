@@ -2,3 +2,125 @@
 !contributor Matty5957
 
 Here you can test your own articles using SpudText.
+
+== What is SpudText? ==
+
+SpudText is a markup language created by Matty5957 for this wiki. All pages in this wiki, except this one because its complexity, have been written using it.
+You can see examples of raw SpudText in all the files inside the [[https://github.com/SpikyTater/spud-wiki/tree/main/docs 'docs' directory in the repository]].
+
+== Very interesting! How does it work? ==
+
+OMG! Thank you SOOO much for asking! First it gets converted into a list of tokens then-
+
+== No, I don't really care. How do I write articles using it? ==
+
+But.. but...
+
+== Shush and tell me how to use it ==
+
+Ok, ok. How uncouth. Well, nevermind. Here we go.
+
+First of all you have to think of each line as a separate entity. You cannot have a style applied across a line break and you will have to close it before the line ends.
+
+== Directive ==
+
+A directive is a line starting with an exclamation point (**!**). Its syntax is like this:
+> !<directive_name> arguments of the directive, altough they could be optional
+<directive_name>, as the name suggests, stands for the name of the directive, which can be optionally followed but another line of text.
+Not all planned directives have been implemented yet, so this is open to change.
+You *shouldn't* have to type directive names in lower case, but I think this might be the case for now, until it gets fixed.
+Where you write a directive doesn't matter, unless otherwise noted.
+All directives are mandatory, unless otherwise noted.
+
+List of directives:
+
+=== !title <args> ===
+
+This is a mandatory directive and it sets the name of the article. All title directives after the first one will be ignored. <args> **can not be** styled.
+
+=== !contributor <contributor_username> ===
+
+This is not a mandatory directive, as there may be articles where a contributor doesn't want to show their username. There can be multiple of these in a single page.
+If you get a warning, it means that the username is not present inside [[https://github.com/SpikyTater/spud-wiki/blob/main/src/contributors.js this file]].
+Remember: you have to use the correct capitalization or you will not be abe to get rid of the warning.
+<contributor_username> **can not be** styled.
+Incorrect contributor directives will be ignored.
+
+=== !note<note_name> <note_text> ===
+
+It is used in combination with the note ref aggregate to write a note for anything inside the article.
+Be careful, as there must be no spaces between !note and <note_name>.
+The name of the note doesn't need to be a number. The order in which note directives are written is ignored, in favor of placing them in order of note reference appearance inside the text.
+If a note has no references inside the text, it will not be displayed.
+<note_name> does not need to be a number, it can be any text, as long as it's not style and has no spaces in it.
+In <note_text> you can write using any aggregate you want, as long as you keep everything in a single line.
+
+=== !center_title ===
+
+It tells the engine to center the title of the article.
+
+=== !make_blue_red ===
+
+It writes BlueStrategosJ's username in red inside the contributors' footer.
+
+== Blockquote ==
+
+Blockquotes are started via a '<' at the beginning of a line and end with a new line.
+Multiple blockquote lines adjacent to each other are merged in a single one.
+Blockquotes look like this:
+> Here. It's nice, innit?
+> Ohh multiple lines as well!
+> This is great, not gonna lie.
+
+== Aggregates ==
+
+Aggregates are a way to style what otherwise would be simple text. They consist of a beginning token and an ending token which, unless otherwise noted, are the same. Different types of aggregates can be put inside one another.
+Aggregates **cannot** carry over a line break.
+
+List of aggregates:
+
+=== Italic ===
+
+"Wel\*l, hello th\*ere." will render as "Wel*l, hello th*ere."
+
+=== Bold ===
+
+"Wel\**l, hello th\**ere." will render as "Wel**l, hello th**ere."
+
+=== Strikethrough ===
+
+"Wel\#l, hello th\#ere." will render as "Wel#l, hello th#ere."
+
+=== Headings ===
+
+Headings are also used to mark different sections of a page. Once it is implemented, on desktop they will appear inside the article navigation map on the right panel.
+
+There are 5 types of usable headings, from 2 to 6, in order of decreasing importance.
+Heading 1 is actually the title of the page, and there can only be one of it.
+
+They can be used like this:
+
+> \=\=\= Headings \=\=\=
+
+This is how the heading of this section, a heading3, has been written in this page.
+The number of '=' is the heading number.
+
+== Links ==
+
+=== Internal links ===
+
+Links to internal pages have not been implemented yet. Their syntax is the same as the one of external links, except they only use a single \[ to open and a single \] to close the aggregate.
+
+=== External Links ===
+
+To add a link to an external resource use this syntax:
+
+> \[\[link_to_page optional label of link\]\]
+
+For example:
+
+> \[\[https://www.twitch.tv/pearlescentmoon click me pls\]\]
+
+will render as [[https://www.twitch.tv/pearlescentmoon click me pls]].
+
+== Enjoy the actual editor ==
