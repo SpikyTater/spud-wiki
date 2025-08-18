@@ -40,4 +40,7 @@ allow contributors to be written in different cases than what is correct (Kawaii
 when a note only has one reference, use [^] instead of [a]
 make a bulletin board for todo stuff. maybe there's already a todo for it...
 make a list of accepted domains for external links, and only https protocol (can be omitted in links)
-avoid any possibility of HTML injection by escaping string before adding them insid htmlifystring. same thing for !noteXXXXX, escape the XXXXX part
+avoid any possibility of HTML injection by escaping string before adding them inside htmlifystring. same thing for !noteXXXXX, escape the XXXXX part
+decouple TokenInstance from AstNode functionality, TokenInstance extend AstNode
+add a "view source" inside each page, so people can read and try to edit articles... it should redirect to editor, which will load the actual source. it will know which page sent it there through a query string
+spudtext doc should be hidden through <summary> and <details> elements
