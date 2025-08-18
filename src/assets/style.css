@@ -357,3 +357,33 @@ p.credits-contributor {
 .editor-critical {
   color: #c5c;
 }
+
+input[type="file"] {
+  display: none;
+}
+
+.editor-btn {
+  appearance: none;
+  border: 0;
+  line-height: normal;
+  padding: .3rem .8rem;
+  background-color: #777;
+  margin: 0;
+  cursor: pointer;
+  user-select: none;
+  display: inline-block;
+  box-sizing: border-box;
+  outline: 0;
+  font-size: 1rem;
+  text-align: center;
+  font-style: normal;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+#editor-btncontainer {
+  display: flex;
+  flex-direction: row;
+  column-gap: 1rem;
+  padding-block: 1rem;
+}

@@ -20,7 +20,7 @@ add editor where users can try writing an article and see it converted immediate
 directives do_center_title should be handled inside spudtext, as it changed something inside the content
 cleanup themes
 cleanup contributors
-add !command directive, to say that, for example, the article "!title kawaii ..etc" you've been writing is the resulting page for a search box command
+add "!command XXX" directive, to say that, for example, the article "!title kawaii ..etc" you've been writing is the resulting page for a search box command. multiple commands can be used for the same page
 add article map (stickied maybe?) to the right sidebar
 add a decent site map to the left sidebar
 style better the darn footer, it looks terrible

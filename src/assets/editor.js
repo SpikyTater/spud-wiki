@@ -37,12 +37,33 @@ function AfterDomLoaded() {
   const errors_container = document.createElement("div");
   errors_container.id = "editor-parserconsole";
 
+  const button_container = document.createElement("div");
+  button_container.id = "editor-btncontainer";
+
   const button = document.createElement("button");
-  button.textContent = "pls work";
+  button.textContent = "Htmlify";
+  button.className = "editor-btn";
+
+  const export_button = document.createElement("button");
+  export_button.textContent = "Export";
+  export_button.title = "Export the current contents of the editor.";
+  export_button.className = "editor-btn";
+
+  const import_label = document.createElement("label");
+  import_label.className = "editor-btn";
+  import_label.textContent = "Import";
+  import_label.title = "Import a file into the editor.";
+
+  const import_input = document.createElement("input");
+  import_input.type = "file";
+  import_input.accept = 'text/*';
+
+  button_container.append(button, export_button, import_label);
+  import_label.append(import_input);
+  content_container.append(editor_container, button_container, errors_container, display_content_container);
 
 
 
-  content_container.append(editor_container, button, errors_container, display_content_container);
 
   const custom_keymap = [
     // TODO: { key: "Ctrl-s", preventDefault: true, run: save }
@@ -82,6 +103,23 @@ function AfterDomLoaded() {
 
   const editor_view = new EditorView(config);
 
+  const file_reader = new FileReader();
+  file_reader.onload = function () {
+    const data = this.result;
+    if (typeof data !== "string" || 0 === data.length) return;
+
+    const text = Text.of(data.split(/\r?\n/));
+
+    editor_view.dispatch({
+      changes: {
+        from: 0,
+        to: editor_view.state.doc.length,
+        insert: text
+      }
+    });
+  }
+
+  // TODO: one click listener on window is enough...
 
   button.onclick = () => {
     let errors_html = "";
@@ -103,12 +141,53 @@ function AfterDomLoaded() {
       }
     } catch (e) {
 
-      
+
       console.error(e);
       errors_html += `<p class="editor-critical">${e?.message || e?.name}. Check console.for more info.</p>`;
     }
     errors_container.innerHTML = errors_html;
   };
+
+  export_button.addEventListener("click", () => {
+    const str = editor_view?.state?.doc?.toString();
+
+    // const file = new File([str], "file.txt", { type: 'application/octet-stream' });
+
+    const blob = new Blob([str], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+
+    // name it SpudText_2025_08_18_20_38.txt or, in case there's a title (check if changes after last spudtext parsing and save spudtext result), TITLE_2025_....txt
+    const now = new Date();
+    a.download = `SpudText_${now.getUTCFullYear()}_${(now.getUTCMonth() + 1).toString().padStart(2, " ")}_${(now.getUTCDay() + 1).toString().padStart(2, " ")}_${now.getUTCHours().toString().padStart(2, " ")}_${now.getUTCMinutes().toString().padStart(2, " ")}_${now.getUTCSeconds().toString().padStart(2, " ")}_${now.getUTCMilliseconds().toString().padStart(3, " ")}.txt`;
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+
+
+  }, { passive: true });
+
+
+  function on_import_input_change(e) {
+    if (!e?.target) return;
+    e.stopPropagation();
+    e.target.value = null;
+    const files = e.target.files;
+    if (!files || 1 !== files.length) return;
+
+    const file = files[0];
+    if (!file || !file.type.startsWith("text")) return;
+
+    file_reader.readAsText(file);
+  }
+
+  import_input.addEventListener("change", on_import_input_change, { passive: true });
+
+
 }
 if ("loading" === document.readyState)
   window.addEventListener("DOMContentLoaded", AfterDomLoaded, { once: true, passive: true });
