@@ -41,13 +41,6 @@ async function Build_NEW(is_dev_build) {
   wiki.AddMediaFile("./src/media/logo.png");
   wiki.AddMediaFile("./src/media/favicon.ico", { dst_path: "./build/favicon.ico" });
 
-  wiki.AddJsFile("./src/assets/all_pages.js", {
-    dst_path: "./build/assets/main.js",
-    on_before_processing: function (str) {
-      return `"use strict";\n(()=>{const THEMES=${JSON.stringify(SpudWiki.THEMES)};${str}})()`;
-    },
-  })
-
   await wiki.WaitForReadingCompletion();
 
   wiki.ParseWikiPages();

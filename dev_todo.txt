@@ -39,3 +39,4 @@ add warning for weird characters like microsoft word's ' " ", god I hate these
 add about.html page
 add some way to prettify spudtext, maybe maybe maybe even a way to do it in VS Code
 allow contributors to be written in different cases than what is correct (Kawaiitron/kawaiitron) and even use the secondary (?) ones (Spammer92/Spammer_92) whilst always showing the same thing when parsed
+when a note only has one reference, use [^] instead of [a]
