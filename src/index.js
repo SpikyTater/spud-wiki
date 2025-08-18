@@ -20,10 +20,8 @@ import process from "process";
 import SpudWiki from "./spud_wiki.js";
 import { CONTRIBUTORS_ARR, GetContributorHtmlString } from "./contributors.js";
 
-async function Build_NEW(is_dev_build) {
+async function Build(is_dev_build) {
   const wiki = new SpudWiki(is_dev_build);
-
-  wiki.AddCssFile("./src/assets/style.css");
 
   wiki.AddSpecialPage("./src/special_pages/main.txt", { dst_path: "./build/index.html" });
   wiki.AddSpecialPage("./src/special_pages/editor.txt", {
@@ -57,8 +55,8 @@ async function Build_NEW(is_dev_build) {
 }
 
 switch (process.argv[2]) {
-  case "build": Build_NEW(false); break;
-  case "build:dev": Build_NEW(true); break;
+  case "build": Build(false); break;
+  case "build:dev": Build(true); break;
   case "clean": {
     if (existsSync("./build")) {
       rmSync("./build", { recursive: true });

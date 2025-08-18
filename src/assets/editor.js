@@ -113,16 +113,3 @@ function AfterDomLoaded() {
 if ("loading" === document.readyState)
   window.addEventListener("DOMContentLoaded", AfterDomLoaded, { once: true, passive: true });
 else AfterDomLoaded();
-
-/*
-
-!title Lol
-!contributor Matty5957
-
-hello?
-
-== Does it really work first try? ==
-
-Omg I'#m *so* **excited** how about# you?
-
-*/
