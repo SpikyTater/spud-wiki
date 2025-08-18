@@ -65,7 +65,7 @@ It writes BlueStrategosJ's username in red inside the contributors' footer.
 
 == Blockquote ==
 
-Blockquotes are started via a '<' at the beginning of a line and end with a new line.
+Blockquotes are started via a '>' at the beginning of a line and end with a new line.
 Multiple blockquote lines adjacent to each other are merged in a single one.
 Blockquotes look like this:
 > Here. It's nice, innit?
@@ -85,7 +85,7 @@ List of aggregates:
 
 === Bold ===
 
-"Wel\**l, hello th\**ere." will render as "Wel**l, hello th**ere."
+"Wel\*\*l, hello th\*\*ere." will render as "Wel**l, hello th**ere."
 
 === Strikethrough ===
 
