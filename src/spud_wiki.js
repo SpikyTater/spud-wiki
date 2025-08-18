@@ -20,6 +20,7 @@ import { readFile, stat, writeFile } from "fs/promises";
 import path from "path";
 import { SpudTextContext, SpudText } from "./spudtext.js";
 import { GetContributorHtmlString } from "./contributors.js";
+import { THEMES } from "./global_constants.js";
 
 const COPYRIGHT_COMMENT = `<!--Spud Wiki Engine\nCopyright (C) ${(new Date()).getFullYear()}  SpikyTater\n\nThis program is free software; you can redistribute it and/or modify\nit under the terms of the GNU General Public License as published by\nthe Free Software Foundation; either version 2 of the License, or\n(at your option) any later version.\n\nThis program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along\nwith this program; if not, write to the Free Software Foundation, Inc.,\n51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.-->\n`;
 
@@ -27,6 +28,7 @@ class SpudWikiAsset {
   static PAGE = Symbol("asset_page");
   static SPECIAL_PAGE = Symbol("asset_special_page");
   static CSS = Symbol("asset_css");
+  // TODO: to remove
   static JS = Symbol("asset_js");
   static MEDIA = Symbol("asset_media");
 
@@ -280,12 +282,9 @@ class SpudWikiAsset {
 
           s += '<div id="theme-cont">Theme: <select id="theme-select">'
 
-          const themes = [
-            "Dark",
-            "Light"
-          ];
+          
 
-          for (const theme of themes) {
+          for (const theme of THEMES) {
             s += `<option value="${theme.toLowerCase()}">${theme}</option>`
           }
 
@@ -304,7 +303,6 @@ class SpudWikiAsset {
 }
 
 export default class SpudWiki {
-  static THEMES = ["Dark", "Light"];
   /**
    * @type {Promise<SpudWikiAsset>[]}
    */
@@ -406,6 +404,7 @@ export default class SpudWiki {
     return this.#AddAssetFile(SpudWikiAsset.CSS, src_file_path, options);
   }
 
+  // TODO to remove
   AddJsFile(src_file_path, options) {
     return this.#AddAssetFile(SpudWikiAsset.JS, src_file_path, options);
   }
@@ -492,7 +491,7 @@ export default class SpudWiki {
     }
 
     for (const [title, page] of page_map) {
-      const sanitized_title = this.SanitizeString(title);//, dst_path = `./build/${sanitized_title}.html`;
+      const sanitized_title = this.SanitizeString(title);
       let dst_path, i = 0;
 
       do {

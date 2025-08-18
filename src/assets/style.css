@@ -261,12 +261,12 @@ h2 {
 }
 
 h3 {
-      font-size: 1.15em;
-    line-height: 1.375;
-    font-weight: 400;
-    padding-inline-start: .7em;
-    padding-block-start: .6rem;
-    margin-block-end: -0.5em;
+  font-size: 1.15em;
+  line-height: 1.375;
+  font-weight: 400;
+  padding-inline-start: .7em;
+  padding-block-start: .6rem;
+  margin-block-end: -0.5em;
 }
 
 blockquote>p {

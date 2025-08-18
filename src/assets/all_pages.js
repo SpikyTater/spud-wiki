@@ -14,25 +14,26 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*/
-
 // This is the only javascript file that is deployed to ALL PAGES OF THE WIKI inside their <head> element
 // This script also undergoes a building process:
 //   - some constants will be added on top (e.g. THEMES)
 //   - all code in this will be included inside an IIFE, so don't worry
 //     about polluting the global object
 
-THEME=THEMES.map(t=>t.toLowerCase());
+import { THEMES } from "../global_constants.js";
+
+const LC_THEMES = THEMES.map(theme => theme.toLowerCase());
 
 let theme = localStorage.getItem("spud-wiki-theme");
-if (!theme || !THEMES.includes(theme)) {
-  theme = THEMES[0];
+if (!theme || !LC_THEMES.includes(theme)) {
+  theme = LC_THEMES[0];
 }
 
 function AfterDomLoaded() {
   // first set anything loaded via localStorage, then add a listener for changes
   const theme_select = document.getElementById("theme-select");
   if (theme_select) {
-    theme_select.value = theme;
+    theme_select.value = theme.toLowerCase();
   } else {
     console.error("why is there no theme-select...");
   }

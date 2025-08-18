@@ -23,10 +23,10 @@ import { CONTRIBUTORS_ARR, GetContributorHtmlString } from "./contributors.js";
 async function Build_NEW(is_dev_build) {
   const wiki = new SpudWiki(is_dev_build);
 
-  wiki.AddAllPagesInsideDocs();
   wiki.AddCssFile("./src/assets/style.css");
 
   wiki.AddSpecialPage("./src/special_pages/main.txt", { dst_path: "./build/index.html" });
+  wiki.AddSpecialPage("./src/special_pages/404.txt", { dst_path: "./build/404.html" });
   wiki.AddSpecialPage("./src/special_pages/credits.txt", {
     dst_path: "./build/credits.html",
     append_to_content: (() => {
@@ -38,15 +38,11 @@ async function Build_NEW(is_dev_build) {
     })()
   });
 
+  // TODO: add a way to avoid having articles with the same names as special pages. maybe add articles to /spud-wiki/articles/ ?
+  wiki.AddAllPagesInsideDocs();
+
   wiki.AddMediaFile("./src/media/logo.png");
   wiki.AddMediaFile("./src/media/favicon.ico", { dst_path: "./build/favicon.ico" });
-
-  wiki.AddJsFile("./src/assets/all_pages.js", {
-    dst_path: "./build/assets/main.js",
-    on_before_processing: function (str) {
-      return `"use strict";\n(()=>{const THEMES=${JSON.stringify(SpudWiki.THEMES)};${str}})()`;
-    },
-  })
 
   await wiki.WaitForReadingCompletion();
 
