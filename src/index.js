@@ -23,8 +23,6 @@ import { CONTRIBUTORS_ARR, GetContributorHtmlString } from "./contributors.js";
 async function Build_NEW(is_dev_build) {
   const wiki = new SpudWiki(is_dev_build);
 
-  wiki.AddCssFile("./src/assets/style.css");
-
   wiki.AddSpecialPage("./src/special_pages/main.txt", { dst_path: "./build/index.html" });
   wiki.AddSpecialPage("./src/special_pages/editor.txt", {
     dst_path: "./build/editor.html",

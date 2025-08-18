@@ -7,8 +7,8 @@
     "doc": "docs"
   },
   "scripts": {
-    "build": "rollup --c --failAfterWarnings --no-stdin && node src/index.js build",
-    "build:dev": "rollup --c --failAfterWarnings --no-stdin --config_debug && node src/index.js build:dev",
+    "build": "rollup --c --failAfterWarnings --no-stdin && cleancss -O2 specialComments:1 -o ./build/assets/style.css ./src/assets/style.css && node src/index.js build",
+    "build:dev": "rollup --c --failAfterWarnings --no-stdin --config_debug && cleancss -O0 -o ./build/assets/style.css ./src/assets/style.css && node src/index.js build:dev",
     "clean": "node src/index.js clean",
     "test_doc": "node src/index.js test_doc"
   },
@@ -24,6 +24,7 @@
   "homepage": "https://github.com/SpikyTater/spud-wiki#readme",
   "type": "module",
   "dependencies": {
+    "clean-css-cli": "^5.6.3",
     "codemirror": "^6.0.2"
   },
   "devDependencies": {

@@ -27,9 +27,6 @@ const COPYRIGHT_COMMENT = `<!--Spud Wiki Engine\nCopyright (C) ${(new Date()).ge
 class SpudWikiAsset {
   static PAGE = Symbol("asset_page");
   static SPECIAL_PAGE = Symbol("asset_special_page");
-  static CSS = Symbol("asset_css");
-  // TODO: to remove
-  static JS = Symbol("asset_js");
   static MEDIA = Symbol("asset_media");
 
   /**
@@ -123,32 +120,6 @@ class SpudWikiAsset {
    */
   SetDataAndPostProcess(spud_wiki, data) {
     switch (this.asset_type) {
-      case SpudWikiAsset.CSS: {
-        if (spud_wiki.is_dev_build) {
-          // no minify
-          this.data = data;
-        } else {
-          // deployment build
-          this.data = new CleanCSS({
-
-          }).minify(data).styles;
-        }
-        return this;
-      }
-      case SpudWikiAsset.JS: {
-        if (this.options.on_before_processing) {
-          data = this.options.on_before_processing(data)
-        }
-
-        if (spud_wiki.is_dev_build) {
-          // no minify
-          this.data = data;
-        } else {
-          // deployment build
-          this.data = data;
-        }
-        return this;
-      }
       case SpudWikiAsset.SPECIAL_PAGE:
       case SpudWikiAsset.PAGE: {
         const { src_file_path } = this;
@@ -186,8 +157,6 @@ class SpudWikiAsset {
   GetDstFileData(spud_wiki) {
     switch (this.asset_type) {
       case SpudWikiAsset.MEDIA:
-      case SpudWikiAsset.JS:
-      case SpudWikiAsset.CSS:
         return this.data;
       case SpudWikiAsset.SPECIAL_PAGE:
       case SpudWikiAsset.PAGE: {
@@ -198,11 +167,7 @@ class SpudWikiAsset {
         s += '<meta charset="utf-8">';
         s += `<title>${data.title}</title>`;
 
-        s += spud_wiki.css_html_string;
-
-        if (this.asset_type === SpudWikiAsset.SPECIAL_PAGE) {
-          // TODO: add eventual additional css files
-        }
+        s += '<link rel="stylesheet" href="/spud-wiki/assets/style.css">';
 
         s += '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">';
         s += '<meta name="application-name" content="Spud Wiki">';
@@ -330,11 +295,6 @@ export default class SpudWiki {
   /**
    * @type {string}
    */
-  css_html_string = "";
-
-  /**
-   * @type {string}
-   */
   site_map_html_string = "";
 
   /**
@@ -346,8 +306,6 @@ export default class SpudWiki {
     [
       SpudWikiAsset.PAGE,
       SpudWikiAsset.SPECIAL_PAGE,
-      SpudWikiAsset.CSS,
-      SpudWikiAsset.JS,
       SpudWikiAsset.MEDIA,
     ].forEach(function (asset_type) {
       this.ASSET_MAP.set(asset_type, []);
@@ -403,15 +361,6 @@ export default class SpudWiki {
     return this.#AddAssetFile(SpudWikiAsset.SPECIAL_PAGE, src_file_path, options);
   }
 
-  AddCssFile(src_file_path, options) {
-    return this.#AddAssetFile(SpudWikiAsset.CSS, src_file_path, options);
-  }
-
-  // TODO to remove
-  AddJsFile(src_file_path, options) {
-    return this.#AddAssetFile(SpudWikiAsset.JS, src_file_path, options);
-  }
-
   AddMediaFile(src_file_path, options) {
     return this.#AddAssetFile(SpudWikiAsset.MEDIA, src_file_path, options);
   }
@@ -423,12 +372,6 @@ export default class SpudWiki {
           const asset = result.value;
 
           this.ASSET_MAP.get(asset.asset_type).push(asset);
-          switch (asset.asset_type) {
-            case SpudWikiAsset.PAGE:
-              //console.log(asset.src_file_path, "ok");
-              break;
-          }
-
         } else {
           console.log("FAILED", result.reason);
         }
@@ -532,34 +475,7 @@ export default class SpudWiki {
   }
 
   PrepareForBuild() {
-    // css_html_string and parse CSS files
-    const all_css_files = this.ASSET_MAP.get(SpudWikiAsset.CSS);
-    for (const css of all_css_files) {
-      const file_ext = path.extname(css.src_file_path), file_name = this.SanitizeString(path.basename(css.src_file_path, file_ext));
-
-      let dst_path, i = 0, link;
-
-      do {
-        if (i) {
-          dst_path = `./build/assets/${file_name}_${i}${file_ext}`;
-          link = `/spud-wiki/assets/${file_name}_${i}${file_ext}`
-        } else {
-          dst_path = `./build/assets/${file_name}${file_ext}`;
-          link = `/spud-wiki/assets/${file_name}${file_ext}`
-        }
-        i++;
-      } while (this.MAP_PATH_TO_ASSET.has(dst_path));
-      css.dst_path = dst_path;
-      css.link = link;
-      this.MAP_PATH_TO_ASSET.set(dst_path, css);
-
-      if (!css.options.limited) {
-        this.css_html_string += `<link rel="stylesheet" href="${link}">`;
-      }
-    }
-
     // prepare media files
-
     const all_media_files = this.ASSET_MAP.get(SpudWikiAsset.MEDIA);
     for (const media of all_media_files) {
       if (!media.dst_path) {
