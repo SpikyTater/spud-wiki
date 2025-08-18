@@ -211,6 +211,9 @@ class SpudWikiAsset {
 
 
         s += '<script src="/spud-wiki/assets/main.js"></script>';
+        if (this.options.additional_script) {
+          s+=`<script src="${this.options.additional_script}"></script>`;
+        }
 
         // close head, start body
         s += "</head><body>";
@@ -226,7 +229,7 @@ class SpudWikiAsset {
 
         // start content section
         // TODO: do_center_title should go inside spudtext
-        s += `<div class="content${data.do_center_title ? " do_center_title" : ""}">`;
+        s += `<div id="content" class="content${data.do_center_title ? ' do_center_title' : ""}">`;
 
         s += data.GetHtmlString();
 
@@ -516,7 +519,7 @@ export default class SpudWiki {
     // TODO:
     let s = '<nav id="side-nav">';
 
-    s += '<a href="/spud-wiki/">Main Page</a><a href="/spud-wiki/credits.html">Credits</a><div class="div-sep"></div>';
+    s += '<a href="/spud-wiki/">Main Page</a><a href="/spud-wiki/credits.html">Credits</a><a href="/spud-wiki/editor.html">SpudText Editor</a><div class="div-sep"></div>';
     const all_articles = this.ASSET_MAP.get(SpudWikiAsset.PAGE), l = all_articles.length;
     for (let i = 0; i < l; i++) {
       const article = all_articles[i];

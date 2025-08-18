@@ -26,6 +26,10 @@ async function Build_NEW(is_dev_build) {
   wiki.AddCssFile("./src/assets/style.css");
 
   wiki.AddSpecialPage("./src/special_pages/main.txt", { dst_path: "./build/index.html" });
+  wiki.AddSpecialPage("./src/special_pages/editor.txt", {
+    dst_path: "./build/editor.html",
+    additional_script: "/spud-wiki/assets/editor.js"
+  });
   wiki.AddSpecialPage("./src/special_pages/404.txt", { dst_path: "./build/404.html" });
   wiki.AddSpecialPage("./src/special_pages/credits.txt", {
     dst_path: "./build/credits.html",
