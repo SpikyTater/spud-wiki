@@ -1,1 +1,2 @@
 - one paragraph gets added before blockquotes and headings and one after, no idea why
+- one backslash should be enough to escape a whole aggregate
