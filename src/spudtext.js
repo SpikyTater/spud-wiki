@@ -800,6 +800,11 @@ class SpudTextContext {
       throw 0;
     }
 
+    if (0===src_text.length) {
+            console.error(`SpudTextContext: 'src_text' must be a non-empty string.`);
+      throw 0;
+    }
+
     /**
      * We use this function to account for complex unicode characters
      * Also soory, I ain't adding lodash just to use its split function

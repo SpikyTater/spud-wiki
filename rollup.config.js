@@ -15,6 +15,17 @@ const DEBUG_CONFIG = [
       nodeResolve(),
     ],
   },
+  {
+    input: "./src/assets/editor.js",
+    output: {
+      file: "./build/assets/editor.js",
+      format: "iife",
+      compact: true,
+    },
+    plugins: [
+      nodeResolve(),
+    ],
+  },
 ];
 
 const RELEASE_CONFIG = [
@@ -22,6 +33,30 @@ const RELEASE_CONFIG = [
     input: "./src/assets/all_pages.js",
     output: {
       file: "./build/assets/main.js",
+      format: "iife",
+      compact: true,
+    },
+    plugins: [
+      nodeResolve(),
+      terser({
+        maxWorkers: 4,
+        ecma: 2025,
+        format: {
+          ascii_only: true,
+          comments: false,
+          preamble: COPYRIGHT_COMMENT,
+        },
+        compress: {
+          drop_console: ["log", "info"],
+        }
+      }),
+    ],
+    //  external: ['fs', 'path',"clean-css"]
+  },
+  {
+    input: "./src/assets/editor.js",
+    output: {
+      file: "./build/assets/editor.js",
       format: "iife",
       compact: true,
     },

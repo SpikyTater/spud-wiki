@@ -1,0 +1,4 @@
+!title SpudText Editor
+!contributor Matty5957
+
+Here you can test your own articles using SpudText.
