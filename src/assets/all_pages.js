@@ -14,11 +14,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*/
-// This is the only javascript file that is deployed to ALL PAGES OF THE WIKI inside their <head> element
-// This script also undergoes a building process:
-//   - some constants will be added on top (e.g. THEMES)
-//   - all code in this will be included inside an IIFE, so don't worry
-//     about polluting the global object
+// This is the ONLY javascript file that is deployed to ALL PAGES OF THE WIKI
+// inside their <head> element.
 
 import SEARCH_DATA from "../../build/search_data.js";
 import { THEMES } from "../global_constants.js";
@@ -49,44 +46,28 @@ function AfterDomLoaded() {
   }, { passive: true });
 
   function SearchString(str) {
-    // const num_resulting_elements = 10;
-    const highest_scoring = [];
-
-
+    const max_search_results = 10, arr = [];
 
     function add_to_result_arr(curr_score, data) {
-
+      const l = arr.length;
       let i = 0;
-
-      while (i < highest_scoring.length && highest_scoring[i] > curr_score) {
-        i += 2;
-      }
-      if (curr_score > 0)
-        highest_scoring.splice(i, 0, curr_score, data);
-
-
-      /*for (let i = 0; i < highest_scoring.length; i += 2) {
-        const score = highest_scoring[i];
-
-        if (curr_score > score) {
-          if (2===highest_scoring.length && 0 ===highest_scoring[1]) {
-highest_scoring[0]= curr_score;
-highest_scoring[1]=data;
-          }else {
-            highest_scoring.splice(i, 0, curr_score, data);
-            if (highest_scoring.lastIndexOf > num_resulting_elements * 2) {
-              highest_scoring.length = num_resulting_elements * 2;
-              
-            }
+      for (; i < max_search_results && i < arr.length; i++) {
+        if (curr_score && curr_score > arr[i].score) {
+          arr.splice(i, 0, { score: curr_score, data });
+          if (max_search_results === l) {
+            arr.length = max_search_results;
           }
           break;
         }
-      }*/
-
+      }
+      if (curr_score && i < max_search_results) {
+        arr.push({ score: curr_score, data });
+      }
     }
 
+    // TODO: ew
     function score_strings(a, b) {
-      if (b.startsWith(a)) return 5;
+      if (b.startsWith(a)) return 2;
       if (b.includes(a)) return 1;
       return 0;
     }
@@ -96,44 +77,63 @@ highest_scoring[1]=data;
       add_to_result_arr(score, v);
     }
 
-    return highest_scoring;
-    //console.log(highest_scoring);
+    return arr;
   }
 
   let old_el;
 
+  const search_cont_inner = document.getElementById("search-cont-inner");
   document.getElementById("search-input").addEventListener("input", e => {
     const s = e?.target?.value;
 
-    if (typeof s !== "string" || s.length < 1) return;
+    if (typeof s !== "string" || s.length < 1) {
+      search_cont_inner.classList.remove("search-show");
+      if (old_el) {
+        old_el.classList.remove("stahp");
+        old_el = undefined;
+      }
+      return;
+    }
     //console.log(s)
+    search_cont_inner.classList.add("search-show");
 
-    const scoring = SearchString(s);
-    let i = 1;
+    const search_results = SearchString(s);
 
-    let el_to_stahp_at;
-    for (; i < scoring.length && i < 20; i += 2) {
-      el_to_stahp_at = document.getElementById("search-cont-inner").children[i / 2 | 0];
-      
-      el_to_stahp_at.textContent = scoring[i].str;
+    // window.requestAnimationFrame(() => {
+    let i = 0;
+    for (; i < search_results.length && i < 10; i++) {
+      search_cont_inner.children[i].textContent = search_results[i].data.str;
+      search_cont_inner.children[i].href = search_results[i].data.link;
     }
+    if (i < 10) {
+      const el = search_cont_inner.children[i];
+      if (el !== old_el) {
+        el.classList.add("stahp");
 
-    // if (i > 1 && i < 20) {
-    //const el = document.getElementById("search-cont-inner").children[i / 2 | 0];
+        if (old_el) {
+          old_el.classList.remove("stahp");
+        }
+        old_el = el;
+      }
 
-    //  if (old_el !== el_to_stahp_at) {
-    if (el_to_stahp_at) {
-      el_to_stahp_at.nextElementSibling?.classList.add("stahp");
+    } else {
+      if (old_el) {
+        old_el.classList.remove("stahp");
+        old_el = undefined;
+      }
     }
-    if (old_el) {
-      old_el.classList.remove("stahp");
-    }
-    old_el = el_to_stahp_at.nextElementSibling;
-    //   }
-    //  }
-
   }, { passive: true });
 
+
+  /*document.getElementById("search-input").addEventListener("focusout", e => {
+    search_cont_inner.classList.remove("search-show");
+  });
+
+  document.getElementById("search-input").addEventListener("focusin", e => {
+    if (old_el) {
+      search_cont_inner.classList.add("search-show");
+    }
+  });*/
 
 }
 
