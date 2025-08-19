@@ -51,9 +51,9 @@ Add the following lines to 'settings.json' located in the '.vscode' directory:
 
     "liveServer.settings.root": "/",
     "liveServer.settings.mount": [
-      ["/spud-wiki", "./build"]
+      ["/spud-wiki", "./build/dist"]
     ],
-    "liveServer.settings.file": "/build/404.html",
+    "liveServer.settings.file": "/build/dist/404.html",
     "liveServer.settings.host": "localhost"
 
 ### Step 4: Profit

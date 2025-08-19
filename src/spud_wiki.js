@@ -183,7 +183,14 @@ class SpudWikiAsset {
         s += "</head><body>";
 
         // body header
-        s += '<header id="header"><div id="logo-cont"><a id="logo-link" href="/spud-wiki/" title="Go to Main Page"><img id="logo" src="/spud-wiki/media/logo.png"/><div id="logo-title-cont"><span id="logo-title">Spud</span><span id="logo-title">Wiki</span></div></a></div><div id="search-cont">Search not yet implemented :]</div></header>';
+        s += '<header id="header"><div id="logo-cont"><a id="logo-link" href="/spud-wiki/" title="Go to Main Page"><img id="logo" src="/spud-wiki/media/logo.png"/><div id="logo-title-cont"><span id="logo-title">Spud</span><span id="logo-title">Wiki</span></div></a></div><div id="search-cont"><input type="search" id="search-input" placeholder="Search..."/><div id="search-cont-outer"><div id="search-cont-inner"><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a></div></div></div></header>';
+
+
+
+
+
+
+
 
 
         // body middle section start
@@ -450,15 +457,15 @@ export default class SpudWiki {
 
       do {
         if (i) {
-          dst_path = `./build/${sanitized_title}_${i}.html`
+          dst_path = `./build/dist/${sanitized_title}_${i}.html`
         } else {
-          dst_path = `./build/${sanitized_title}.html`
+          dst_path = `./build/dist/${sanitized_title}.html`
         }
         i++;
       } while (this.MAP_PATH_TO_ASSET.has(dst_path));
 
       page.dst_path = dst_path;
-      page.link = path.posix.join("/spud-wiki", path.posix.relative("./build", dst_path));
+      page.link = path.posix.join("/spud-wiki", path.posix.relative("./build/dist", dst_path));
 
       this.MAP_PATH_TO_ASSET.set(dst_path, page);
 
@@ -487,10 +494,10 @@ export default class SpudWiki {
     const all_media_files = this.ASSET_MAP.get(SpudWikiAsset.MEDIA);
     for (const media of all_media_files) {
       if (!media.dst_path) {
-        media.dst_path = `./build/media/${path.basename(media.src_file_path)}`;
+        media.dst_path = `./build/dist/media/${path.basename(media.src_file_path)}`;
       }
 
-      media.link = path.posix.join("/spud-wiki", path.posix.relative("./build", media.dst_path));
+      media.link = path.posix.join("/spud-wiki", path.posix.relative("./build/dist", media.dst_path));
 
       this.MAP_PATH_TO_ASSET.set(media.dst_path, media);
     }
@@ -516,15 +523,24 @@ export default class SpudWiki {
     if (!existsSync("./build")) {
       mkdirSync("./build");
     }
-    if (!existsSync("./build/assets")) {
-      mkdirSync("./build/assets");
+    if (!existsSync("./build/dist")) {
+      mkdirSync("./build/dist");
     }
-    if (!existsSync("./build/media")) {
-      mkdirSync("./build/media");
+    if (!existsSync("./build/dist/media")) {
+      mkdirSync("./build/dist/media");
     }
 
+    const search_map = {};
 
-
+    function add_search_map_string(str, is_title, link) {
+      if (Object.hasOwn(search_map, str)) {
+        console.error(`Duplicate search_string '${str}'`);
+      } else {
+        search_map[str] = {
+          str, is_title, link,lc_str:str.toLowerCase()
+        };
+      }
+    }
 
     const promises = []
     for (const [asset_type, assets] of this.ASSET_MAP) {
@@ -534,9 +550,21 @@ export default class SpudWiki {
 
         promises.push(writeFile(asset.dst_path, data));
 
+        if (SpudWikiAsset.PAGE === asset_type) {
+          // create search list
+          const spud_text = asset.data;
+
+          add_search_map_string(spud_text.title, true, asset.link);
+
+          // TODO: add for each redirect
+        }
 
       }
     }
+
+
+    const intermediate_search_helper_file_data = `/*This file was automatically generated. DO NOT EDIT.*/"use strict";const SEARCH_DATA=${JSON.stringify(search_map, null, this.is_dev_build ? 2 : 0)};export default SEARCH_DATA;`;
+    promises.push(writeFile("./build/search_data.js", intermediate_search_helper_file_data));
 
     return Promise.allSettled(promises);
   }
