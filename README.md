@@ -4,16 +4,17 @@
 
 ## How to build locally
 
+Node.js is required to be installed on your device. This project is being tested and built using version 22.
+
 ### Open console
 
 Open a command prompt inside the main directory of the repository you have cloned/downloaded.
 
 ### Step 1: Install module dependencies
 
-To install any module dependencies, run:
+To install module dependencies, run:
 
     npm ci
-There are currently none, but some may be added in the future.
 
 ### Step 2: Build
 
@@ -21,7 +22,9 @@ To create a development build of the Wiki, run:
 
     npm run build:dev
 
-Currently is has no difference with the production build, but that may change.
+It is much faster (currently about 3x) than production builds as many optimizations are not done.
+
+Before making a pull request, please make sure both the development build and the production work.
 
 You can find other scripts you can run inside 'package.json' and they can be used like this:
 
@@ -29,7 +32,7 @@ You can find other scripts you can run inside 'package.json' and they can be use
 
 ## How to test locally using Visual Studio Code
 
-Requires you to have Visual Studio Code installed.
+Requires you to have Visual Studio Code and installed.
 
 ### Step 1: Install NodeJS
 
@@ -50,12 +53,14 @@ Add the following lines to 'settings.json' located in the '.vscode' directory:
     "liveServer.settings.mount": [
       ["/spud-wiki", "./build"]
     ],
-    "liveServer.settings.file": "/build/index.html",
+    "liveServer.settings.file": "/build/404.html",
     "liveServer.settings.host": "localhost"
 
 ### Step 4: Profit
 
 Now you can test the Wiki locally on your browser by pressing "Go Live", found on the right side of VS Code's bottom panel.
+
+The first page you will be shown **will be** the 404 (Not Found) handler, do not panic. It's the only way I could think of so 404.html could be tested. You can reach all other pages from there.
 
 ## Testing an article
 
