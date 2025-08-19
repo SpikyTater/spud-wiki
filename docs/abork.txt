@@ -1,0 +1,8 @@
+!title Abork
+!contributor waarisdetaart
+
+**Abork** is a non-existent word made up by EthosLab that chat uses to mean 'broken'. In Etho's episode 9 of Hermitcraft Season 10{1}, he played Pearl's minigame Pearldle (Dye-Duction) for the first time. Instead of reading the rules completely, he decided after a couple of pages to just start playing.
+He gets a couple of the rules wrong, and starts by guessing 'AEIOU', which is, of course, not a word. Like with Wordle, players are only allowed to make guesses that are actual words, but unlike Wordle, the Pearldle redstone cannot check if the word that is put in is a real word.
+When he was on his last guess, he had an A locked in in the first spot, and an O in the third spot. At this point he couldn't think of anything that fit with the letters he had left, so he guessed 'ABORK'. When Pearl and chat learned of this guess, Pearl pointed out that it is pretty close to the word bork (slang for 'not working, broken'). Since this moment, chat has occasionally been using the word 'abork' to mean 'broken'.
+
+!note1 [[https://www.youtube.com/watch?v=6PeJbmc0WVc&t=2628s]]
