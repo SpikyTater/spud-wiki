@@ -49,154 +49,92 @@ function AfterDomLoaded() {
   }, { passive: true });
 
   function SearchString(str) {
-    const num_resulting_elements = 10;
-    const highest_scoring = new Array(num_resulting_elements*2);
-
-    highest_scoring.fill(0);
-
-    function score_finding(s, data) {
+    // const num_resulting_elements = 10;
+    const highest_scoring = [];
 
 
 
+    function add_to_result_arr(curr_score, data) {
+
+      let i = 0;
+
+      while (i < highest_scoring.length && highest_scoring[i] > curr_score) {
+        i += 2;
+      }
+      if (curr_score > 0)
+        highest_scoring.splice(i, 0, curr_score, data);
 
 
+      /*for (let i = 0; i < highest_scoring.length; i += 2) {
+        const score = highest_scoring[i];
 
+        if (curr_score > score) {
+          if (2===highest_scoring.length && 0 ===highest_scoring[1]) {
+highest_scoring[0]= curr_score;
+highest_scoring[1]=data;
+          }else {
+            highest_scoring.splice(i, 0, curr_score, data);
+            if (highest_scoring.lastIndexOf > num_resulting_elements * 2) {
+              highest_scoring.length = num_resulting_elements * 2;
+              
+            }
+          }
+          break;
+        }
+      }*/
 
+    }
 
-
-
-
-
-function _min(d0, d1, d2, bx, ay)
-  {
-    return d0 < d1 || d2 < d1
-        ? d0 > d2
-            ? d2 + 1
-            : d0 + 1
-        : bx === ay
-            ? d1
-            : d1 + 1;
-  }
-
-   function xxx(a, b)
-  {
-    if (a === b) {
+    function score_strings(a, b) {
+      if (b.startsWith(a)) return 5;
+      if (b.includes(a)) return 1;
       return 0;
     }
 
-    if (a.length > b.length) {
-      var tmp = a;
-      a = b;
-      b = tmp;
-    }
-
-    var la = a.length;
-    var lb = b.length;
-
-    while (la > 0 && (a.charCodeAt(la - 1) === b.charCodeAt(lb - 1))) {
-      la--;
-      lb--;
-    }
-
-    var offset = 0;
-
-    while (offset < la && (a.charCodeAt(offset) === b.charCodeAt(offset))) {
-      offset++;
-    }
-
-    la -= offset;
-    lb -= offset;
-
-    if (la === 0 || lb < 3) {
-      return lb;
-    }
-
-    var x = 0;
-    var y;
-    var d0;
-    var d1;
-    var d2;
-    var d3;
-    var dd;
-    var dy;
-    var ay;
-    var bx0;
-    var bx1;
-    var bx2;
-    var bx3;
-
-    var vector = [];
-
-    for (y = 0; y < la; y++) {
-      vector.push(y + 1);
-      vector.push(a.charCodeAt(offset + y));
-    }
-
-    var len = vector.length - 1;
-
-    for (; x < lb - 3;) {
-      bx0 = b.charCodeAt(offset + (d0 = x));
-      bx1 = b.charCodeAt(offset + (d1 = x + 1));
-      bx2 = b.charCodeAt(offset + (d2 = x + 2));
-      bx3 = b.charCodeAt(offset + (d3 = x + 3));
-      dd = (x += 4);
-      for (y = 0; y < len; y += 2) {
-        dy = vector[y];
-        ay = vector[y + 1];
-        d0 = _min(dy, d0, d1, bx0, ay);
-        d1 = _min(d0, d1, d2, bx1, ay);
-        d2 = _min(d1, d2, d3, bx2, ay);
-        dd = _min(d2, d3, dd, bx3, ay);
-        vector[y] = dd;
-        d3 = d2;
-        d2 = d1;
-        d1 = d0;
-        d0 = dy;
-      }
-    }
-
-    for (; x < lb;) {
-      bx0 = b.charCodeAt(offset + (d0 = x));
-      dd = ++x;
-      for (y = 0; y < len; y += 2) {
-        dy = vector[y];
-        vector[y] = dd = _min(dy, d0, dd, bx0, vector[y + 1]);
-        d0 = dy;
-      }
-    }
-
-    return dd;
-  };
-
-
-
-
-
-
-
-return xxx(s, data);
-
-
-
-
-
-
-
-
-    }
-    function add_to_result_arr(score, data) {
-for (let i=0;i<num_resulting_elements * 2;i+=2) {
-
-}
-    }
-
     for (const k in SEARCH_DATA) {
-      const v = SEARCH_DATA[k], score = score_finding(str, v.str);
+      const v = SEARCH_DATA[k], score = score_strings(str, v.lc_str);
       add_to_result_arr(score, v);
     }
 
-    console.log(highest_scoring);
+    return highest_scoring;
+    //console.log(highest_scoring);
   }
+
+  let old_el;
+
+  document.getElementById("search-input").addEventListener("input", e => {
+    const s = e?.target?.value;
+
+    if (typeof s !== "string" || s.length < 1) return;
+    //console.log(s)
+
+    const scoring = SearchString(s);
+    let i = 1;
+
+    let el_to_stahp_at;
+    for (; i < scoring.length && i < 20; i += 2) {
+      el_to_stahp_at = document.getElementById("search-cont-inner").children[i / 2 | 0];
+      
+      el_to_stahp_at.textContent = scoring[i].str;
+    }
+
+    // if (i > 1 && i < 20) {
+    //const el = document.getElementById("search-cont-inner").children[i / 2 | 0];
+
+    //  if (old_el !== el_to_stahp_at) {
+    if (el_to_stahp_at) {
+      el_to_stahp_at.nextElementSibling?.classList.add("stahp");
+    }
+    if (old_el) {
+      old_el.classList.remove("stahp");
+    }
+    old_el = el_to_stahp_at.nextElementSibling;
+    //   }
+    //  }
+
+  }, { passive: true });
+
+
 }
 
 if ("loading" === document.readyState)
