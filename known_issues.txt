@@ -1,2 +1,2 @@
 - one paragraph gets added before blockquotes and headings and one after, no idea why
-- one backslash should be enough to escape a whole aggregate
+- I spent 2 hours trying to fix the style, but listening to pearl's stream isn't helping, so kawaii's #Eat article stay aborked for now
