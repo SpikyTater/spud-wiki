@@ -15,62 +15,84 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*/
 // A big thanks to every single one of you. <3
-const CONTRIBUTORS_ARR = [
-  {
-    username: "19_meg_91",
-    color: "00e700",
-    twitch_username: "19_meg_91"
-  },
-  {
-    username: "BlueStrategosJ",
-    color: "359bff",
-    twitch_username: "BlueStrategosJ"
-  },
-  {
-    username: "Kawaiitron",
-    color: "00e700",
-    twitch_username: "Kawaiitron_"
-  },
-  {
-    username: "Matty5957",
-    color: "daa520",
-    twitch_username: "Matty5957",
-    assets: "logo.png"
-  },
-  {
-    username: "Spammer92",
-    color: "92ff00",
-    twitch_username: "Spammer_92"
-  },
-  {
-    username: "waarisdetaart",
-    color: "daa520",
-    twitch_username: "waarisdetaart"
+
+class Contributor {
+  /**
+   * @type {string}
+   */
+  username;
+
+  /**
+   * @type {string}
+   */
+  color;
+
+  /**
+   * @type {string}
+   */
+  twitch_username;
+
+  /**
+   * @type {string}
+   */
+  twitch_link;
+
+  /**
+   * @param {string} username 
+   * @param {string} color 
+   * @param {string | undefined} twitch_username 
+   */
+  constructor(username, color, twitch_username) {
+    this.username = username;
+    this.color = color;
+    this.twitch_username = twitch_username || username;
+    this.twitch_link = `https://www.twitch.tv/${this.twitch_username.toLowerCase()}`;
   }
-];
 
-const CONTRIBUTORS = new Map();
+  /**
+   * @param {string} forced_color 
+   * @returns {string}
+   */
+  GetHtmlString(forced_color) {
+    return `<a target="_blank" rel="noopener noreferrer" class="tw-name" href="${this.twitch_username}" style="color:#${forced_color || this.color}">${this.username}</a>`;
+  }
 
-function ContributorsPostProcess() {
-  CONTRIBUTORS_ARR.sort((ca, cb) => {
-    return ca.username.toLowerCase() < cb.username.toLowerCase();
-  });
+}
 
-  CONTRIBUTORS_ARR.forEach(c => {
-    const lc_username = c.username.toLowerCase();
-    if (CONTRIBUTORS.has(lc_username)) {
-      console.error(`Not on my watch, me. Contributor '${lc_username}' is duplicated.`);
-      throw 0;
+const CONTRIBUTORS = {
+  "19_meg_91": new Contributor("19_meg_91", "00e700"),
+  bluestrategosj: new Contributor("BlueStrategosJ", "359bff"),
+  kawaiitron: new Contributor("Kawaiitron", "00e700", "Kawaiitron_"),
+  matty5957: new Contributor("Matty5957", "daa520"),
+  spammer92: new Contributor("Spammer92", "92ff00", "Spammer_92"),
+  waarisdetaart: new Contributor("waarisdetaart", "daa520"),
+};
+
+export default CONTRIBUTORS;
+
+export function ValidateContributors() {
+  let errored = false;
+  for (const lc_username in CONTRIBUTORS) {
+    const contributor = CONTRIBUTORS[lc_username];
+    if (lc_username !== contributor.username.toLowerCase()) {
+      console.error(`CONTRIBUTORS key '${lc_username}' does not equal their lowercase username.`)
+      errored ||= true;
     }
-    CONTRIBUTORS.set(lc_username, c);
-  });
+  }
+  return errored;
 }
 
-ContributorsPostProcess();
-
-function GetContributorHtmlString(contributor, forced_color) {
-  return `<a target="_blank" rel="noopener noreferrer" class="tw-name" href="https://www.twitch.tv/${contributor.twitch_username}" style="color:#${forced_color ? forced_color : contributor.color}">${contributor.username}</a>`;
-
+/**
+ * @param {string} s 
+ * @returns {Contributor | undefined}
+ */
+export function ContributorFromString(s) {
+  s = s.toLowerCase();
+  for (const lc_username in CONTRIBUTORS) {
+    const contributor = CONTRIBUTORS[lc_username];
+    if (s === lc_username || s === contributor.twitch_username.toLowerCase()) {
+      return contributor;
+    }
+  }
+  return;
 }
-
-export { CONTRIBUTORS_ARR, CONTRIBUTORS, GetContributorHtmlString };
