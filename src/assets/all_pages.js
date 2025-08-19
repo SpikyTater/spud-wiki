@@ -14,12 +14,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*/
-// This is the only javascript file that is deployed to ALL PAGES OF THE WIKI inside their <head> element
-// This script also undergoes a building process:
-//   - some constants will be added on top (e.g. THEMES)
-//   - all code in this will be included inside an IIFE, so don't worry
-//     about polluting the global object
+// This is the ONLY javascript file that is deployed to ALL PAGES OF THE WIKI
+// inside their <head> element.
 
+import SEARCH_DATA from "../../build/search_data.js";
 import { THEMES } from "../global_constants.js";
 
 const LC_THEMES = THEMES.map(theme => theme.toLowerCase());
@@ -46,6 +44,97 @@ function AfterDomLoaded() {
         break;
     }
   }, { passive: true });
+
+  function SearchString(str) {
+    const max_search_results = 10, arr = [];
+
+    function add_to_result_arr(curr_score, data) {
+      const l = arr.length;
+      let i = 0;
+      for (; i < max_search_results && i < arr.length; i++) {
+        if (curr_score && curr_score > arr[i].score) {
+          arr.splice(i, 0, { score: curr_score, data });
+          if (max_search_results === l) {
+            arr.length = max_search_results;
+          }
+          break;
+        }
+      }
+      if (curr_score && i < max_search_results) {
+        arr.push({ score: curr_score, data });
+      }
+    }
+
+    // TODO: ew
+    function score_strings(a, b) {
+      if (b.startsWith(a)) return 2;
+      if (b.includes(a)) return 1;
+      return 0;
+    }
+
+    for (const k in SEARCH_DATA) {
+      const v = SEARCH_DATA[k], score = score_strings(str, v.lc_str);
+      add_to_result_arr(score, v);
+    }
+
+    return arr;
+  }
+
+  let old_el;
+
+  const search_cont_inner = document.getElementById("search-cont-inner");
+  document.getElementById("search-input").addEventListener("input", e => {
+    const s = e?.target?.value;
+
+    if (typeof s !== "string" || s.length < 1) {
+      search_cont_inner.classList.remove("search-show");
+      if (old_el) {
+        old_el.classList.remove("stahp");
+        old_el = undefined;
+      }
+      return;
+    }
+    //console.log(s)
+    search_cont_inner.classList.add("search-show");
+
+    const search_results = SearchString(s);
+
+    // window.requestAnimationFrame(() => {
+    let i = 0;
+    for (; i < search_results.length && i < 10; i++) {
+      search_cont_inner.children[i].textContent = search_results[i].data.str;
+      search_cont_inner.children[i].href = search_results[i].data.link;
+    }
+    if (i < 10) {
+      const el = search_cont_inner.children[i];
+      if (el !== old_el) {
+        el.classList.add("stahp");
+
+        if (old_el) {
+          old_el.classList.remove("stahp");
+        }
+        old_el = el;
+      }
+
+    } else {
+      if (old_el) {
+        old_el.classList.remove("stahp");
+        old_el = undefined;
+      }
+    }
+  }, { passive: true });
+
+
+  /*document.getElementById("search-input").addEventListener("focusout", e => {
+    search_cont_inner.classList.remove("search-show");
+  });
+
+  document.getElementById("search-input").addEventListener("focusin", e => {
+    if (old_el) {
+      search_cont_inner.classList.add("search-show");
+    }
+  });*/
+
 }
 
 if ("loading" === document.readyState)

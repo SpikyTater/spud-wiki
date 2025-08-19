@@ -7,7 +7,7 @@ const DEBUG_CONFIG = [
   {
     input: "./src/assets/all_pages.js",
     output: {
-      file: "./build/assets/main.js",
+      file: "./build/dist/assets/main.js",
       format: "iife",
       compact: true,
     },
@@ -18,7 +18,7 @@ const DEBUG_CONFIG = [
   {
     input: "./src/assets/editor.js",
     output: {
-      file: "./build/assets/editor.js",
+      file: "./build/dist/assets/editor.js",
       format: "iife",
       compact: true,
     },
@@ -32,7 +32,7 @@ const RELEASE_CONFIG = [
   {
     input: "./src/assets/all_pages.js",
     output: {
-      file: "./build/assets/main.js",
+      file: "./build/dist/assets/main.js",
       format: "iife",
       compact: true,
     },
@@ -56,7 +56,7 @@ const RELEASE_CONFIG = [
   {
     input: "./src/assets/editor.js",
     output: {
-      file: "./build/assets/editor.js",
+      file: "./build/dist/assets/editor.js",
       format: "iife",
       compact: true,
     },

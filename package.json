@@ -7,10 +7,10 @@
     "doc": "docs"
   },
   "scripts": {
-    "build": "node src/index.js validate && rollup --c --failAfterWarnings --no-stdin && cleancss -O2 specialComments:1 -o ./build/assets/style.css ./src/assets/style.css && node src/index.js build",
-    "build:dev": "node src/index.js validate && rollup --c --failAfterWarnings --no-stdin --config_debug && cleancss -O0 -o ./build/assets/style.css ./src/assets/style.css && node src/index.js build:dev",
+    "build": "node src/index.js validate && node src/index.js build && rollup --c --failAfterWarnings --no-stdin && cleancss -O2 specialComments:1 -o ./build/dist/assets/style.css ./src/assets/style.css ",
+    "build:dev": "node src/index.js validate && node src/index.js build:dev && rollup --c --failAfterWarnings --no-stdin --config_debug && cleancss -O0 -o ./build/dist/assets/style.css ./src/assets/style.css",
     "clean": "node src/index.js clean",
-    "test_doc": "node src/index.js test_doc",
+    "test_something": "node src/index.js test_something",
     "validate": "node src/index.js validate"
   },
   "repository": {
@@ -25,13 +25,13 @@
   "homepage": "https://github.com/SpikyTater/spud-wiki#readme",
   "type": "module",
   "dependencies": {
-    "clean-css-cli": "^5.6.3",
     "codemirror": "^6.0.2"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-terser": "^0.4.4",
     "clean-css": "^5.3.3",
+    "clean-css-cli": "^5.6.3",
     "rollup": "^4.46.3"
   }
 }

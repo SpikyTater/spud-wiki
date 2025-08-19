@@ -56,7 +56,7 @@ class MediaAsset {
   }
 
   GetBuildPath() {
-    return `./build/${this.dst_path}`;
+    return `./build/dist/${this.dst_path}`;
   }
 
   GetLink() {

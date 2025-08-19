@@ -39,5 +39,4 @@ make a bulletin board for todo stuff. maybe there's already a todo for it...
 make a list of accepted domains for external links, and only https protocol (can be omitted in links)
 avoid any possibility of HTML injection by escaping string before adding them inside htmlifystring. same thing for !noteXXXXX, escape the XXXXX part
 decouple TokenInstance from AstNode functionality, TokenInstance extend AstNode
-add a "view source" inside each page, so people can read and try to edit articles... it should redirect to editor, which will load the actual source. it will know which page sent it there through a query string
-spudtext doc should be hidden through <summary> and <details> elements
+add a "view source" inside each page, so people can read and try to edit articles... it should redirect to editor, which will load the actual source. it will know which page sent it there through a query string with the name of the file. the hash of the deployed commit should be saved and used to fetch that file from github https://stackoverflow.com/a/34518749

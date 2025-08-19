@@ -24,14 +24,14 @@ import CONTRIBUTORS, { ValidateContributors } from "./contributors.js";
 async function Build(is_dev_build) {
   const wiki = new SpudWiki(is_dev_build);
 
-  wiki.AddSpecialPage("./src/special_pages/main.txt", { dst_path: "./build/index.html" });
+  wiki.AddSpecialPage("./src/special_pages/main.txt", { dst_path: "./build/dist/index.html" });
   wiki.AddSpecialPage("./src/special_pages/editor.txt", {
-    dst_path: "./build/editor.html",
+    dst_path: "./build/dist/editor.html",
     additional_script: "/spud-wiki/assets/editor.js"
   });
-  wiki.AddSpecialPage("./src/special_pages/404.txt", { dst_path: "./build/404.html" });
+  wiki.AddSpecialPage("./src/special_pages/404.txt", { dst_path: "./build/dist/404.html" });
   wiki.AddSpecialPage("./src/special_pages/credits.txt", {
-    dst_path: "./build/credits.html",
+    dst_path: "./build/dist/credits.html",
     append_to_content: (() => {
       let s = "";
       for (const lc_username in CONTRIBUTORS) {
@@ -46,8 +46,6 @@ async function Build(is_dev_build) {
   wiki.AddAllPagesInsideDocs();
 
   wiki.AddAllMediaAssets();
-//  wiki.AddMediaFile("./src/media/logo.png");
-//  wiki.AddMediaFile("./src/media/favicon.ico", { dst_path: "./build/favicon.ico" });
 
   await wiki.WaitForReadingCompletion();
 
@@ -69,7 +67,7 @@ switch (process.argv[2]) {
     }
     break;
   }
-  case "test_doc": {
+  case "test_something": {
     const wiki = new SpudWiki(true), docs = process.argv.slice(3);
     for (const doc of docs) {
       const fpath = `./docs/${doc}.txt`;
