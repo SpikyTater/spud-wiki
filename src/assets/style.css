@@ -83,6 +83,7 @@ body {
 
 :not(.search-result)a:visited:hover {
   color: var(--link-color-txt-visited-hover);
+  text-decoration: underline;
 }
 
 :not(.search-result)a:hover {
@@ -241,7 +242,7 @@ blockquote>p {
   display: grid;
   grid-template-columns: min-content auto;
   padding-inline: 1.4em;
-  column-gap: 1em;
+  column-gap: .4rem;
   row-gap: .6em;
   padding-block-start: .8em;
 }
@@ -437,4 +438,13 @@ input[type="file"] {
   display: block;
   text-decoration: none;
   color: #111;
+}
+
+.page-note-backlink {
+  text-decoration: none;
+}
+
+.page-note-backlinks {
+  letter-spacing: .2rem;
+    font-style: italic;
 }

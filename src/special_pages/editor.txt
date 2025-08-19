@@ -43,9 +43,7 @@ This is a mandatory directive and it sets the name of the article. All title dir
 
 This is not a mandatory directive, as there may be articles where a contributor doesn't want to show their username. There can be multiple of these in a single page.
 If you get a warning, it means that the username is not present inside [[https://github.com/SpikyTater/spud-wiki/blob/main/src/contributors.js this file]].
-Remember: you have to use the correct capitalization or you will not be abe to get rid of the warning.
-<contributor_username> **can not be** styled.
-Incorrect contributor directives will be ignored.
+You can use both the displayed and the twitch username, the parser will do the rest for you. Capitalization doesn't matter. Incorrect contributor directives will be ignored.
 
 === !note<note_name> <note_text> ===
 
@@ -90,7 +88,7 @@ List of aggregates:
 
 === Strikethrough ===
 
-"Wel\#l, hello th\#ere." will render as "Wel#l, hello th#ere."
+"Wel\#\#l, hello th\#\#ere." will render as "Wel##l, hello th##ere."
 
 === Headings ===
 
