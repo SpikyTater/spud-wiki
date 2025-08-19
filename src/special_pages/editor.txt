@@ -124,4 +124,14 @@ For example:
 
 will render as [[https://www.twitch.tv/pearlescentmoon click me pls]].
 
+== Backslash ==
+
+The backslash, \\, is used to strip the meaning out of the following special character. For example if you write
+
+> \\\*
+
+you will simply get a \*.
+To get an actual backslash in the page, you will have to write two consecutive backslashes, \\\\.
+A single backslash in spudtext currently gives a critical error. It will later be changed to a warning and it wil be ignored.
+
 == Enjoy the actual editor ==
