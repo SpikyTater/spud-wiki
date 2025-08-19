@@ -63,7 +63,7 @@ const TOKENS = {
     needs_children: true,
   },
   strikethrough: {
-    raw_token_length: 1,
+    raw_token_length: 2,
   },
   strikethrough_aggregate: {
     can_have_children: true,
@@ -997,7 +997,12 @@ class SpudTextContext {
             t.pop();
             this.#MergeSameOrAddToken(TOKENS.text, i);
           } else {
-            this.#AddToken(TOKENS.strikethrough, i);
+            if (i + 1 < l && 35 === code_point_array[i + 1]) {
+              this.#AddToken(TOKENS.strikethrough, i);
+              i += 1;
+            } else {
+              this.#MergeSameOrAddToken(TOKENS.text, i);
+            }
           }
           continue;
         case 42: // *
@@ -1641,6 +1646,12 @@ class SpudTextContext {
 
         notes_container.AddChild(note_container);
 
+        if (nrefs > 1) {
+          const backlink_up_test = TokenInstance.CreateFromRawToken(TOKENS.html_text);
+          backlink_up_test.content = "^";
+          note_backlink_div.AddChild(backlink_up_test);
+        }
+
         for (let i = 0; i < nrefs; i++) {
           const letter_index = index_to_letter_index(i);
 
@@ -1665,10 +1676,14 @@ class SpudTextContext {
           const note_backlink = TokenInstance.CreateFromRawToken(TOKENS.html_element);
           note_backlink.tag = "a";
           note_backlink.class = "page-note-backlink";
-          note_backlink.content = `[${letter_index}]`;
+          note_backlink.content = `${nrefs === 1 ? "^" : letter_index}`;
           note_backlink.href = `#${id}`;
 
-          note_backlink_div.AddChild(note_backlink);
+          const note_backlinks_sup = TokenInstance.CreateFromRawToken(TOKENS.html_container);
+          note_backlinks_sup.tag = "sup";
+          note_backlinks_sup.AddChild(note_backlink);
+
+          note_backlink_div.AddChild(note_backlinks_sup);
         }
       }
     }
@@ -1840,7 +1855,7 @@ class SpudTextContext {
     const token_instances = this.ast.children;
 
     let curr_paragraph_start = 0, i = 0;
-
+    // TODO: something in here causes the issues with paragraphs and blockquotes
     const make_into_a_paragraph = (ends_in_newline) => {
       const token_instance = token_instances[i];
 

@@ -1,12 +1,11 @@
 rework navigation
 what could go on the right side of the middle section -> page navigation, preomputed and presented as html
 site map on the left side
-search functionality
 chat commands (!cowboy, !time, !celtic, !kawaii and so on) in the search bar
 add last modified on the bottom of every page unless !nolastmodified
 add recent changes to main page
 add redirected from ?redirect=#DeathForTheSpiders -> escape space # " < > [ \ ] ^ `
-use html elements -> small, sub, sup, textarea, hgroup (for redirect), main, button, footer, header, address (for contributors), abbr
+use html elements -> small, sub, sup, hgroup (for redirect), main, button, footer, header, address (for contributors), abbr
 add ARIA for accessibility
 better mobile layout
 a single '#' is used too much (hashtags) to be able to be used as the beginning of strikethrough. use 2#
@@ -29,14 +28,12 @@ cleanup spudtext.js, most of it is extremely redundant
 add // and /**/ comments to spudtext
 once !nosearchindex and !redirect get added, add !nosearchindex to Sup Face and maybe add some easter eggs for it, like 4 random characters that appear between sup and face, and idk how to search index for it
 license the SpudText format
-make a SpudText format documentation
 add warning for weird characters like microsoft word's ' " ", god I hate these
 add about.html page
 add some way to prettify spudtext, maybe maybe maybe even a way to do it in VS Code
-allow contributors to be written in different cases than what is correct (Kawaiitron/kawaiitron) and even use the secondary (?) ones (Spammer92/Spammer_92) whilst always showing the same thing when parsed
-when a note only has one reference, use [^] instead of [a]
-make a bulletin board for todo stuff. maybe there's already a todo for it...
+make a bulletin board for todo stuff
 make a list of accepted domains for external links, and only https protocol (can be omitted in links)
 avoid any possibility of HTML injection by escaping string before adding them inside htmlifystring. same thing for !noteXXXXX, escape the XXXXX part
 decouple TokenInstance from AstNode functionality, TokenInstance extend AstNode
 add a "view source" inside each page, so people can read and try to edit articles... it should redirect to editor, which will load the actual source. it will know which page sent it there through a query string with the name of the file. the hash of the deployed commit should be saved and used to fetch that file from github https://stackoverflow.com/a/34518749
+hide search thingy when focusing out of it
