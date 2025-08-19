@@ -14,13 +14,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*/
-import CleanCSS from "clean-css";
 import { existsSync, mkdirSync, readdirSync } from "fs";
 import { readFile, stat, writeFile } from "fs/promises";
 import path from "path";
 import { SpudTextContext, SpudText } from "./spudtext.js";
-import { GetContributorHtmlString } from "./contributors.js";
 import { THEMES } from "./global_constants.js";
+import { MEDIA_ASSETS } from "./media_assets.js";
 
 const COPYRIGHT_COMMENT = `<!--Spud Wiki Engine\nCopyright (C) ${(new Date()).getFullYear()}  SpikyTater\n\nThis program is free software; you can redistribute it and/or modify\nit under the terms of the GNU General Public License as published by\nthe Free Software Foundation; either version 2 of the License, or\n(at your option) any later version.\n\nThis program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along\nwith this program; if not, write to the Free Software Foundation, Inc.,\n51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.-->\n`;
 
@@ -177,7 +176,7 @@ class SpudWikiAsset {
 
         s += '<script src="/spud-wiki/assets/main.js"></script>';
         if (this.options.additional_script) {
-          s+=`<script src="${this.options.additional_script}"></script>`;
+          s += `<script src="${this.options.additional_script}"></script>`;
         }
 
         // close head, start body
@@ -229,7 +228,7 @@ class SpudWikiAsset {
               forced_color = "f77";
             }
 
-            const contributor_html_string = GetContributorHtmlString(c[i], forced_color);
+            const contributor_html_string = c[i].GetHtmlString(forced_color);
 
             if (l - i >= 3) {
               s += contributor_html_string + ", ";
@@ -250,7 +249,7 @@ class SpudWikiAsset {
 
           s += '<div id="theme-cont">Theme: <select id="theme-select">'
 
-          
+
 
           for (const theme of THEMES) {
             s += `<option value="${theme.toLowerCase()}">${theme}</option>`
@@ -363,6 +362,15 @@ export default class SpudWiki {
 
   AddMediaFile(src_file_path, options) {
     return this.#AddAssetFile(SpudWikiAsset.MEDIA, src_file_path, options);
+  }
+
+  AddAllMediaAssets() {
+    for (const media_asset_name in MEDIA_ASSETS) {
+      const media_asset = MEDIA_ASSETS[media_asset_name];
+      this.#AddAssetFile(SpudWikiAsset.MEDIA, media_asset.src_path, {
+        dst_path: media_asset.GetBuildPath()
+      });
+    }
   }
 
   async WaitForReadingCompletion() {

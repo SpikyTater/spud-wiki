@@ -18,15 +18,12 @@ add !nosearchindex -> the first heading encountered when going reverse post-orde
 add !category and !tag, pretty self explanatory
 add editor where users can try writing an article and see it converted immediately (debounce for like 100 ms, remember to add contain to the CSS of the preview). articles can be saved in local storage, exported or imported. maybe later add more than one save slot for articles.
 directives do_center_title should be handled inside spudtext, as it changed something inside the content
-cleanup themes
-cleanup contributors
 add "!command XXX" directive, to say that, for example, the article "!title kawaii ..etc" you've been writing is the resulting page for a search box command. multiple commands can be used for the same page
 add article map (stickied maybe?) to the right sidebar
 add a decent site map to the left sidebar
 style better the darn footer, it looks terrible
 style better the darn header, it looks terrible
 redesign the welcome page
-see if index.js can be cleaned up somehow
 for larry's sake add some testing, especially to spudtext.js (which needs a lot of it)
 cleanup spudtext.js, most of it is extremely redundant
 add // and /**/ comments to spudtext

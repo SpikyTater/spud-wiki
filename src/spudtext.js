@@ -14,7 +14,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*/
-import { CONTRIBUTORS } from "./contributors.js";
+import { ContributorFromString } from "./contributors.js";
 
 /**
  * @typedef Token
@@ -679,8 +679,8 @@ class SpudText {
    * @returns {string}
    */
   #EscapeContent(s) {
-    s=s.replaceAll("<", "&lt;");
-    s=s.replaceAll(">", "&gt;");
+    s = s.replaceAll("<", "&lt;");
+    s = s.replaceAll(">", "&gt;");
 
     return s;
   }
@@ -812,8 +812,8 @@ class SpudTextContext {
       throw 0;
     }
 
-    if (0===src_text.length) {
-            console.error(`SpudTextContext: 'src_text' must be a non-empty string.`);
+    if (0 === src_text.length) {
+      console.error(`SpudTextContext: 'src_text' must be a non-empty string.`);
       throw 0;
     }
 
@@ -1483,7 +1483,7 @@ class SpudTextContext {
       }
 
       const contributor_username = text_token.GetRawString().trim().toLowerCase();
-      const contributor = CONTRIBUTORS.get(contributor_username)
+      const contributor = ContributorFromString(contributor_username);
       if (!contributor) {
         this.LogWarn(`Contributor '${contributor_username}' does not exist in the database located in './src/contributors.js'. If you are sure you haven't made a spelling mistake, please contact a Wiki mantainer or make a pull request to add that contributor to the list.`);
         continue;

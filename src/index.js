@@ -18,7 +18,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import { existsSync, rmSync } from "fs";
 import process from "process";
 import SpudWiki from "./spud_wiki.js";
-import { CONTRIBUTORS_ARR, GetContributorHtmlString } from "./contributors.js";
+import { ValidateMediaAssets } from "./media_assets.js";
+import CONTRIBUTORS, { ValidateContributors } from "./contributors.js";
 
 async function Build(is_dev_build) {
   const wiki = new SpudWiki(is_dev_build);
@@ -33,9 +34,10 @@ async function Build(is_dev_build) {
     dst_path: "./build/credits.html",
     append_to_content: (() => {
       let s = "";
-      CONTRIBUTORS_ARR.forEach(c => {
-        s += `<p class="credits-contributor">${GetContributorHtmlString(c)}</p>`;
-      });
+      for (const lc_username in CONTRIBUTORS) {
+        const contributor = CONTRIBUTORS[lc_username];
+        s += `<p class="credits-contributor">${contributor.GetHtmlString()}</p>`;
+      }
       return s;
     })()
   });
@@ -43,8 +45,9 @@ async function Build(is_dev_build) {
   // TODO: add a way to avoid having articles with the same names as special pages. maybe add articles to /spud-wiki/articles/ ?
   wiki.AddAllPagesInsideDocs();
 
-  wiki.AddMediaFile("./src/media/logo.png");
-  wiki.AddMediaFile("./src/media/favicon.ico", { dst_path: "./build/favicon.ico" });
+  wiki.AddAllMediaAssets();
+//  wiki.AddMediaFile("./src/media/logo.png");
+//  wiki.AddMediaFile("./src/media/favicon.ico", { dst_path: "./build/favicon.ico" });
 
   await wiki.WaitForReadingCompletion();
 
@@ -74,6 +77,16 @@ switch (process.argv[2]) {
       wiki.AddWikiPage(fpath);
 
       await wiki.WaitForReadingCompletion();
+    }
+    break;
+  }
+  case "validate": {
+    // don't exit immediately on error, check everything first
+    if (ValidateMediaAssets()) {
+      process.exitCode = 1;
+    }
+    if (ValidateContributors()) {
+      process.exitCode = 1;
     }
     break;
   }

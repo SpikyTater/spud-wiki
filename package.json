@@ -7,10 +7,11 @@
     "doc": "docs"
   },
   "scripts": {
-    "build": "rollup --c --failAfterWarnings --no-stdin && cleancss -O2 specialComments:1 -o ./build/assets/style.css ./src/assets/style.css && node src/index.js build",
-    "build:dev": "rollup --c --failAfterWarnings --no-stdin --config_debug && cleancss -O0 -o ./build/assets/style.css ./src/assets/style.css && node src/index.js build:dev",
+    "build": "node src/index.js validate && rollup --c --failAfterWarnings --no-stdin && cleancss -O2 specialComments:1 -o ./build/assets/style.css ./src/assets/style.css && node src/index.js build",
+    "build:dev": "node src/index.js validate && rollup --c --failAfterWarnings --no-stdin --config_debug && cleancss -O0 -o ./build/assets/style.css ./src/assets/style.css && node src/index.js build:dev",
     "clean": "node src/index.js clean",
-    "test_doc": "node src/index.js test_doc"
+    "test_doc": "node src/index.js test_doc",
+    "validate": "node src/index.js validate"
   },
   "repository": {
     "type": "git",
