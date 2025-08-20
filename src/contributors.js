@@ -54,7 +54,7 @@ class Contributor {
    * @returns {string}
    */
   GetHtmlString(forced_color) {
-    return `<a target="_blank" rel="noopener noreferrer" class="tw-name" href="${this.twitch_username}" style="color:#${forced_color || this.color}">${this.username}</a>`;
+    return `<a target="_blank" rel="noopener noreferrer" class="tw-name" href="${this.twitch_link}" style="color:#${forced_color || this.color}">${this.username}</a>`;
   }
 
 }
