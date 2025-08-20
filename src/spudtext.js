@@ -665,6 +665,14 @@ class SpudText {
     return this.time_taken.toFixed(3) + " ms";
   }
 
+  GetTitleHtmlString() {
+    if (this.do_center_title) {
+      return `<h1 id="_title" style="text-align:center">${this.title}</h1>`;
+    } else {
+      return `<h1 id="_title">${this.title}</h1>`;
+    }
+  }
+
   GetHtmlString() {
     if (this.html_string) {
       return this.html_string;
@@ -701,14 +709,17 @@ class SpudText {
           s += `</${token.tag}>`
           break;
         case TOKENS.html_element:
-          s += `<${token.tag} ${token.id ? 'id="' + token.id + '"' : ""} ${token.class ? 'class="' + token.class + '"' : ""} ${token.href ? 'href="' + token.href + '"' : ""}`;
+          // TODO: this is a hack. I hate it with every fiber of my being
+          if (token.tag !== "h1") {
+            s += `<${token.tag} ${token.id ? 'id="' + token.id + '"' : ""} ${token.class ? 'class="' + token.class + '"' : ""} ${token.href ? 'href="' + token.href + '"' : ""}`;
 
-          if (token.ext_link) {
-            s += ' target="_blank" rel="noopener noreferrer"';
+            if (token.ext_link) {
+              s += ' target="_blank" rel="noopener noreferrer"';
+            }
+            s += ">";
+            s += this.#EscapeContent(token.content);
+            s += `</${token.tag}>`
           }
-          s += ">";
-          s += this.#EscapeContent(token.content);
-          s += `</${token.tag}>`
           break;
         case TOKENS.html_text:
           s += this.#EscapeContent(token.content);
