@@ -33,6 +33,8 @@ a {
   text-decoration: none;
 }
 
+
+
 body:has(#theme-select>[value="light"]:checked) {
   color-scheme: light;
   --color-bg-1-txt: #eee;
@@ -67,6 +69,25 @@ body:has(#theme-select>[value="dark"]:checked) {
   --color-txt-main: #eee;
 }
 
+a {
+  color: var(--link-color-txt);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--link-color-txt-hover);
+  text-decoration: underline;
+}
+
+a:visited {
+  color: var(--link-color-txt-visited);
+}
+
+a:visited:hover {
+  color: var(--link-color-txt-visited-hover);
+  text-decoration: underline;
+}
+
 body {
   min-height: 100vh;
   width: 100vw;
@@ -98,7 +119,9 @@ body {
 
 #search-cont {
   grid-area: 1 / 3 / 2 / 4;
-  padding: 1rem 0 0 1rem;
+  padding-left: 1rem;
+  justify-self: start;
+  align-self: center;
 }
 
 #section-middle {
@@ -114,7 +137,6 @@ body {
 #content {
   grid-area: 2 / 3 / 3 / 4;
   padding: 0 1rem;
-  /* text-align: justify;*/
 }
 
 #right-sidebar {
@@ -131,6 +153,8 @@ body {
 #footer-info {
   grid-area: 3 / 2 / 4 / 4;
   padding: 1rem 0;
+  border-top: 1px solid #fff;
+  margin-top: 1rem;
 }
 
 #footer-contributors {
@@ -141,6 +165,8 @@ body {
 #theme-cont {
   grid-area: 3 / 4 / 4 / 5;
   padding: 1rem 0;
+  border-top: 1px solid #fff;
+  margin-top: 1rem;
 }
 
 #logo {
@@ -195,19 +221,23 @@ h2 {
   display: grid;
   grid-template-columns: min-content auto;
   padding: .8rem 1.4rem 0 1.4rem;
-      justify-content: left;
-    align-items: baseline;
+  justify-content: left;
+  align-items: baseline;
 }
 
 .page-note {
-    display: contents;
+  display: contents;
 }
 
 .page-note-backlinks {
-    letter-spacing: .2rem;
-    font-style: italic;
+  letter-spacing: .2rem;
+  font-style: italic;
 }
 
 .page-note-name {
-    padding-right: .4rem;
+  padding-right: .4rem;
+}
+
+#search-input {
+  font-size: 1.5rem;
 }
