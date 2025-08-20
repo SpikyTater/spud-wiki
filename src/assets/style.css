@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*/
 
-
 html,
 body,
 p,
@@ -75,24 +74,31 @@ body {
   background-color: var(--bg-main);
   color: var(--color-txt-main);
   overflow-wrap: break-word;
-
-  --outer-padding-inline: 5.5vw;
+  font-family: sans-serif;
 
   display: grid;
-  grid-template-rows: 4rem auto min-content;
-  grid-template-columns: 1fr 3fr 1fr;
+  grid-template-rows: 5rem auto min-content min-content;
+  grid-template-columns: minmax(0, 1fr) minmax(16%, 12rem) minmax(55%, 50rem) minmax(16%, 12rem) minmax(0, 1fr);
 }
 
 #header {
-    display: contents;
+  display: contents;
 }
 
 #logo-link {
-    grid-area: 1 / 1 / 2 / 2;
+  grid-area: 1 / 2 / 2 / 3;
+  display: grid;
+  max-height: 100%;
+  grid-template-columns: min-content min-content;
+  grid-template-rows: auto auto;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
 }
 
 #search-cont {
-  grid-area: 1 / 2 / 2 / 3;
+  grid-area: 1 / 3 / 2 / 4;
+  padding: 1rem 0 0 1rem;
 }
 
 #section-middle {
@@ -100,18 +106,108 @@ body {
 }
 
 #side-nav {
-  grid-area: 2/1/3/2;
+  grid-area: 2/2/3/3;
+  display: flex;
+  flex-direction: column;
 }
 
 #content {
-  grid-area: 2/2/3/3;
+  grid-area: 2 / 3 / 3 / 4;
+  padding: 0 1rem;
+  /* text-align: justify;*/
 }
 
 #right-sidebar {
-  grid-area: 2/3/3/4;
+  grid-area: 2 / 4 / 3 / 5;
+  position: sticky;
+  top: 0;
+  height: fit-content;
 }
 
 #footer {
   display: contents;
 }
 
+#footer-info {
+  grid-area: 3 / 2 / 4 / 4;
+  padding: 1rem 0;
+}
+
+#footer-contributors {
+  grid-area: 4 / 2 / 5 / 4;
+  padding-bottom: 1rem;
+}
+
+#theme-cont {
+  grid-area: 3 / 4 / 4 / 5;
+  padding: 1rem 0;
+}
+
+#logo {
+  max-height: 3rem;
+  grid-area: 1 / 1 / 3 / 2;
+  padding-right: 1rem;
+}
+
+#logo-link>span {
+  color: var(--color-bg-1-txt);
+  font-weight: bold;
+  font-family: monospace;
+  font-size: 1.3rem;
+}
+
+#logo-link>span:nth-child(2) {
+  align-self: flex-end;
+}
+
+#logo-link>span:nth-child(3) {
+  align-self: flex-start;
+}
+
+#side-nav>a {
+  line-height: 1.5;
+}
+
+h1 {
+  font-size: 1.8em;
+  font-family: 'Linux Libertine', 'Georgia', 'Times', 'Source Serif Pro', serif;
+  line-height: 1.375;
+  border-bottom: 1px solid var(--color-section-border);
+  font-weight: normal;
+  margin-block-end: 1rem;
+}
+
+h2 {
+  font-size: 1.5em;
+  font-family: 'Linux Libertine', Georgia, Times, 'Source Serif Pro', serif;
+  line-height: 1.375;
+  border-bottom: 1px solid var(--color-section-border);
+  font-weight: normal;
+}
+
+.content>p {
+  margin-block-start: 1rem;
+  margin-block-end: 1rem;
+  line-height: 1.5;
+}
+
+#_notes-container {
+  display: grid;
+  grid-template-columns: min-content auto;
+  padding: .8rem 1.4rem 0 1.4rem;
+      justify-content: left;
+    align-items: baseline;
+}
+
+.page-note {
+    display: contents;
+}
+
+.page-note-backlinks {
+    letter-spacing: .2rem;
+    font-style: italic;
+}
+
+.page-note-name {
+    padding-right: .4rem;
+}

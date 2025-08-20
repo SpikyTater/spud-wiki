@@ -8,7 +8,6 @@ add redirected from ?redirect=#DeathForTheSpiders -> escape space # " < > [ \ ] 
 use html elements -> small, sub, sup, hgroup (for redirect), main, button, footer, header, address (for contributors), abbr
 add ARIA for accessibility
 better mobile layout
-a single '#' is used too much (hashtags) to be able to be used as the beginning of strikethrough. use 2#
 add embold, you lazy smile
 add internal links, you lazy smile
 add embedded media (at least images), you lazy smile
