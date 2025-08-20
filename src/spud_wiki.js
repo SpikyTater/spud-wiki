@@ -183,7 +183,7 @@ class SpudWikiAsset {
         s += "</head><body>";
 
         // body header
-        s += '<a id="logo-link" href="/spud-wiki/" title="Go to Main Page"><img id="logo" src="/spud-wiki/media/logo.png"/><span>Spud</span><span>Wiki</span></a><div id="search-cont"><input type="search" id="search-input" placeholder="Search..."/><div id="search-cont-outer"><div id="search-cont-inner"><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a></div></div></div>';
+        s += '<a id="logo-link" href="/spud-wiki/" title="Go to Main Page"><img id="logo" src="/spud-wiki/media/logo.png"/><span>Spud</span><span>Wiki</span></a><div id="search-cont"><input type="search" spellcheck="false" id="search-input" placeholder="Search..."/><div id="search-cont-outer"><div id="search-cont-inner"><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a></div></div></div>';
 
 
 

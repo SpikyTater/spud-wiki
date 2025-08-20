@@ -7,7 +7,6 @@ add recent changes to main page
 add redirected from ?redirect=#DeathForTheSpiders -> escape space # " < > [ \ ] ^ `
 use html elements -> small, sub, sup, hgroup (for redirect), main, button, footer, header, address (for contributors), abbr
 add ARIA for accessibility
-better mobile layout
 add embold, you lazy smile
 add internal links, you lazy smile
 add embedded media (at least images), you lazy smile
@@ -15,12 +14,9 @@ add !redirect -> when searching the following string, users will be redirected t
 add !nosearchindex -> the first heading encountered when going reverse post-order in the AST won't be indexed by its name. redirects are still allowed.
 add !category and !tag, pretty self explanatory
 add editor where users can try writing an article and see it converted immediately (debounce for like 100 ms, remember to add contain to the CSS of the preview). articles can be saved in local storage, exported or imported. maybe later add more than one save slot for articles.
-directives do_center_title should be handled inside spudtext, as it changed something inside the content
 add "!command XXX" directive, to say that, for example, the article "!title kawaii ..etc" you've been writing is the resulting page for a search box command. multiple commands can be used for the same page
 add article map (stickied maybe?) to the right sidebar
 add a decent site map to the left sidebar
-style better the darn footer, it looks terrible
-style better the darn header, it looks terrible
 redesign the welcome page
 for larry's sake add some testing, especially to spudtext.js (which needs a lot of it)
 cleanup spudtext.js, most of it is extremely redundant

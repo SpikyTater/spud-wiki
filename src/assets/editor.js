@@ -137,7 +137,7 @@ function AfterDomLoaded() {
         ],
       }).GetSpudText();
       if (spud_text) {
-        display_content_container.innerHTML = spud_text.GetHtmlString();
+        display_content_container.innerHTML = spud_text.GetTitleHtmlString() + spud_text.GetHtmlString();
       }
     } catch (e) {
 

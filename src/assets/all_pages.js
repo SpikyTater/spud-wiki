@@ -57,7 +57,7 @@ function AfterDomLoaded() {
           if (max_search_results === l) {
             arr.length = max_search_results;
           }
-          break;
+          return;
         }
       }
       if (curr_score && i < max_search_results) {
@@ -94,6 +94,7 @@ function AfterDomLoaded() {
       }
       return;
     }
+    console.log("HHH", s)
     //console.log(s)
     search_cont_inner.classList.add("search-show");
 
