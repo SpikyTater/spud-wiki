@@ -102,7 +102,7 @@ body {
   font-family: sans-serif;
 
   display: grid;
-  grid-template-rows: 5rem auto min-content min-content;
+  grid-template-rows: 5rem min-content auto min-content min-content;
   grid-template-columns: minmax(0, 1fr) minmax(16%, 12rem) minmax(55%, 50rem) minmax(16%, 12rem) minmax(0, 1fr);
 }
 
