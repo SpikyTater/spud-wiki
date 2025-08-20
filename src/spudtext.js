@@ -55,7 +55,7 @@ const TOKENS = {
   embold: {
     raw_token_length: 3,
   },
-  embold_aggregate: { // TODO
+  embold_aggregate: {
     can_have_children: true,
     is_processed_token: true,
     started_by: "embold",
@@ -587,6 +587,16 @@ class SpudText {
    * @type {boolean}
    */
   make_blue_red = false;
+
+  /**
+   * @type {boolean}
+   */
+  no_search_index = false;
+
+  /**
+   * @type {string[]}
+   */
+  commands = [];
 
   /**
    * Sets the title of this page
@@ -1725,6 +1735,22 @@ class SpudTextContext {
           token_instance.RemoveSelfAndChildrenFromAST(html_container);
           break;
         }
+        case TOKENS.embold_aggregate: {
+          const html_container = TokenInstance.CreateFromRawToken(TOKENS.html_container);
+          html_container.tag = "b";
+          html_container.children = token_instance.children;
+          for (const token of token_instance.children) {
+            token.parent = html_container;
+          }
+
+          const html_container2 = TokenInstance.CreateFromRawToken(TOKENS.html_container);
+          html_container2.tag = "em";
+          html_container2.children = [html_container];
+          html_container.parent = html_container2;
+
+          token_instance.RemoveSelfAndChildrenFromAST(html_container2);
+          break;
+        }
         case TOKENS.text: {
           const html_text = TokenInstance.CreateFromRawToken(TOKENS.html_text);
           html_text.content = token_instance.GetRawString();
@@ -1969,10 +1995,8 @@ class SpudTextContext {
 
   /*
   "redirect",
-  "nosearchindex",
   "category",
   "tag",
-center_title
   
   */
   #ParseFlagDirectives() {
@@ -1995,6 +2019,24 @@ center_title
             this.LogWarn(`Only one '${directive_name}' directive is needed.`);
           }
           spudtext.make_blue_red = true;
+          to_delete.push(directive_name);
+          break;
+        }
+        case "nosearchindex": {
+          if (token_instances.length > 1) {
+            this.LogWarn(`Only one '${directive_name}' directive is needed.`);
+          }
+          spudtext.no_search_index = true;
+          to_delete.push(directive_name);
+          break;
+        }
+        case "command": {
+          for (const token_instance of token_instances) {
+            
+            spudtext.commands.push(token_instance.children[0].GetRawString().trim().toLowerCase());
+          }
+          // !command implies !nosearchindex
+          spudtext.no_search_index = true;
           to_delete.push(directive_name);
           break;
         }
@@ -2077,11 +2119,6 @@ center_title
     this.spudtext.SetHtmlTree(this.ast);
 
     return this.spudtext;
-
-    // return this.#MakeHtmlString(this.ast.children);
-
-
-    //return "not yet";
   }
 }
 

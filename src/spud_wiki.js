@@ -534,12 +534,24 @@ export default class SpudWiki {
 
     const search_map = {};
 
+    const command_map = {};
+
     function add_search_map_string(str, is_title, link) {
       if (Object.hasOwn(search_map, str)) {
-        console.error(`Duplicate search_string '${str}'`);
+        console.error(`Duplicate search_string '${str}'.`);
       } else {
         search_map[str] = {
           str, is_title, link, lc_str: str.toLowerCase()
+        };
+      }
+    }
+
+    function add_command(cmd_string, link) {
+      if (Object.hasOwn(command_map, cmd_string)) {
+        console.error(`Duplicate command '${cmd_string}'.`);
+      } else {
+        command_map[cmd_string] = {
+          cmd: cmd_string, link
         };
       }
     }
@@ -556,9 +568,17 @@ export default class SpudWiki {
           // create search list
           const spud_text = asset.data;
 
-          add_search_map_string(spud_text.title, true, asset.link);
-
+          if (!spud_text.no_search_index) {
+            add_search_map_string(spud_text.title, true, asset.link);
+          }
           // TODO: add for each redirect
+
+          if (spud_text.commands.length) {
+            for (const cmd_string of spud_text.commands) {
+              add_command(cmd_string, asset.link);
+            }
+            // console.log(spud_text.commands)
+          }
         }
 
       }
@@ -567,6 +587,10 @@ export default class SpudWiki {
 
     const intermediate_search_helper_file_data = `/*This file was automatically generated. DO NOT EDIT.*/"use strict";const SEARCH_DATA=${JSON.stringify(search_map, null, this.is_dev_build ? 2 : 0)};export default SEARCH_DATA;`;
     promises.push(writeFile("./build/search_data.js", intermediate_search_helper_file_data));
+
+    const intermediate_command_helper_file_data = `/*This file was automatically generated. DO NOT EDIT.*/"use strict";const COMMAND_DATA=${JSON.stringify(command_map, null, this.is_dev_build ? 2 : 0)};export default COMMAND_DATA;`;
+    promises.push(writeFile("./build/command_data.js", intermediate_command_helper_file_data));
+
 
     return Promise.allSettled(promises);
   }
