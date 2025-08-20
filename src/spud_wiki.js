@@ -183,7 +183,7 @@ class SpudWikiAsset {
         s += "</head><body>";
 
         // body header
-        s += '<header id="header"><div id="logo-cont"><a id="logo-link" href="/spud-wiki/" title="Go to Main Page"><img id="logo" src="/spud-wiki/media/logo.png"/><div id="logo-title-cont"><span id="logo-title">Spud</span><span id="logo-title">Wiki</span></div></a></div><div id="search-cont"><input type="search" id="search-input" placeholder="Search..."/><div id="search-cont-outer"><div id="search-cont-inner"><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a></div></div></div></header>';
+        s += '<a id="logo-link" href="/spud-wiki/" title="Go to Main Page"><img id="logo" src="/spud-wiki/media/logo.png"/><span>Spud</span><span>Wiki</span></a><div id="search-cont"><input type="search" spellcheck="false" id="search-input" placeholder="Search..."/><div id="search-cont-outer"><div id="search-cont-inner"><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a></div></div></div>';
 
 
 
@@ -194,14 +194,16 @@ class SpudWikiAsset {
 
 
         // body middle section start
-        s += '<div id="section-middle">';
+        //  s += '<div id="section-middle">';
 
         s += spud_wiki.site_map_html_string;
 
         // start content section
         // TODO: do_center_title should go inside spudtext
-        s += `<div id="content" class="content${data.do_center_title ? ' do_center_title' : ""}">`;
+        //  s += `<div id="content" class="content${data.do_center_title ? ' do_center_title' : ""}">`;
+        s += data.GetTitleHtmlString();
 
+        s += `<div id="content" class="content">`;
         s += data.GetHtmlString();
 
         if (this.options.append_to_content) {
@@ -215,7 +217,7 @@ class SpudWikiAsset {
         s += '<div id="right-sidebar"></div>'
 
         // body middle section end, footer start
-        s += '</div><footer id="footer">';
+        //  s += '</div>';
 
         // footer
 
@@ -268,7 +270,7 @@ class SpudWikiAsset {
 
 
         // close footer, body and html
-        return s + "</footer></body></html>";
+        return s + "</body></html>";
       }
     }
   }
@@ -537,7 +539,7 @@ export default class SpudWiki {
         console.error(`Duplicate search_string '${str}'`);
       } else {
         search_map[str] = {
-          str, is_title, link,lc_str:str.toLowerCase()
+          str, is_title, link, lc_str: str.toLowerCase()
         };
       }
     }
