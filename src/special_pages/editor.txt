@@ -27,7 +27,7 @@ First of all you have to think of each line as a separate entity. You cannot hav
 A directive is a line starting with an exclamation point (**!**). Its syntax is like this:
 > !<directive_name> arguments of the directive, altough they could be optional
 
-<directive_name>, as the name suggests, stands for the name of the directive, which can be optionally followed but another line of text.
+<directive_name>, as the name suggests, stands for the name of the directive, which can be optionally followed by another line of text.
 Not all planned directives have been implemented yet, so this is open to change.
 You *shouldn't* have to type directive names in lower case, but I think this might be the case for now, until it gets fixed.
 Where you write a directive doesn't matter, unless otherwise noted.
