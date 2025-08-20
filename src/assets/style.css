@@ -14,6 +14,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*/
+
+
 html,
 body,
 p,
@@ -28,13 +30,16 @@ h6 {
   padding: 0;
 }
 
+a {
+  text-decoration: none;
+}
+
 body:has(#theme-select>[value="light"]:checked) {
   color-scheme: light;
   --color-bg-1-txt: #eee;
   --color-bg-1: #7338cb;
   --color-bg-1-lighter: #8662bb;
   --color-bg-1-darker: #652db9;
-  --outer-padding-inline: 8rem;
   --link-color-txt: #36c;
   --link-color-txt-hover: #3056a9;
   --link-color-txt-visited: #6a60b0;
@@ -52,7 +57,6 @@ body:has(#theme-select>[value="dark"]:checked) {
   --color-bg-1: #7338cb;
   --color-bg-1-lighter: #8662bb;
   --color-bg-1-darker: #652db9;
-  --outer-padding-inline: 8rem;
   --link-color-txt: #88a3e8;
   --link-color-txt-hover: #b0c1f0;
   --link-color-txt-visited: #a799cd;
@@ -65,386 +69,49 @@ body:has(#theme-select>[value="dark"]:checked) {
 }
 
 body {
-  display: flex;
-  flex-direction: column;
   min-height: 100vh;
+  width: 100vw;
+  max-width: 100%;
   background-color: var(--bg-main);
   color: var(--color-txt-main);
-}
+  overflow-wrap: break-word;
 
-:not(.search-result)a {
-  color: var(--link-color-txt);
-  text-decoration: none;
-}
+  --outer-padding-inline: 5.5vw;
 
-:not(.search-result)a:visited {
-  color: var(--link-color-txt-visited);
-}
-
-:not(.search-result)a:visited:hover {
-  color: var(--link-color-txt-visited-hover);
-  text-decoration: underline;
-}
-
-:not(.search-result)a:hover {
-  color: var(--link-color-txt-hover);
-  text-decoration: underline;
+  display: grid;
+  grid-template-rows: 4rem auto min-content;
+  grid-template-columns: 1fr 3fr 1fr;
 }
 
 #header {
-  background-color: var(--color-bg-1);
-  min-height: 3rem;
-  width: 100%;
-  display: flex;
-  padding: .4rem var(--outer-padding-inline);
-  box-sizing: border-box;
-}
-
-#logo-cont {
-  height: 100%;
-  display: flex;
-  justify-self: left;
+    display: contents;
 }
 
 #logo-link {
-  display: flex;
-  flex-direction: row;
-  flex-shrink: 1;
-  text-decoration: none;
-  color: var(--color-bg-1-txt);
-  font-weight: 700;
-  font-family: monospace;
-  font-size: 1.3rem;
-  user-select: none;
-}
-
-#logo {
-  height: max(3rem, 50px);
-}
-
-#logo-title-cont {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: max(3rem, 50px);
-  align-items: center;
-}
-
-#footer {
-  background-color: var(--color-bg-1);
-  color: var(--color-bg-1-txt);
-  width: 100%;
-  display: flex;
-  padding: .4rem var(--outer-padding-inline);
-  box-sizing: border-box;
-}
-
-#footer-info {
-  font-size: .75em;
-  flex-grow: 1;
-}
-
-#footer-info>a,
-#footer-contributors>a {
-  color: var(--color-bg-1-txt);
-}
-
-#section-middle {
-  font-family: sans-serif;
-  box-sizing: border-box;
-  padding-inline: var(--outer-padding-inline);
-  display: grid;
-  grid-template-columns: 1fr 4fr 1fr;
-  flex-grow: 1;
-  padding: 1rem var(--outer-padding-inline);
-  column-gap: 1rem;
-}
-
-.content {
-  box-sizing: border-box;
-}
-
-.tw-name {
-  font-weight: 700;
-  font-family: "Inter", "Noto Sans Arabic", "Roobert", "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-
-#footer-contributors {
-  font-size: 0.9em;
-}
-
-blockquote {
-  border-left: .2rem solid var(--color-bg-1-lighter);
-  margin-left: .6rem;
-  background-color: var(--color-bg-blockquote);
-  padding: .8rem 1.5rem;
-}
-
-#side-nav {
-  display: flex;
-  flex-direction: column;
-  padding-top: 4.3rem;
-}
-
-#side-nav>a {
-  line-height: 1.5;
-}
-
-.div-sep {
-  height: 1px;
-  background-color: var(--color-section-border);
-  margin-block: .4rem;
-}
-
-
-
-
-/************************************/
-
-h1 {
-  font-size: 1.8em;
-  font-family: 'Linux Libertine', 'Georgia', 'Times', 'Source Serif Pro', serif;
-  line-height: 1.375;
-  border-bottom: 1px solid var(--color-section-border);
-  font-weight: normal;
-  margin-block-end: 1em;
-}
-
-h2 {
-  font-size: 1.5em;
-  font-family: 'Linux Libertine', 'Georgia', 'Times', 'Source Serif Pro', serif;
-  line-height: 1.375;
-  border-bottom: 1px solid var(--color-section-border);
-  font-weight: normal;
-}
-
-h3 {
-  font-size: 1.15em;
-  line-height: 1.375;
-  font-weight: 400;
-  padding-inline-start: .7em;
-  padding-block-start: .6rem;
-  margin-block-end: -0.5em;
-}
-
-blockquote>p {
-  line-height: 2;
-}
-
-.content>p {
-  margin-block-start: 1em;
-  margin-block-end: 1em;
-  line-height: 1.5;
-  text-align: justify;
-}
-
-#_notes-container {
-  display: grid;
-  grid-template-columns: min-content auto;
-  padding-inline: 1.4em;
-  column-gap: .4rem;
-  row-gap: .6em;
-  padding-block-start: .8em;
-}
-
-.page-note {
-  display: contents;
-}
-
-.do_center_title>h1 {
-  text-align: center;
-}
-
-p.credits-contributor {
-  text-align: center;
-}
-
-.page-note-text a {
-  word-break: break-all;
-}
-
-@media screen and (max-width: 640px) {
-  #search-cont {
-    display: none;
-  }
-
-  #section-middle {
-    display: flex;
-    flex-direction: column;
-    padding-inline: 1.5rem;
-    padding-block: 1rem;
-    row-gap: 1.5rem;
-  }
-
-  #side-nav {
-    padding: 0;
-  }
-
-  .content {
-    padding: 0;
-    border-top: 1px solid var(--color-section-border);
-  }
-
-  #right-sidebar {
-    display: none;
-  }
-
-  #header {
-    padding-inline: 0;
-    justify-content: center;
-  }
-
-  #footer {
-    flex-direction: column;
-    padding-inline: 1.5rem;
-    row-gap: 1rem;
-    padding-block: 1rem;
-  }
-}
-
-/* editor stuff */
-
-#editor-container {
-  width: 100%;
-  height: 30rem;
-  border: 1px solid #555;
-}
-
-.cm-editor {
-  height: 100%;
-  width: 100%;
-  background-color: var(--bg-main-darker);
-}
-
-.cm-editor .cm-gutter {
-  min-width: 3em;
-}
-
-.cm-editor .cm-cursor {
-  border-left-color: var(--color-txt-main);
-}
-
-.cm-editor .cm-gutters {
-  color: var(--color-txt-main);
-  border: 0;
-  user-select: none;
-}
-
-.cm-editor .cm-gutters {
-  background-color: var(--color-bg-blockquote);
-}
-
-.cm-editor .cm-activeLineGutter {
-  color: #000;
-  background-color: #bbb;
-}
-
-.cm-editor .cm-activeLine {
-  background-color: var(--color-bg-blockquote);
-}
-
-#editor-content {
-  padding-inline: 0;
-}
-
-.editor-warn {
-  color: #cc5;
-}
-
-.editor-error {
-  color: #c55;
-}
-
-.editor-critical {
-  color: #c5c;
-}
-
-input[type="file"] {
-  display: none;
-}
-
-.editor-btn {
-  appearance: none;
-  border: 0;
-  line-height: normal;
-  padding: .3rem .8rem;
-  background-color: #777;
-  margin: 0;
-  cursor: pointer;
-  user-select: none;
-  display: inline-block;
-  box-sizing: border-box;
-  outline: 0;
-  font-size: 1rem;
-  text-align: center;
-  font-style: normal;
-  font-weight: normal;
-  vertical-align: middle;
-}
-
-#editor-btncontainer {
-  display: flex;
-  flex-direction: row;
-  column-gap: 1rem;
-  padding-block: 1rem;
-}
-
-.stahp~*,
-.stahp {
-  display: none !important;
-}
-
-#search-cont-inner.search-show {
-  display: block;
+    grid-area: 1 / 1 / 2 / 2;
 }
 
 #search-cont {
-  position: relative;
-  font-family: sans-serif;
+  grid-area: 1 / 2 / 2 / 3;
 }
 
-#search-cont-outer {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 1.3em;
-  user-select: none;
-  cursor: pointer;
+#section-middle {
+  display: contents;
 }
 
-#search-cont-inner {
-  display: none;
-  color: #111;
+#side-nav {
+  grid-area: 2/1/3/2;
 }
 
-.search-result:nth-child(even) {
-  background-color: #cdacff;
+#content {
+  grid-area: 2/2/3/3;
 }
 
-.search-result:hover {
-  background-color: #e1ccff;
+#right-sidebar {
+  grid-area: 2/3/3/4;
 }
 
-.search-result:active {
-  background-color: #ebdcff;
+#footer {
+  display: contents;
 }
 
-.search-result {
-  padding: .2rem .6rem;
-  background-color: #c096ff;
-}
-
-#search-cont-inner>a {
-  display: block;
-  text-decoration: none;
-  color: #111;
-}
-
-.page-note-backlink {
-  text-decoration: none;
-}
-
-.page-note-backlinks {
-  letter-spacing: .2rem;
-    font-style: italic;
-}
