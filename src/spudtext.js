@@ -2054,7 +2054,6 @@ class SpudTextContext {
           to_delete.push(directive_name);
           break;
         }
-
       }
     }
 
