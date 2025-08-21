@@ -121,7 +121,7 @@ const TOKENS = {
   external_link_end: {
     raw_token_length: 2,
   },
-  embedded_file: { // TODO
+  embedded_file: {
     can_have_children: true,
     is_processed_token: true,
     only_one_text_child_allowed: true,
@@ -689,12 +689,12 @@ class SpudText {
     }
   }
 
-  GetHtmlString() {
+  GetHtmlString(search_map) {
     if (this.html_string) {
       return this.html_string;
     }
 
-    return this.html_string = this.#Htmlify(this.html_tree_root.children);
+    return this.html_string = this.#Htmlify(this.html_tree_root.children, search_map);
   }
 
   /**
@@ -714,19 +714,38 @@ class SpudText {
    * @param {TokenInstance} html_tokens 
    * @returns {string}
    */
-  #Htmlify(html_tokens) {
+  #Htmlify(html_tokens, search_map) {
     let s = "";
 
     for (const token of html_tokens) {
       switch (token.raw_token) {
         case TOKENS.html_container:
           s += `<${token.tag} ${token.id ? 'id="' + token.id + '"' : ""} ${token.title ? 'title="' + token.title + '"' : ""} ${token.class ? 'class="' + token.class + '"' : ""} ${token.href ? 'href="' + token.href + '"' : ""} ${token.src ? 'src="' + token.src + '"' : ""} ${token.style ? 'style="' + token.style + '"' : ""}>`;
-          s += this.#Htmlify(token.children);
+          s += this.#Htmlify(token.children, search_map);
           s += `</${token.tag}>`
           break;
         case TOKENS.html_element:
           // TODO: this is a hack. I hate it with every fiber of my being
+
+
           if (token.tag !== "h1") {
+            if (token.class === "internal-link") {
+              let found = false;
+              for (const k in search_map) {
+                if (k.toLowerCase() === token.title) {
+                  token.href = search_map[k].link;
+                  found = true;
+                  break;
+                }
+              }
+
+              if (!found) {
+                console.error({token, search_map});
+                throw "NO";
+              }
+            }
+
+
             s += `<${token.tag} ${token.id ? 'id="' + token.id + '"' : ""} ${token.title ? 'title="' + token.title + '"' : ""} ${token.class ? 'class="' + token.class + '"' : ""} ${token.href ? 'href="' + token.href + '"' : ""} ${token.src ? 'src="' + token.src + '"' : ""} ${token.style ? 'style="' + token.style + '"' : ""}`;
 
             if (token.ext_link) {
@@ -2164,6 +2183,44 @@ class SpudTextContext {
     }
   }
 
+  #ParseInternalLinks() {
+    for (const token_instance of this.#ASTIteratorDepthFirstPostOrder()) {
+      if (token_instance.IsInstanceOf(TOKENS.internal_link)) {
+        const t = token_instance.children[0].code_point_array, l = t.length;
+
+        if (0 === l) {
+          this.LogWarn("empty internal_link aggregate.")
+          token_instance.RemoveSelfAndChildrenFromAST();
+          continue;
+        }
+
+        let link, label;
+
+        let i = 0;
+        // skip whitespaces
+        while (i < l && t[i] <= 32) i++;
+        const link_start = i;
+        // skip non-| (124)
+        while (i < l && t[i] !== 124) i++;
+        link = String.fromCodePoint(...t.slice(link_start, i)).trim();
+
+        if (i >= l) {
+          label = link;
+        } else {
+          label = String.fromCodePoint(...t.slice(i + 1)).trim();
+        }
+
+        const html_a = TokenInstance.CreateFromRawToken(TOKENS.html_element);
+        html_a.tag = "a";
+        html_a.content = label;
+        html_a.class = "internal-link";
+        html_a.title = link;
+
+        token_instance.RemoveSelfAndChildrenFromAST(html_a);
+      }
+    }
+  }
+
   GetSpudText() {
     this.start_timestamp = performance.now();
     this.#TokenizeSource();
@@ -2213,6 +2270,8 @@ class SpudTextContext {
     this.#ParseExternalLinks();
 
     this.#ParseEmbeddedFiles();
+
+    this.#ParseInternalLinks();
 
     this.#HandleStyles();
 

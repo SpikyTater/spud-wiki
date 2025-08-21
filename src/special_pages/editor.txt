@@ -109,7 +109,21 @@ The number of '=' is the heading number.
 
 === Internal links ===
 
-Links to internal pages have not been implemented yet. Their syntax is the same as the one of external links, except they only use a single \[ to open and a single \] to close the aggregate.
+To add a link to an article use this syntax:
+
+> \[link_to_article | optional label\]
+
+
+Their syntax is the same as the one of external links, except they only use a single \[ to open and a single \] to close the aggregate.
+There can be no styles inside this aggregate.
+
+Example:
+
+> \[larry|          Label to Larryyyyyyy!!!!!\]
+
+will render as:
+
+> [larry | Label to Larryyyyyyy!!!!!]
 
 === External Links ===
 
@@ -122,6 +136,28 @@ For example:
 > \[\[https://www.twitch.tv/pearlescentmoon click me pls\]\]
 
 will render as [[https://www.twitch.tv/pearlescentmoon click me pls]].
+There can be no styles inside this aggregate.
+
+=== Embedded images ===
+
+To embed an image inside an article, first you have to make sure that it's already on the server. To do so, check the '[[https://github.com/SpikyTater/spud-wiki/tree/main/src/media src/media]]' directory on github for the image, and then, to get the ID of that resource, check the file '[[https://github.com/SpikyTater/spud-wiki/blob/main/src/media_assets.js src/media_assets.js']] on github: you will have to check a variable named 'MEDIA_ASSETS'.
+
+The syntax is like this:
+
+> \[\[\[image_id | percentage | position | label \]\]\]
+
+[[[logo     left |30|   This is Larry. Say hi to him.]]]
+where image_id is the ID of the resource; percentage is an integer number representing what percentage of the width of the article will be occupied by the image, it's optional and the default value is 30; position is either 'right' or 'left' and it's self-explanatory, it's optional and the default value is 'right'; label is the label you want underneath the image, it's optional and the default value is the description found in src/media_assets.js'.
+The order doesn't matter, as long as image_id is written first.
+There can be no styles inside this aggregate.
+
+Example:
+
+> \[\[\[logo     left |30|   This is Larry. Say hi to him.\]\]\]
+
+will render as:
+
+Yes, spaces also don't matter. And the place where it appears is also very [abork | aborked]. I will work on that soon.
 
 == Backslash ==
 

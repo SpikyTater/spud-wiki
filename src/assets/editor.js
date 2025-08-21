@@ -16,6 +16,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*/
 
 import COMMIT_HASH from "../../build/commit_data.js";
+import { MEDIA_ASSETS } from "../media_assets.js";
+import SEARCH_DATA from "../../build/search_data.js";
 import { SpudTextContext } from "../spudtext.js";
 
 import { EditorView, keymap, lineNumbers, highlightActiveLineGutter, highlightActiveLine } from "@codemirror/view"
@@ -23,7 +25,6 @@ import { defaultKeymap, historyKeymap, history } from "@codemirror/commands"
 import { closeBrackets, closeBracketsKeymap } from "@codemirror/autocomplete"
 import { bracketMatching } from "@codemirror/language"
 import { Text } from "@codemirror/state"
-import { MEDIA_ASSETS } from "../media_assets.js";
 
 function AfterDomLoaded(initial_data) {
   // initializing the UI
@@ -194,7 +195,7 @@ function AfterDomLoaded(initial_data) {
         ],
       }).GetSpudText();
       if (spud_text) {
-        display_content_container.innerHTML = spud_text.GetTitleHtmlString() + spud_text.GetHtmlString();
+        display_content_container.innerHTML = spud_text.GetTitleHtmlString() + spud_text.GetHtmlString(SEARCH_DATA);
       }
     } catch (e) {
 

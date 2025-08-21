@@ -195,7 +195,7 @@ class SpudWikiAsset {
           s += `<a id="edit-src" href="/spud-wiki/editor.html?src=${encodeURIComponent(path.posix.normalize(this.src_file_path))}">Edit</a>`;
         }
         s += `<div id="content" class="content">`;
-        s += data.GetHtmlString();
+        s += data.GetHtmlString(spud_wiki.search_map);
 
         if (this.options.append_to_content) {
           s += this.options.append_to_content;
@@ -300,6 +300,11 @@ export default class SpudWiki {
    * @type {string}
    */
   current_commit_hash = "";
+
+  /**
+   * @type {any}
+   */
+  search_map;
 
   /**
    * @param {boolean} is_dev_build 
@@ -529,7 +534,7 @@ export default class SpudWiki {
       mkdirSync("./build/dist/media");
     }
 
-    const search_map = {};
+    const search_map = this.search_map = {};
 
     const command_map = {};
 
@@ -566,11 +571,6 @@ export default class SpudWiki {
     const promises = []
     for (const [asset_type, assets] of this.ASSET_MAP) {
       for (const asset of assets) {
-        const data = asset.GetDstFileData(this);
-        console.log(asset.dst_path.padEnd(60, " "), asset.src_file_path.padEnd(60, " "), data?.length);
-
-        promises.push(writeFile(asset.dst_path, data));
-
         if (SpudWikiAsset.PAGE === asset_type) {
           // create search list
           const spud_text = asset.data;
@@ -588,6 +588,19 @@ export default class SpudWiki {
             // console.log(spud_text.commands)
           }
         }
+
+      }
+    }
+
+    //  console.log("SEARCH",search_map)
+
+    for (const [asset_type, assets] of this.ASSET_MAP) {
+      for (const asset of assets) {
+        const data = asset.GetDstFileData(this);
+        console.log(asset.dst_path.padEnd(60, " "), asset.src_file_path.padEnd(60, " "), data?.length);
+
+        promises.push(writeFile(asset.dst_path, data));
+
 
       }
     }
