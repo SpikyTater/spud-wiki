@@ -23,6 +23,7 @@ import { defaultKeymap, historyKeymap, history } from "@codemirror/commands"
 import { closeBrackets, closeBracketsKeymap } from "@codemirror/autocomplete"
 import { bracketMatching } from "@codemirror/language"
 import { Text } from "@codemirror/state"
+import { MEDIA_ASSETS } from "../media_assets.js";
 
 function AfterDomLoaded(initial_data) {
   // initializing the UI
@@ -30,6 +31,10 @@ function AfterDomLoaded(initial_data) {
 
   const editor_container = document.createElement("div");
   editor_container.id = "editor-container";
+
+  const new_media_container = document.createElement("div");
+  new_media_container.id = "editor-media-container";
+  new_media_container.textContent = "Temporary media assets:";
 
   const display_content_container = document.createElement("div");
   display_content_container.id = "editor-content";
@@ -58,13 +63,61 @@ function AfterDomLoaded(initial_data) {
   const import_input = document.createElement("input");
   import_input.type = "file";
   import_input.accept = 'text/*';
-
-  button_container.append(button, export_button, import_label);
   import_label.append(import_input);
-  content_container.append(editor_container, button_container, errors_container, display_content_container);
+
+  const import_image_label = document.createElement("label");
+  import_image_label.className = "editor-btn";
+  import_image_label.textContent = "Import image";
+  import_image_label.title = "Import an image into the editor. It won't be uploaded online.";
+
+  const import_image = document.createElement("input");
+  import_image.type = "file";
+  import_image.accept = 'image/*';
+  import_image_label.append(import_image);
+
+  button_container.append(button, export_button, import_label, import_image_label);
+  content_container.append(editor_container, button_container, new_media_container, errors_container, display_content_container);
 
 
 
+  /**
+   * This function is to be used ONLY by the editor.
+   */
+  function AddNewMediaAsset(e) {
+    if (!e?.target) return;
+    e.stopPropagation();
+    const files = e.target.files;
+    if (!files || 1 !== files.length) return;
+    const file = files[0];
+    if (!file || !file.type.startsWith("image")) return;
+
+    //file_reader.read(file);
+
+    const name = prompt("Add an internal id for the image. (It can be whatever you want, except a duplicate one. No spaces allowed. To cancel, send an empty value)")?.toLowerCase().trim();
+    if (!name) {
+      return;
+    }
+    if (Object.hasOwn(MEDIA_ASSETS, name)) return;
+
+    const desc = prompt("Add an internal descsripton for the image. (To cancel, send an empty value)");
+    if (!desc) {
+      return;
+    }
+
+    MEDIA_ASSETS[name] = {
+      name, description: desc, url: URL.createObjectURL(file), GetLink: function () {
+        return this.url;
+      }
+    };
+
+    // console.log(MEDIA_ASSETS);
+    e.target.value = null;
+
+    const el = document.createElement("div");
+    el.textContent = `{name:"${name}",desc:"${desc}"}`;
+
+    new_media_container.append(el);
+  }
 
   const custom_keymap = [
     // TODO: { key: "Ctrl-s", preventDefault: true, run: save }
@@ -174,15 +227,21 @@ function AfterDomLoaded(initial_data) {
   function on_import_input_change(e) {
     if (!e?.target) return;
     e.stopPropagation();
-    e.target.value = null;
     const files = e.target.files;
+
+    // console.log(files, e);
     if (!files || 1 !== files.length) return;
 
     const file = files[0];
     if (!file || !file.type.startsWith("text")) return;
 
     file_reader.readAsText(file);
+    e.target.value = null;
+
   }
+
+
+  import_image.addEventListener("change", e => new Promise(() => AddNewMediaAsset(e)), { passive: true });
 
   import_input.addEventListener("change", on_import_input_change, { passive: true });
 }

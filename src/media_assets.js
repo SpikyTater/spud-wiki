@@ -60,7 +60,7 @@ class MediaAsset {
   }
 
   GetLink() {
-    return `/spud-wiki/${this.dst_path}`;
+    return this.url ? this.url : `/spud-wiki/${this.dst_path}`;
   }
 }
 const MEDIA_ASSETS = {
