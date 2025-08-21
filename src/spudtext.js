@@ -2041,8 +2041,8 @@ class SpudTextContext {
 
             spudtext.commands.push(token_instance.children[0].GetRawString().trim().toLowerCase());
           }
-          // !command implies !nosearchindex
-          spudtext.no_search_index = true;
+          // !command implies !nosearchindex <- not anymore
+          // spudtext.no_search_index = true;
           to_delete.push(directive_name);
           break;
         }
@@ -2096,7 +2096,7 @@ class SpudTextContext {
           const html_figure = TokenInstance.CreateFromRawToken(TOKENS.html_container);
           html_figure.tag = "figure";
           html_figure.style = "width:" + percentage + "%;";
-          html_figure.class="img-align-" + alignment;
+          html_figure.class = "img-align-" + alignment;
 
           //  console.log(html_figure)
           // TODO: enclose the img in an 'a' element, which redirects to a page with info about the img
