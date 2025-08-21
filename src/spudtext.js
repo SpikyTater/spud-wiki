@@ -732,7 +732,7 @@ class SpudText {
             if (token.class === "internal-link") {
               let found = false;
               for (const k in search_map) {
-                if (k.toLowerCase() === token.title) {
+                if (k.toLowerCase() === token.title.toLowerCase()) {
                   token.href = search_map[k].link;
                   found = true;
                   break;
@@ -740,7 +740,7 @@ class SpudText {
               }
 
               if (!found) {
-                console.error({token, search_map});
+                console.error({ token, search_map });
                 throw "NO";
               }
             }
