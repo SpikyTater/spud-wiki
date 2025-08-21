@@ -478,3 +478,16 @@ input[type="file"] {
   }
 
 }
+
+.embedded-img {
+  width: 100%;
+}
+
+.img-align-left {
+  float: left;
+}
+
+.img-align-right {
+  float: right;
+  
+}

@@ -15,6 +15,7 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*/
 import { ContributorFromString } from "./contributors.js";
+import { MEDIA_ASSETS } from "./media_assets.js";
 
 /**
  * @typedef Token
@@ -719,14 +720,14 @@ class SpudText {
     for (const token of html_tokens) {
       switch (token.raw_token) {
         case TOKENS.html_container:
-          s += `<${token.tag} ${token.id ? 'id="' + token.id + '"' : ""} ${token.class ? 'class="' + token.class + '"' : ""} ${token.href ? 'href="' + token.href + '"' : ""}>`;
+          s += `<${token.tag} ${token.id ? 'id="' + token.id + '"' : ""} ${token.title ? 'title="' + token.title + '"' : ""} ${token.class ? 'class="' + token.class + '"' : ""} ${token.href ? 'href="' + token.href + '"' : ""} ${token.src ? 'src="' + token.src + '"' : ""} ${token.style ? 'style="' + token.style + '"' : ""}>`;
           s += this.#Htmlify(token.children);
           s += `</${token.tag}>`
           break;
         case TOKENS.html_element:
           // TODO: this is a hack. I hate it with every fiber of my being
           if (token.tag !== "h1") {
-            s += `<${token.tag} ${token.id ? 'id="' + token.id + '"' : ""} ${token.class ? 'class="' + token.class + '"' : ""} ${token.href ? 'href="' + token.href + '"' : ""}`;
+            s += `<${token.tag} ${token.id ? 'id="' + token.id + '"' : ""} ${token.title ? 'title="' + token.title + '"' : ""} ${token.class ? 'class="' + token.class + '"' : ""} ${token.href ? 'href="' + token.href + '"' : ""} ${token.src ? 'src="' + token.src + '"' : ""} ${token.style ? 'style="' + token.style + '"' : ""}`;
 
             if (token.ext_link) {
               s += ' target="_blank" rel="noopener noreferrer"';
@@ -2069,6 +2070,101 @@ class SpudTextContext {
 
   }
 
+  #ParseEmbeddedFiles() {
+    for (const token_instance of this.#ASTIteratorDepthFirstPostOrder()) {
+      if (token_instance.IsInstanceOf(TOKENS.embedded_file)) {
+        // only one text child... for now. later optional description will be able to
+        // be styled
+        const t = token_instance.children[0].code_point_array, l = t.length;
+
+        if (0 === l) {
+          this.LogWarn("empty embedded aggregate.")
+          token_instance.RemoveSelfAndChildrenFromAST();
+          continue;
+        }
+
+        let media_name, desc = "", percentage = "30", alignment = "right";
+
+        const add_media_to_ast = () => {
+          media_name = media_name.toLowerCase();
+          if (!Object.hasOwn(MEDIA_ASSETS, media_name)) {
+            this.LogWarn("no media by this name");
+            return;
+          }
+
+          const asset = MEDIA_ASSETS[media_name];
+          const html_figure = TokenInstance.CreateFromRawToken(TOKENS.html_container);
+          html_figure.tag = "figure";
+          html_figure.style = "width:" + percentage + "%;";
+          html_figure.class="img-align-" + alignment;
+
+          //  console.log(html_figure)
+          // TODO: enclose the img in an 'a' element, which redirects to a page with info about the img
+          const html_img = TokenInstance.CreateFromRawToken(TOKENS.html_element);
+          html_img.tag = "img";
+          html_img.content = "";
+          html_img.class = "embedded-img";
+          html_img.src = asset.GetLink();
+
+          const html_figcaption = TokenInstance.CreateFromRawToken(TOKENS.html_element);
+          html_figcaption.tag = "figcaption";
+          html_figcaption.content = desc || asset.description;
+
+          html_figure.AddChild(html_img);
+          html_figure.AddChild(html_figcaption);
+
+          token_instance.RemoveSelfAndChildrenFromAST(html_figure);
+        }
+
+        let i = 0;
+        // skip whitespaces
+        while (i < l && t[i] <= 32) i++;
+        const media_name_start = i;
+        // skip non-whitespaces
+        while (i < l && t[i] > 32) i++;
+        media_name = String.fromCodePoint(...t.slice(media_name_start, i));
+
+        if (i >= l) {
+          add_media_to_ast();
+          continue;
+        }
+
+        while (i < l) {
+          while (i < l && t[i] <= 32) i++;
+
+          if (i >= l) {
+            add_media_to_ast();
+            continue;
+          }
+
+          // we have a string
+          const str_init = i;
+          // skip non-| (124)
+          while (i < l && t[i] !== 124) i++;
+
+          const str = String.fromCodePoint(...t.slice(str_init, i)).trim();
+          if (/^[0-9]+$/.test(str)) {
+            // use it as page width percentage
+            percentage = str;
+          } else {
+            switch (str) {
+              case "left":
+              case "right":
+                alignment = str; break;
+              default:
+                desc = str;
+                break;
+            }
+          }
+
+          // skip | if one was encountered
+          if (i < l && t[i] === 124) i++;
+        }
+        add_media_to_ast();
+      }
+    }
+  }
+
   GetSpudText() {
     this.start_timestamp = performance.now();
     this.#TokenizeSource();
@@ -2116,6 +2212,8 @@ class SpudTextContext {
     this.#ParseNotes();
 
     this.#ParseExternalLinks();
+
+    this.#ParseEmbeddedFiles();
 
     this.#HandleStyles();
 
