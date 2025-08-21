@@ -105,8 +105,6 @@ function AfterDomLoaded(initial_data) {
     config.doc = Text.of(initial_data); //Text.of(data.split(/\r?\n/));
   }
 
-  // config.doc = Text.of(arr) -> arr is an array of lines, I believe
-
   const editor_view = new EditorView(config);
 
   const file_reader = new FileReader();
@@ -157,8 +155,6 @@ function AfterDomLoaded(initial_data) {
   export_button.addEventListener("click", () => {
     const str = editor_view?.state?.doc?.toString();
 
-    // const file = new File([str], "file.txt", { type: 'application/octet-stream' });
-
     const blob = new Blob([str], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
 
@@ -172,9 +168,6 @@ function AfterDomLoaded(initial_data) {
     a.click();
 
     URL.revokeObjectURL(url);
-
-
-
   }, { passive: true });
 
 
@@ -192,8 +185,6 @@ function AfterDomLoaded(initial_data) {
   }
 
   import_input.addEventListener("change", on_import_input_change, { passive: true });
-
-
 }
 
 function start_page(initial_data) {
@@ -206,7 +197,7 @@ function start_page(initial_data) {
 const query_string = new URLSearchParams(window.location.search);
 const src_string = query_string.get("src");
 if (src_string) {
-  const src_url = `https://raw.githubusercontent.com/SpikyTater/spud-wiki/${COMMIT_HASH}/${src_string}`;
+  const src_url = `https://raw.githubusercontent.com/SpikyTater/spud-wiki/${COMMIT_HASH}/${decodeURIComponent(src_string)}`;
   (async () => {
     try {
       const response = await fetch(src_url);

@@ -191,8 +191,9 @@ class SpudWikiAsset {
         s += data.GetTitleHtmlString();
 
         // edit source link
-        s += `<a id="edit-src" href="/spud-wiki/editor.html?src=${encodeURIComponent(path.posix.normalize(this.src_file_path))}">Edit</a>`;
-
+        if (!data.no_edit) {
+          s += `<a id="edit-src" href="/spud-wiki/editor.html?src=${encodeURIComponent(path.posix.normalize(this.src_file_path))}">Edit</a>`;
+        }
         s += `<div id="content" class="content">`;
         s += data.GetHtmlString();
 

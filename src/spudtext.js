@@ -594,6 +594,11 @@ class SpudText {
   no_search_index = false;
 
   /**
+   * @type {boolean}
+   */
+  no_edit = false;
+
+  /**
    * @type {string[]}
    */
   commands = [];
@@ -2032,11 +2037,19 @@ class SpudTextContext {
         }
         case "command": {
           for (const token_instance of token_instances) {
-            
+
             spudtext.commands.push(token_instance.children[0].GetRawString().trim().toLowerCase());
           }
           // !command implies !nosearchindex
           spudtext.no_search_index = true;
+          to_delete.push(directive_name);
+          break;
+        }
+        case "noedit": {
+          if (token_instances.length > 1) {
+            this.LogWarn(`Only one '${directive_name}' directive is needed.`);
+          }
+          spudtext.no_edit = true;
           to_delete.push(directive_name);
           break;
         }
