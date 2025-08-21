@@ -49,6 +49,7 @@ body:has(#theme-select>[value="light"]:checked) {
   --color-section-border: #444;
   --bg-main: #eee;
   --bg-main-accent: #ddd;
+  --bg-main-accenter: #ccc;
   --bg-main-darker: #ddd;
   --bg-main-darkerer: #ccc;
   --color-txt-main: #333;
@@ -68,6 +69,7 @@ body:has(#theme-select>[value="dark"]:checked) {
   --color-section-border: #ddd;
   --bg-main: #333;
   --bg-main-accent: #3c3c3c;
+  --bg-main-accenter: #444;
   --bg-main-darker: #222;
   --bg-main-darkerer: #111;
   --color-txt-main: #eee;
@@ -104,11 +106,12 @@ body {
   display: grid;
   grid-template-rows: 5rem min-content auto min-content min-content;
   grid-template-columns: minmax(0, 1fr) minmax(16%, 12rem) minmax(55%, 50rem) minmax(16%, 12rem) minmax(0, 1fr);
-  grid-template-areas: ". logo search search ."
-  ". . title . ."
-  ". leftp cont rightp ."
-  ". copyr copyr sett ."
-  ". contr contr sett ."
+  grid-template-areas:
+    ". logo  search search ."
+    ". .     title  .      ."
+    ". leftp cont   rightp ."
+    ". copyr copyr  sett   ."
+    ". contr contr  sett   ."
   ;
 }
 
@@ -122,6 +125,7 @@ body {
   align-items: center;
   user-select: none;
   border-bottom: 1px solid var(--color-section-border);
+  text-decoration: none;
 }
 
 #search-cont {
@@ -146,7 +150,7 @@ body {
 
 #content {
   grid-area: cont;
-  padding: 0 1rem;
+  padding: 0 .5rem;
 }
 
 #right-sidebar {
@@ -199,6 +203,15 @@ body {
 #side-nav>a {
   line-height: 1.5;
   text-align: center;
+  margin: 0 .5rem;
+}
+
+#side-nav>a:nth-child(even) {
+  background-color: var(--bg-main-accent);
+}
+
+#side-nav>a:hover {
+  background-color: var(--bg-main-accenter);
 }
 
 h1 {
@@ -248,11 +261,19 @@ h2 {
   font-size: 1.5rem;
 }
 
-body>#_title {
+body>._title {
   grid-area: title;
-  padding-left: .5rem;
-  margin: 0 .5rem;
+  padding: 0 .5rem;
+  /* margin: 0 .5rem;*/
   line-height: 2;
+}
+
+#edit-src {
+  grid-area: title;
+  margin-right: .5rem;
+  align-self: flex-end;
+  padding: 0 .5rem .95rem;
+  justify-self: flex-end;
 }
 
 blockquote {
@@ -398,10 +419,6 @@ input[type="file"] {
   background-color: var(--bg-main-darkerer);
 }
 
-#side-nav>a:nth-child(even) {
-  background-color: var(--bg-main-accent);
-}
-
 .div-sep {
   height: 1px;
   background-color: var(--color-section-border);
@@ -449,6 +466,15 @@ input[type="file"] {
   #theme-cont {
     padding: 1rem;
     text-align: center;
+  }
+
+  body._title {
+    margin-right: .5rem;
+  }
+
+  #edit-src {
+    border: 0;
+    margin-top: -2.15rem;
   }
 
 }

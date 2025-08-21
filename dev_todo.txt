@@ -1,20 +1,15 @@
 rework navigation
 what could go on the right side of the middle section -> page navigation, preomputed and presented as html
 site map on the left side
-chat commands (!cowboy, !time, !celtic, !kawaii and so on) in the search bar
 add last modified on the bottom of every page unless !nolastmodified
 add recent changes to main page
 add redirected from ?redirect=#DeathForTheSpiders -> escape space # " < > [ \ ] ^ `
 use html elements -> small, sub, sup, hgroup (for redirect), main, button, footer, header, address (for contributors), abbr
 add ARIA for accessibility
-add embold, you lazy smile
 add internal links, you lazy smile
 add embedded media (at least images), you lazy smile
 add !redirect -> when searching the following string, users will be redirected to this page, to be more specific they will be redirected to the first heading node encountered when going in reverse post-order in the AST (remember to turn the title into a heading1_aggregate, first...). multiple !redirect s are allowed for each heading
-add !nosearchindex -> the first heading encountered when going reverse post-order in the AST won't be indexed by its name. redirects are still allowed.
 add !category and !tag, pretty self explanatory
-add editor where users can try writing an article and see it converted immediately (debounce for like 100 ms, remember to add contain to the CSS of the preview). articles can be saved in local storage, exported or imported. maybe later add more than one save slot for articles.
-add "!command XXX" directive, to say that, for example, the article "!title kawaii ..etc" you've been writing is the resulting page for a search box command. multiple commands can be used for the same page
 add article map (stickied maybe?) to the right sidebar
 add a decent site map to the left sidebar
 redesign the welcome page
@@ -25,10 +20,10 @@ once !nosearchindex and !redirect get added, add !nosearchindex to Sup Face and 
 license the SpudText format
 add warning for weird characters like microsoft word's ' " ", god I hate these
 add about.html page
-add some way to prettify spudtext, maybe maybe maybe even a way to do it in VS Code
+add some way to prettify spudtext in VS Code
 make a bulletin board for todo stuff
 make a list of accepted domains for external links, and only https protocol (can be omitted in links)
 avoid any possibility of HTML injection by escaping string before adding them inside htmlifystring. same thing for !noteXXXXX, escape the XXXXX part
 decouple TokenInstance from AstNode functionality, TokenInstance extend AstNode
-add a "view source" inside each page, so people can read and try to edit articles... it should redirect to editor, which will load the actual source. it will know which page sent it there through a query string with the name of the file. the hash of the deployed commit should be saved and used to fetch that file from github https://stackoverflow.com/a/34518749
-hide search thingy when focusing out of it
+editor: add save (never autosave), multiple save slots, squiggles for warnings (yellow) and errors (red), auto compile -> race between 10 seconds since last compilation, 2 seconds debounce, normal click, click on warning/error to show exact place in spudtext (select that substring as well maybe?), better issue (warning/error) console, add prettify function, hide all spudtext documentation in <details> and <summary>
+search: add arrow key support to choose result, hide search thingy when focusing out of it / clicking elsewhere

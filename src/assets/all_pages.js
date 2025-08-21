@@ -17,6 +17,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 // This is the ONLY javascript file that is deployed to ALL PAGES OF THE WIKI
 // inside their <head> element.
 
+import COMMAND_DATA from "../../build/command_data.js";
 import SEARCH_DATA from "../../build/search_data.js";
 import { THEMES } from "../global_constants.js";
 
@@ -84,7 +85,7 @@ function AfterDomLoaded() {
 
   const search_cont_inner = document.getElementById("search-cont-inner");
   document.getElementById("search-input").addEventListener("input", e => {
-    const s = e?.target?.value;
+    let s = e?.target?.value;
 
     if (typeof s !== "string" || s.length < 1) {
       search_cont_inner.classList.remove("search-show");
@@ -94,10 +95,11 @@ function AfterDomLoaded() {
       }
       return;
     }
-    console.log("HHH", s)
+    //    console.log("HHH", s)
     //console.log(s)
     search_cont_inner.classList.add("search-show");
 
+    s = s.toLowerCase().trim();
     const search_results = SearchString(s);
 
     // window.requestAnimationFrame(() => {
@@ -125,6 +127,16 @@ function AfterDomLoaded() {
     }
   }, { passive: true });
 
+  document.getElementById("search-input").addEventListener("change", e => {
+    const s = e?.target?.value;
+    if (!s || s.length <= 1) return;
+    if (!s.codePointAt(0) === 33) return;
+    const cmd = s.substring(1).toLowerCase().trim();
+    if (Object.hasOwn(COMMAND_DATA, cmd)) {
+      window.location.href = COMMAND_DATA[cmd].link;
+    }
+    //console.log(s);
+  })
 
   /*document.getElementById("search-input").addEventListener("focusout", e => {
     search_cont_inner.classList.remove("search-show");

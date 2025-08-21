@@ -15,6 +15,7 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*/
 
+import COMMIT_HASH from "../../build/commit_data.js";
 import { SpudTextContext } from "../spudtext.js";
 
 import { EditorView, keymap, lineNumbers, highlightActiveLineGutter, highlightActiveLine } from "@codemirror/view"
@@ -23,7 +24,7 @@ import { closeBrackets, closeBracketsKeymap } from "@codemirror/autocomplete"
 import { bracketMatching } from "@codemirror/language"
 import { Text } from "@codemirror/state"
 
-function AfterDomLoaded() {
+function AfterDomLoaded(initial_data) {
   // initializing the UI
   const content_container = document.getElementById("content");
 
@@ -99,7 +100,10 @@ function AfterDomLoaded() {
     ]
   };
 
-  // config.doc = Text.of(arr) -> arr is an array of lines, I believe
+
+  if (initial_data && Array.isArray(initial_data) && initial_data.every(datum => typeof datum === "string" || datum instanceof String)) {
+    config.doc = Text.of(initial_data); //Text.of(data.split(/\r?\n/));
+  }
 
   const editor_view = new EditorView(config);
 
@@ -151,8 +155,6 @@ function AfterDomLoaded() {
   export_button.addEventListener("click", () => {
     const str = editor_view?.state?.doc?.toString();
 
-    // const file = new File([str], "file.txt", { type: 'application/octet-stream' });
-
     const blob = new Blob([str], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
 
@@ -166,9 +168,6 @@ function AfterDomLoaded() {
     a.click();
 
     URL.revokeObjectURL(url);
-
-
-
   }, { passive: true });
 
 
@@ -186,9 +185,34 @@ function AfterDomLoaded() {
   }
 
   import_input.addEventListener("change", on_import_input_change, { passive: true });
-
-
 }
-if ("loading" === document.readyState)
-  window.addEventListener("DOMContentLoaded", AfterDomLoaded, { once: true, passive: true });
-else AfterDomLoaded();
+
+function start_page(initial_data) {
+  if ("loading" === document.readyState) {
+    window.addEventListener("DOMContentLoaded", initial_data ? AfterDomLoaded.bind(window, initial_data) : AfterDomLoaded, { once: true, passive: true });
+  }
+  else AfterDomLoaded(initial_data);
+}
+
+const query_string = new URLSearchParams(window.location.search);
+const src_string = query_string.get("src");
+if (src_string) {
+  const src_url = `https://raw.githubusercontent.com/SpikyTater/spud-wiki/${COMMIT_HASH}/${decodeURIComponent(src_string)}`;
+  (async () => {
+    try {
+      const response = await fetch(src_url);
+      if (!response.ok) {
+        console.error("what now", response);
+        start_page();
+        return;
+      }
+      const text = await response.text();
+      start_page(text.split(/\r?\n/));
+    } catch (e) {
+      console.error("why...", e);
+      start_page();
+    }
+  })()
+} else {
+  start_page();
+}
