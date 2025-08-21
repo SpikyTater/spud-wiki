@@ -25,4 +25,4 @@ avoid any possibility of HTML injection by escaping string before adding them in
 decouple TokenInstance from AstNode functionality, TokenInstance extend AstNode
 editor: add save (never autosave), multiple save slots, squiggles for warnings (yellow) and errors (red), auto compile -> race between 10 seconds since last compilation, 2 seconds debounce, normal click, click on warning/error to show exact place in spudtext (select that substring as well maybe?), better issue (warning/error) console, add prettify function, hide all spudtext documentation in <details> and <summary>
 search: add arrow key support to choose result, hide search thingy when focusing out of it / clicking elsewhere
-add global constants to spudtext, for example COMMIT_HASH
+add global constants to spudtext, for example COMMIT_HASH and other stuff
