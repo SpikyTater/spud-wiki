@@ -479,8 +479,9 @@ export default class SpudWiki {
     const all_articles = this.ASSET_MAP.get(SpudWikiAsset.PAGE), l = all_articles.length;
     for (let i = 0; i < l; i++) {
       const article = all_articles[i];
-
-      s += `<a href="${article.link}">${article.data.title}</a>`;
+      if (!article.data.no_search_index) {
+        s += `<a href="${article.link}">${article.data.title}</a>`;
+      }
     }
     s += "</nav>"
 
