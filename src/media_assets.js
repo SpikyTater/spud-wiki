@@ -60,15 +60,13 @@ class MediaAsset {
   }
 
   GetLink() {
-    return `/spud-wiki/${this.dst_path}`;
+    return this.url ? this.url : `/spud-wiki/${this.dst_path}`;
   }
 }
 const MEDIA_ASSETS = {
-  "favicon.ico": new MediaAsset("favicon.ico", CONTRIBUTORS.matty5957, "Website icon.", null, "favicon.ico"),
-  "logo.png": new MediaAsset("logo.png", CONTRIBUTORS.matty5957, "Website logo."),
+  favicon: new MediaAsset("favicon", CONTRIBUTORS.matty5957, "Website icon.", "./src/media/favicon.ico", "favicon.ico"),
+  logo: new MediaAsset("logo", CONTRIBUTORS.matty5957, "Website logo.", "./src/media/logo.png", "media/logo.png"),
 };
-
-
 
 function ValidateMediaAssets() {
   let errored = false
