@@ -144,7 +144,7 @@ To embed an image inside an article, first you have to make sure that it's alrea
 
 The syntax is like this:
 
-> \[\[\[image_id | percentage | position | label \]\]\]
+> \[\[\[image_id  percentage | position | label \]\]\]
 
 [[[logo     left |30|   This is Larry. Say hi to him.]]]
 where image_id is the ID of the resource; percentage is an integer number representing what percentage of the width of the article will be occupied by the image, it's optional and the default value is 30; position is either 'right' or 'left' and it's self-explanatory, it's optional and the default value is 'right'; label is the label you want underneath the image, it's optional and the default value is the description found in src/media_assets.js'.
