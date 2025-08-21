@@ -25,5 +25,5 @@ make a bulletin board for todo stuff
 make a list of accepted domains for external links, and only https protocol (can be omitted in links)
 avoid any possibility of HTML injection by escaping string before adding them inside htmlifystring. same thing for !noteXXXXX, escape the XXXXX part
 decouple TokenInstance from AstNode functionality, TokenInstance extend AstNode
-hide search thingy when focusing out of it
 editor: add save (never autosave), multiple save slots, squiggles for warnings (yellow) and errors (red), auto compile -> race between 10 seconds since last compilation, 2 seconds debounce, normal click, click on warning/error to show exact place in spudtext (select that substring as well maybe?), better issue (warning/error) console, add prettify function, hide all spudtext documentation in <details> and <summary>
+search: add arrow key support to choose result, hide search thingy when focusing out of it / clicking elsewhere
