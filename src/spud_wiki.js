@@ -14,7 +14,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*/
-import { existsSync, mkdirSync, readdirSync } from "fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync } from "fs";
 import { readFile, stat, writeFile } from "fs/promises";
 import path from "path";
 import { SpudTextContext, SpudText } from "./spudtext.js";
@@ -185,23 +185,13 @@ class SpudWikiAsset {
         // body header
         s += '<a id="logo-link" href="/spud-wiki/" title="Go to Main Page"><img id="logo" src="/spud-wiki/media/logo.png"/><span>Spud</span><span>Wiki</span></a><div id="search-cont"><input type="search" spellcheck="false" id="search-input" placeholder="Search..."/><div id="search-cont-outer"><div id="search-cont-inner"><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a><a class="search-result"></a></div></div></div>';
 
-
-
-
-
-
-
-
-
-        // body middle section start
-        //  s += '<div id="section-middle">';
-
         s += spud_wiki.site_map_html_string;
 
         // start content section
-        // TODO: do_center_title should go inside spudtext
-        //  s += `<div id="content" class="content${data.do_center_title ? ' do_center_title' : ""}">`;
         s += data.GetTitleHtmlString();
+
+        // edit source link
+        s += `<a id="edit-src" href="/spud-wiki/editor.html?src=${encodeURIComponent(path.posix.normalize(this.src_file_path))}">Edit</a>`;
 
         s += `<div id="content" class="content">`;
         s += data.GetHtmlString();
@@ -306,6 +296,11 @@ export default class SpudWiki {
   site_map_html_string = "";
 
   /**
+   * @type {string}
+   */
+  current_commit_hash = "";
+
+  /**
    * @param {boolean} is_dev_build 
    */
   constructor(is_dev_build) {
@@ -397,9 +392,9 @@ export default class SpudWiki {
   }
 
   AddAllPagesInsideDocs() {
-    const files_in_docs = readdirSync(path.join(".", "docs"), { recursive: true });
+    const files_in_docs = readdirSync(path.posix.join(".", "docs"), { recursive: true });
     for (const file_path of files_in_docs) {
-      this.AddWikiPage(path.join(".", "docs", file_path));
+      this.AddWikiPage(path.posix.join(".", "docs", file_path));
     }
   }
 
@@ -496,7 +491,7 @@ export default class SpudWiki {
     const all_media_files = this.ASSET_MAP.get(SpudWikiAsset.MEDIA);
     for (const media of all_media_files) {
       if (!media.dst_path) {
-        media.dst_path = `./build/dist/media/${path.basename(media.src_file_path)}`;
+        media.dst_path = `./build/dist/media/${path.posix.basename(media.src_file_path)}`;
       }
 
       media.link = path.posix.join("/spud-wiki", path.posix.relative("./build/dist", media.dst_path));
@@ -536,6 +531,16 @@ export default class SpudWiki {
 
     const command_map = {};
 
+    const current_commit_hash = this.current_commit_hash = (() => {
+      // https://stackoverflow.com/a/34518749
+      const rev = readFileSync('.git/HEAD').toString().trim();
+      if (rev.indexOf(':') === -1) {
+        return rev;
+      } else {
+        return readFileSync('.git/' + rev.substring(5)).toString().trim();
+      }
+    })();
+
     function add_search_map_string(str, is_title, link) {
       if (Object.hasOwn(search_map, str)) {
         console.error(`Duplicate search_string '${str}'.`);
@@ -571,12 +576,13 @@ export default class SpudWiki {
           if (!spud_text.no_search_index) {
             add_search_map_string(spud_text.title, true, asset.link);
           }
-          // TODO: add for each redirect
 
           if (spud_text.commands.length) {
             for (const cmd_string of spud_text.commands) {
               add_command(cmd_string, asset.link);
             }
+
+            // TODO: add for each redirect
             // console.log(spud_text.commands)
           }
         }
@@ -585,11 +591,15 @@ export default class SpudWiki {
     }
 
 
-    const intermediate_search_helper_file_data = `/*This file was automatically generated. DO NOT EDIT.*/"use strict";const SEARCH_DATA=${JSON.stringify(search_map, null, this.is_dev_build ? 2 : 0)};export default SEARCH_DATA;`;
+    const intermediate_search_helper_file_data = `/*This file was automatically generated. DO NOT EDIT.*/\n"use strict";\nconst SEARCH_DATA=${JSON.stringify(search_map, null, 2)};\nexport default SEARCH_DATA;`;
     promises.push(writeFile("./build/search_data.js", intermediate_search_helper_file_data));
 
-    const intermediate_command_helper_file_data = `/*This file was automatically generated. DO NOT EDIT.*/"use strict";const COMMAND_DATA=${JSON.stringify(command_map, null, this.is_dev_build ? 2 : 0)};export default COMMAND_DATA;`;
+    const intermediate_command_helper_file_data = `/*This file was automatically generated. DO NOT EDIT.*/\n"use strict";\nconst COMMAND_DATA=${JSON.stringify(command_map, null, 2)};\nexport default COMMAND_DATA;`;
     promises.push(writeFile("./build/command_data.js", intermediate_command_helper_file_data));
+
+
+
+    promises.push(writeFile("./build/commit_data.js", `/*This file was automatically generated. DO NOT EDIT.*/\n"use strict";\nconst COMMIT_HASH="${current_commit_hash}";\nexport default COMMIT_HASH;`));
 
 
     return Promise.allSettled(promises);

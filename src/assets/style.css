@@ -103,12 +103,13 @@ body {
 
   display: grid;
   grid-template-rows: 5rem min-content auto min-content min-content;
-  grid-template-columns: minmax(0, 1fr) minmax(16%, 12rem) minmax(55%, 50rem) minmax(16%, 12rem) minmax(0, 1fr);
-  grid-template-areas: ". logo search search ."
-  ". . title . ."
-  ". leftp cont rightp ."
-  ". copyr copyr sett ."
-  ". contr contr sett ."
+  grid-template-columns: minmax(0, 1fr) minmax(16%, 12rem) minmax(55%, 50rem) min-content minmax(16%, 12rem) minmax(0, 1fr);
+  grid-template-areas:
+    ". logo  search search search ."
+    ". .     title  edit   .      ."
+    ". leftp cont   cont   rightp ."
+    ". copyr copyr  copyr  sett   ."
+    ". contr contr  contr  sett   ."
   ;
 }
 
@@ -122,6 +123,7 @@ body {
   align-items: center;
   user-select: none;
   border-bottom: 1px solid var(--color-section-border);
+  text-decoration: none;
 }
 
 #search-cont {
@@ -248,11 +250,19 @@ h2 {
   font-size: 1.5rem;
 }
 
-body>#_title {
+body>._title {
   grid-area: title;
   padding-left: .5rem;
-  margin: 0 .5rem;
+  margin-left: .5rem;
   line-height: 2;
+}
+
+#edit-src {
+  grid-area: edit;
+  border-bottom: 1px solid var(--color-section-border);
+  margin-right: .5rem;
+  align-self: flex-end;
+  padding: 0 .5rem .95rem 1rem;
 }
 
 blockquote {
@@ -449,6 +459,15 @@ input[type="file"] {
   #theme-cont {
     padding: 1rem;
     text-align: center;
+  }
+
+  body._title {
+    margin-right: .5rem;
+  }
+
+  #edit-src {
+    border: 0;
+    margin-top: -2.15rem;
   }
 
 }

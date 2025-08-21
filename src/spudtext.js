@@ -677,9 +677,9 @@ class SpudText {
 
   GetTitleHtmlString() {
     if (this.do_center_title) {
-      return `<h1 id="_title" style="text-align:center">${this.title}</h1>`;
+      return `<h1 class="_title" style="text-align:center">${this.title}</h1>`;
     } else {
-      return `<h1 id="_title">${this.title}</h1>`;
+      return `<h1 class="_title">${this.title}</h1>`;
     }
   }
 
@@ -1476,7 +1476,7 @@ class SpudTextContext {
     const html_element_token_instance = TokenInstance.CreateFromRawToken(TOKENS.html_element);
 
     html_element_token_instance.tag = "h1";
-    html_element_token_instance.id = "_title";
+    html_element_token_instance.class = "_title";
     html_element_token_instance.content = title;
 
     this.ast.AddChild(html_element_token_instance, 0);
