@@ -241,9 +241,10 @@ h2 {
 #_notes-container {
   display: grid;
   grid-template-columns: min-content auto;
-  padding: .8rem 1.4rem 0 1.4rem;
   justify-content: left;
   align-items: baseline;
+  padding-top: 1rem;
+  line-height: 1.375;
 }
 
 .page-note {
@@ -251,22 +252,29 @@ h2 {
 }
 
 .page-note-backlinks {
-  letter-spacing: .2rem;
   font-style: italic;
+}
+
+.page-note-backlinks>* {
+  padding-left: .24rem;
 }
 
 .page-note-name {
   padding-right: .4rem;
+  justify-self: flex-end;
 }
 
 #search-input {
   font-size: 1.5rem;
 }
 
+.page-note-content {
+  word-break: break-word;
+}
+
 body>._title {
   grid-area: title;
   padding: 0 .5rem;
-  /* margin: 0 .5rem;*/
   line-height: 2;
 }
 

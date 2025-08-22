@@ -1650,7 +1650,7 @@ class SpudTextContext {
       function index_to_letter_index(n) {
         let res = "";
         do {
-          res = String.fromCharCode(97 + n % 26);
+          res = String.fromCharCode(97 + n % 26) + res;
         } while (n = (n / 26 | 0));
         return res;
       }
@@ -1674,6 +1674,7 @@ class SpudTextContext {
 
         const note_name_div = TokenInstance.CreateFromRawToken(TOKENS.html_element);
         note_name_div.tag = "span";
+        note_name_div.id = `_note-${note_name}`;
         note_name_div.class = "page-note-name";
         note_name_div.content = `${note_name}:`;
 
@@ -1683,17 +1684,12 @@ class SpudTextContext {
         note_content_div.AddChild(note_backlink_div);
         note_content_div.AddChild(note_text_div);
 
-        const note_container = TokenInstance.CreateFromRawToken(TOKENS.html_container);
-        note_container.tag = "div";
-        note_container.id = `_note-${note_name}`;
-        note_container.class = "page-note";
-        note_container.AddChild(note_name_div);
-        note_container.AddChild(note_content_div);
-
-        notes_container.AddChild(note_container);
+        notes_container.AddChild(note_name_div);
+        notes_container.AddChild(note_content_div);
 
         if (nrefs > 1) {
-          const backlink_up_test = TokenInstance.CreateFromRawToken(TOKENS.html_text);
+          const backlink_up_test = TokenInstance.CreateFromRawToken(TOKENS.html_element);
+          backlink_up_test.tag = "sup";
           backlink_up_test.content = "^";
           note_backlink_div.AddChild(backlink_up_test);
         }

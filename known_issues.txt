@@ -1,1 +1,2 @@
 - one paragraph gets added before blockquotes and headings and one after, no idea why
+- when there's a high number (> 26) of note refs referencing the same note, it's possible that the backlink made of more than one latter will wrap mid-word to the next line

@@ -43,8 +43,11 @@ async function Build(is_dev_build) {
   });
 
   // TODO: add a way to avoid having articles with the same names as special pages. maybe add articles to /spud-wiki/articles/ ?
-  wiki.AddAllPagesInsideDocs();
+  wiki.AddAllPagesInsideDirectory("docs");
 
+  if (is_dev_build) {
+    wiki.AddAllPagesInsideDirectory("test_docs");
+  }
   wiki.AddAllMediaAssets();
 
   await wiki.WaitForReadingCompletion();

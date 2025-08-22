@@ -397,10 +397,10 @@ export default class SpudWiki {
     });
   }
 
-  AddAllPagesInsideDocs() {
-    const files_in_docs = readdirSync(path.posix.join(".", "docs"), { recursive: true });
+  AddAllPagesInsideDirectory(directory) {
+    const files_in_docs = readdirSync(path.posix.join(".", directory), { recursive: true });
     for (const file_path of files_in_docs) {
-      this.AddWikiPage(path.posix.join(".", "docs", file_path));
+      this.AddWikiPage(path.posix.join(".", directory, file_path));
     }
   }
 
