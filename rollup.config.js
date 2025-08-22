@@ -28,6 +28,8 @@ const DEBUG_CONFIG = [
   },
 ];
 
+const ECMA = 2025;
+
 const RELEASE_CONFIG = [
   {
     input: "./src/assets/all_pages.js",
@@ -40,7 +42,7 @@ const RELEASE_CONFIG = [
       nodeResolve(),
       terser({
         maxWorkers: 4,
-        ecma: 2025,
+        ecma: ECMA,
         format: {
           ascii_only: true,
           comments: false,
@@ -64,7 +66,7 @@ const RELEASE_CONFIG = [
       nodeResolve(),
       terser({
         maxWorkers: 4,
-        ecma: 2025,
+        ecma: ECMA,
         format: {
           ascii_only: true,
           comments: false,
