@@ -605,6 +605,11 @@ class SpudText {
   no_map = false;
 
   /**
+   * @type {boolean}
+   */
+  no_last_modified = false;
+
+  /**
    * @type {string[]}
    */
   commands = [];
@@ -882,7 +887,7 @@ this.AddRedirect(str_to_redirect_from);
         default:
           //sigh
           //  console.error("why...", this.title);
-
+console.log({token});
           throw "YOU CAN'T BE HERE, C'MON!"
       }
     }
@@ -1781,7 +1786,7 @@ class SpudTextContext {
         const nrefs = refs.length;
 
         const note_backlink_div = TokenInstance.CreateFromRawToken(TOKENS.html_container);
-        note_backlink_div.tag = "span";
+        note_backlink_div.tag = "sup";
         note_backlink_div.class = "page-note-backlinks";
 
         const note_text_div = TokenInstance.CreateFromRawToken(TOKENS.html_container);
@@ -1809,7 +1814,7 @@ class SpudTextContext {
 
         if (nrefs > 1) {
           const backlink_up_test = TokenInstance.CreateFromRawToken(TOKENS.html_element);
-          backlink_up_test.tag = "sup";
+          backlink_up_test.tag = "span";
           backlink_up_test.content = "^";
           note_backlink_div.AddChild(backlink_up_test);
         }
@@ -1841,11 +1846,11 @@ class SpudTextContext {
           note_backlink.content = `${nrefs === 1 ? "^" : letter_index}`;
           note_backlink.href = `#${id}`;
 
-          const note_backlinks_sup = TokenInstance.CreateFromRawToken(TOKENS.html_container);
+          /*const note_backlinks_sup = TokenInstance.CreateFromRawToken(TOKENS.html_container);
           note_backlinks_sup.tag = "sup";
-          note_backlinks_sup.AddChild(note_backlink);
+          note_backlinks_sup.AddChild(note_backlink);*/
 
-          note_backlink_div.AddChild(note_backlinks_sup);
+          note_backlink_div.AddChild(note_backlink);
         }
       }
     }
@@ -2209,6 +2214,15 @@ class SpudTextContext {
           to_delete.push(directive_name);
           break;
         }
+        case "nolastmodified": {
+          if (token_instances.length > 1) {
+            this.LogWarn(`Only one '${directive_name}' directive is needed.`);
+          }
+          spudtext.no_last_modified = true;
+          to_delete.push(directive_name);
+          break;
+          break;
+        }
       }
     }
 
@@ -2384,7 +2398,7 @@ class SpudTextContext {
       return;
     }
 
-   // this.#DebugPrintTokens(this.ast.children);
+    // this.#DebugPrintTokens(this.ast.children);
 
     this.#ParseBlockquotes();
 

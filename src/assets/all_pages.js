@@ -37,6 +37,13 @@ function AfterDomLoaded() {
     console.error("why is there no theme-select...");
   }
 
+  const query_string = new URLSearchParams(window.location.search);
+  const redirect_string = query_string.get("redirect");
+
+  if (redirect_string) {
+    document.getElementById("redirect-lbl").innerHTML = `(redirected from <i><b>${decodeURIComponent(redirect_string)}</b></i>)`;
+  }
+
   window.addEventListener("change", function ({ target }) {
     switch (target instanceof HTMLSelectElement && target?.id) {
       case "theme-select":
@@ -74,8 +81,11 @@ function AfterDomLoaded() {
     }
 
     for (const k in SEARCH_DATA) {
-      const v = SEARCH_DATA[k], score = score_strings(str, v.lc_str);
-      add_to_result_arr(score, v);
+      const v = SEARCH_DATA[k];
+      if (v.can_search) {
+        const score = score_strings(str, v.lc_str);
+        add_to_result_arr(score, v);
+      }
     }
 
     return arr;
@@ -107,9 +117,11 @@ function AfterDomLoaded() {
     for (; i < search_results.length && i < 10; i++) {
       const el = search_cont_inner.children[i], d = search_results[i].data;
       el.textContent = d.title; //search_results[i].data.str;
-      el.href = d.link;
-      if (!d.is_title) {
-        el.setAttribute("data-redirect", `(redirected from '${d.str}')`);
+      if (d.is_title) {
+        el.href = d.link;
+      } else {
+        el.href = `${d.link}?redirect=${encodeURIComponent(d.str)}`;
+        el.setAttribute("data-redirect", `(redirect from '${d.str}')`);
       }
     }
     if (i < 10) {
