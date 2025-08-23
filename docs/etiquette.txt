@@ -1,5 +1,10 @@
 !title Chat Etiquette
+!contributor BlueStrategosJ
+!contributor CelticJax
+!contributor FrozenCascade
 !contributor Matty5957
+!contributor Ven_lillu
+!contributor waarisdetaart
 
 **Chat Etiquette** is the set of behaviours which help maintain a comfortable streaming experience for both the streamer and the viewer. Pearl, like most streamers, has her rules [[https://www.twitch.tv/pearlescentmoon/about listed in her Twitch channel]].
 
@@ -54,7 +59,7 @@ Don't spam the same message multiple times in a row in a short amount of time. A
 
 === Can I join? ===
 
-Unless specifically stated in the stream title that Pearl is going to pay games with viewers, then no.
+Unless specifically stated in the stream title that Pearl is going to play games with viewers, then no.
 
 === No calling out lurkers ===
 
@@ -96,9 +101,9 @@ Never say something on the lines of "You look/sound tired". This is extremely di
 
 If somebody goes live, you do not need to announce it to chat, even if they are Pearl's friend, unless Pearl was asking for them. Do not say you are going to watch another streamer, just do it without posting rude messages.
 
-=== No shipping ===
+=== Shipping ===
 
-As mentioned earlier, Pearl has a boyfriend and does not like being shipped.
+As mentioned earlier, Pearl has a boyfriend and, while she does not mind if fans ship her with others, she does not want to see anything about it.
 
 === No announcing sad news ===
 
@@ -115,6 +120,10 @@ We do not know, Pearl does not know. Even if she were to know, she wouldn't say 
 === No personal info in chat ===
 
 This includes your age, your name, your location. In short be careful with anything you write, because once it's out there you can't take it back.
+
+=== Tone indicators ===
+
+This isn't a rule, but more of a suggestion. Writing is completely different from speaking to somebody as you can't use the tone of your voice to add extra meanings to your words, so if you are posting a message but you are unsure if others are going to take it the way you intend them to, make use of [[https://en.wikipedia.org/wiki/Tone_indicator tone indicators]] at the end of your sentences. /srs
 
 !note1 [[https://www.reddit.com/r/Twitch/comments/16x20s1/etiquette_and_unspoken_rules_of_twitch_on_and_off/]]
 
