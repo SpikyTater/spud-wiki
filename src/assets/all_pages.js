@@ -105,8 +105,12 @@ function AfterDomLoaded() {
     // window.requestAnimationFrame(() => {
     let i = 0;
     for (; i < search_results.length && i < 10; i++) {
-      search_cont_inner.children[i].textContent = search_results[i].data.str;
-      search_cont_inner.children[i].href = search_results[i].data.link;
+      const el = search_cont_inner.children[i], d = search_results[i].data;
+      el.textContent = d.title; //search_results[i].data.str;
+      el.href = d.link;
+      if (!d.is_title) {
+        el.setAttribute("data-redirect", `(redirected from '${d.str}')`);
+      }
     }
     if (i < 10) {
       const el = search_cont_inner.children[i];

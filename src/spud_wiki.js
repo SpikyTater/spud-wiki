@@ -187,8 +187,12 @@ class SpudWikiAsset {
 
         s += spud_wiki.site_map_html_string;
 
+        if (!data.no_map && data.headings.length) {
+          s += `<div id="right-sidebar">${data.GetPageMapHtml()}</div>`
+        }
+
         // start content section
-        s += data.GetTitleHtmlString();
+        s += data.GetTitleHtmlString("_title");
 
         // edit source link
         if (!data.no_edit) {
@@ -204,8 +208,6 @@ class SpudWikiAsset {
         // end content section
         s += '</div>';
 
-        // TODO: article map
-        s += '<div id="right-sidebar"></div>'
 
         // body middle section end, footer start
         //  s += '</div>';
@@ -548,12 +550,12 @@ export default class SpudWiki {
       }
     })();
 
-    function add_search_map_string(str, is_title, link) {
+    function add_search_map_string(str, is_title, link, title) {
       if (Object.hasOwn(search_map, str)) {
         console.error(`Duplicate search_string '${str}'.`);
       } else {
         search_map[str] = {
-          str, is_title, link, lc_str: str.toLowerCase()
+          str, is_title, link, lc_str: str.toLowerCase(), title
         };
       }
     }
@@ -576,16 +578,17 @@ export default class SpudWiki {
           const spud_text = asset.data;
 
           if (!spud_text.no_search_index) {
-            add_search_map_string(spud_text.title, true, asset.link);
+            add_search_map_string(spud_text.title, true, asset.link, spud_text.title);
+          }
+
+          for (const redirect of spud_text.redirects) {
+            add_search_map_string(redirect, false, asset.link, spud_text.title);
           }
 
           if (spud_text.commands.length) {
             for (const cmd_string of spud_text.commands) {
               add_command(cmd_string, asset.link);
             }
-
-            // TODO: add for each redirect
-            // console.log(spud_text.commands)
           }
         }
 

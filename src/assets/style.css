@@ -24,7 +24,9 @@ h2,
 h3,
 h4,
 h5,
-h6 {
+h6,
+li,
+ol {
   margin: 0;
   padding: 0;
 }
@@ -32,8 +34,6 @@ h6 {
 a {
   text-decoration: none;
 }
-
-
 
 body:has(#theme-select>[value="light"]:checked) {
   color-scheme: light;
@@ -109,7 +109,7 @@ body {
   grid-template-rows: 5rem min-content auto min-content min-content;
   grid-template-columns: minmax(0, 1fr) minmax(16%, 12rem) minmax(55%, 50rem) minmax(16%, 12rem) minmax(0, 1fr);
   grid-template-areas:
-    ". logo  search search ."
+    ". logo  search .      ."
     ". .     title  .      ."
     ". leftp cont   rightp ."
     ". copyr copyr  sett   ."
@@ -132,16 +132,17 @@ body {
 
 #search-cont {
   grid-area: search;
-  padding-left: 1rem;
-  justify-self: start;
-  align-self: center;
-  position: relative;
-  font-family: sans-serif;
-  width: 100%;
-  height: 100%;
-  border-bottom: 1px solid var(--color-section-border);
-  padding-top: 1.5rem;
-  box-sizing: border-box;
+    /* padding-left: 1rem; */
+    justify-self: start;
+    align-self: center;
+    position: relative;
+    font-family: sans-serif;
+    width: 100%;
+    height: 100%;
+    border-bottom: 1px solid var(--color-section-border);
+    /* padding-top: 1.5rem; */
+    box-sizing: border-box;
+    padding: 1.5rem 1rem 0 1rem;
 }
 
 #side-nav {
@@ -157,9 +158,8 @@ body {
 
 #right-sidebar {
   grid-area: rightp;
-  position: sticky;
-  top: 0;
-  height: fit-content;
+  padding: 1.2rem .5rem 1rem .5rem;
+  box-sizing: border-box;
 }
 
 #footer-info {
@@ -266,13 +266,14 @@ h2 {
 
 #search-input {
   font-size: 1.5rem;
+  width: 100%;
 }
 
 .page-note-content {
   word-break: break-word;
 }
 
-body>._title {
+#_title {
   grid-area: title;
   padding: 0 .5rem;
   line-height: 2;
@@ -478,7 +479,7 @@ input[type="file"] {
     text-align: center;
   }
 
-  body._title {
+  #_title {
     margin-right: .5rem;
   }
 
@@ -504,4 +505,30 @@ input[type="file"] {
 figure {
   border: 1px solid var(--color-figure-border);
   padding: .5rem;
+}
+
+#right-sidebar ol {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 1rem;
+}
+
+#right-sidebar li {
+  margin: .4rem 0;
+}
+
+.toc-name,
+.toc-num {
+  display: table-cell;
+}
+
+.toc-num {
+  padding-right: .6rem;
+}
+
+.search-result[data-redirect]::after {
+  content: attr(data-redirect);
+  display: block;
+  font-size: .7rem;
+  text-decoration: none !important;
 }

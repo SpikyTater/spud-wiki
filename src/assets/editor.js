@@ -100,7 +100,7 @@ function AfterDomLoaded(initial_data) {
     }
     if (Object.hasOwn(MEDIA_ASSETS, name)) return;
 
-    const desc = prompt("Add an internal descsripton for the image. (To cancel, send an empty value)");
+    const desc = prompt("Add an internal description for the image. (To cancel, send an empty value)");
     if (!desc) {
       return;
     }

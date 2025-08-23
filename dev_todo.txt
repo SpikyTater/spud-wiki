@@ -6,9 +6,7 @@ add recent changes to main page
 add redirected from ?redirect=#DeathForTheSpiders -> escape space # " < > [ \ ] ^ `
 use html elements -> small, sub, sup, hgroup (for redirect), main, button, footer, header, address (for contributors), abbr
 add ARIA for accessibility
-add !redirect -> when searching the following string, users will be redirected to this page, to be more specific they will be redirected to the first heading node encountered when going in reverse post-order in the AST (remember to turn the title into a heading1_aggregate, first...). multiple !redirect s are allowed for each heading
 add !category and !tag, pretty self explanatory
-add article map (NOT sticky) to the right sidebar
 add a decent site map to the left sidebar
 redesign the welcome page
 for larry's sake add some testing, especially to spudtext.js (which needs a lot of it)
@@ -26,3 +24,5 @@ decouple TokenInstance from AstNode functionality, TokenInstance extend AstNode
 editor: add save (never autosave), multiple save slots, squiggles for warnings (yellow) and errors (red), auto compile -> race between 10 seconds since last compilation, 2 seconds debounce, normal click, click on warning/error to show exact place in spudtext (select that substring as well maybe?), better issue (warning/error) console, add prettify function, hide all spudtext documentation in <details> and <summary>
 search: add arrow key support to choose result, hide search thingy when focusing out of it / clicking elsewhere
 add global constants to spudtext, for example COMMIT_HASH and other stuff
+for last_modified of each page, use git instead of the file's last_modified. don't use bigint in stat anymore
+!redirect: make it work for every heading
