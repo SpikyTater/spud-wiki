@@ -30,6 +30,8 @@ async function Build(is_dev_build) {
     additional_script: "/spud-wiki/assets/editor.js"
   });
   wiki.AddSpecialPage("./src/special_pages/404.txt", { dst_path: "./build/dist/404.html" });
+  wiki.AddSpecialPage("./src/special_pages/about.txt", { dst_path: "./build/dist/about.html" });
+
   wiki.AddSpecialPage("./src/special_pages/credits.txt", {
     dst_path: "./build/dist/credits.html",
     append_to_content: (() => {

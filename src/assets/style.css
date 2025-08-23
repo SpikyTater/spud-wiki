@@ -106,11 +106,12 @@ body {
   font-family: sans-serif;
 
   display: grid;
-  grid-template-rows: 5rem min-content auto min-content min-content;
+  grid-template-rows: 5rem min-content min-content auto min-content min-content;
   grid-template-columns: minmax(0, 1fr) minmax(16%, 12rem) minmax(55%, 50rem) minmax(16%, 12rem) minmax(0, 1fr);
   grid-template-areas:
     ". logo  search .      ."
     ". .     title  .      ."
+    ". .     redir  .      ."
     ". leftp cont   rightp ."
     ". copyr copyr  sett   ."
     ". contr contr  sett   ."
@@ -531,4 +532,9 @@ figure {
   display: block;
   font-size: .7rem;
   text-decoration: none !important;
+}
+
+#redirect-lbl {
+  grid-area: redir;
+      padding: .5rem;
 }

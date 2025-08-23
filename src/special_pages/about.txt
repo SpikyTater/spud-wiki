@@ -1,0 +1,12 @@
+!title About
+!center_title
+!contributor Matty5957
+!nomap
+
+Spud Wiki does not collect any data from users and never will.
+There are no ads shown and there will never be.
+The only data saved by this website inside your browser is the theme of your choosing, and it is located in the localStorage.
+
+This website, while its existence is known by Pearl, is not affiliated with her and her twitch moderation team. We are also not affiliated with Hermitcraft and any of the Hermits.
+
+If your name or your content is present anywhere on this website and you want them removed or want some modifications to them, please contact the owner of our [[https://github.com/SpikyTater/spud-wiki repository]] on GitHub.

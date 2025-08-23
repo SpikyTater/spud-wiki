@@ -15,7 +15,6 @@ add // and /**/ comments to spudtext
 once !nosearchindex and !redirect get added, add !nosearchindex to Sup Face and maybe add some easter eggs for it, like 4 random characters that appear between sup and face, and idk how to search index for it
 license the SpudText format
 add warning for weird characters like microsoft word's ' " ", god I hate these
-add about.html page
 add some way to prettify spudtext in VS Code
 make a bulletin board for todo stuff
 make a list of accepted domains for external links, and only https protocol (can be omitted in links)
@@ -26,3 +25,5 @@ search: add arrow key support to choose result, hide search thingy when focusing
 add global constants to spudtext, for example COMMIT_HASH and other stuff
 for last_modified of each page, use git instead of the file's last_modified. don't use bigint in stat anymore
 !redirect: make it work for every heading
+merge all note refs' sups, thus decreasing the number of DOM elements. take care of whitespaces between them
+merge all note backlinks' sups, thus decreasing the number of DOM elements

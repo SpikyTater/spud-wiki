@@ -194,6 +194,8 @@ class SpudWikiAsset {
         // start content section
         s += data.GetTitleHtmlString("_title");
 
+        s+='<small id="redirect-lbl"></small>';
+
         // edit source link
         if (!data.no_edit) {
           s += `<a id="edit-src" href="/spud-wiki/editor.html?src=${encodeURIComponent(path.posix.normalize(this.src_file_path))}">Edit</a>`;
@@ -482,7 +484,7 @@ export default class SpudWiki {
     // TODO:
     let s = '<nav id="side-nav">';
 
-    s += '<a href="/spud-wiki/">Main Page</a><a href="/spud-wiki/credits.html">Credits</a><a href="/spud-wiki/editor.html">SpudText Editor</a><div class="div-sep"></div>';
+    s += '<a href="/spud-wiki/">Main Page</a><a href="/spud-wiki/credits.html">Credits</a><a href="/spud-wiki/about.html">About</a><a href="/spud-wiki/bulletin_board.html">Bulletin Board</a><a href="/spud-wiki/editor.html">SpudText Editor</a><div class="div-sep"></div>';
     const all_articles = this.ASSET_MAP.get(SpudWikiAsset.PAGE), l = all_articles.length;
     for (let i = 0; i < l; i++) {
       const article = all_articles[i];

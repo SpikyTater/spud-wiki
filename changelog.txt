@@ -5,3 +5,5 @@
   - Added article map in the right panel
   - Added !nomap directive
   - Added !redirect directive, only for articles, NOT for headings
+  - Added about.html
+  - 
