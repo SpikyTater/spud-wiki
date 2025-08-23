@@ -600,9 +600,84 @@ class SpudText {
   no_edit = false;
 
   /**
+   * @type {boolean}
+   */
+  no_map = false;
+
+  /**
    * @type {string[]}
    */
   commands = [];
+
+  headings = [];
+
+  redirects = [];
+
+  /**
+   * @param {string} str 
+   * @param {number} heading_level 
+   * @param {string | undefined} id
+   * @returns {string}
+   */
+  AddHeading(str, heading_level, id) {
+    if (heading_level < 2 || heading_level > 6 || !(typeof str === "string" || str instanceof String)) {
+      console.error("no", { str, heading_level });
+      throw 0;
+    }
+
+    const starting_heading_level = heading_level;
+    let { headings } = this;
+    heading_level -= 2;
+    let s = "";
+
+    while (heading_level && headings.length) {
+      s = `${s}_${headings.length - 1}`;
+      headings = headings[headings.length - 1].children;
+      heading_level--;
+    };
+
+
+    s = `_heading${s}_${headings.length}`;
+    headings.push({
+      title: str.trim(),
+      children: [],
+      id: id ? id : s
+    });
+
+
+
+    if (heading_level) {
+      // TODO: warn
+    }
+
+
+    return s;
+  }
+
+  GetPageMapHtml() {
+    let s = `<a href="#_title">${this.title}</a>`;
+
+    function recursive_parse_heading(arr, marker) {
+      if (Array.isArray(arr) && arr.length) {
+        const l = arr.length;
+        s += "<ol>"
+        for (let i = 0; i < l; i++) {
+          const mk = `${marker}.${i + 1}`;
+          const child = arr[i];
+          s += `<li><a href="#${child.id}"><span class="toc-num">${mk.substring(1)}</span><span class="toc-name">${child.title}</span></a>`;
+          if (child.children) {
+            recursive_parse_heading(child.children, mk);
+          }
+          s += "</li>"
+        }
+        s += "</ol>"
+      }
+    }
+
+    recursive_parse_heading(this.headings, "");
+
+    return s;
+  }
 
   /**
    * Sets the title of this page
@@ -622,8 +697,9 @@ class SpudText {
 
   /**
    * @param {TokenInstance} directive_instance 
+   * @param {SpudTextContext} ctx
    */
-  AddAndElaborateDirectiveInstance(directive_instance) {
+  AddAndElaborateDirectiveInstance(directive_instance, ctx) {
     if (!directive_instance.IsInstanceOf(TOKENS.directive)) {
       console.error("Pls no.");
       throw 0;
@@ -641,6 +717,45 @@ class SpudText {
 
     directive_instance.real_directive_name = real_directive_name;
     directive_instance.real_directive_subname = real_directive_subname;
+
+    // before adding the directive, check if it's a heading-sensitive one and process it directly here
+    const HEADING_SENSITIVE_DIRS = [
+      "redirect"
+    ];
+
+    if (HEADING_SENSITIVE_DIRS.includes(real_directive_name)) {
+      switch (real_directive_name) {
+        case "redirect": {
+          /* let heading, token = directive_instance;
+           while (token = token.ReverseDepthFirstPostOrderNext()
+             && token
+             && !token.IsInstanceOf(TOKENS.heading2_aggregate)
+             && !token.IsInstanceOf(TOKENS.heading3_aggregate)
+             && !token.IsInstanceOf(TOKENS.heading4_aggregate)
+             && !token.IsInstanceOf(TOKENS.heading5_aggregate)
+             && !token.IsInstanceOf(TOKENS.heading6_aggregate)
+           );
+ 
+           
+           if (!token) {
+             // redirect to title -> article*/
+
+          const str_to_redirect_from = directive_instance.children[0].GetRawString().trim();
+          this.redirects.push(str_to_redirect_from);
+          /*} else {
+            const 
+this.AddRedirect(str_to_redirect_from);
+
+          }*/
+
+
+          return;
+        }
+        default:
+          throw "huh?";
+      }
+    }
+
 
     this.directive_instances.push(directive_instance);
 
@@ -681,11 +796,16 @@ class SpudText {
     return this.time_taken.toFixed(3) + " ms";
   }
 
-  GetTitleHtmlString() {
-    if (this.do_center_title) {
-      return `<h1 class="_title" style="text-align:center">${this.title}</h1>`;
+  GetTitleHtmlString(id) {
+    if (id) {
+      id = ` id="${id}"`;
     } else {
-      return `<h1 class="_title">${this.title}</h1>`;
+      id = "";
+    }
+    if (this.do_center_title) {
+      return `<h1${id} class="page-title" style="text-align:center">${this.title}</h1>`;
+    } else {
+      return `<h1${id} class="page-title">${this.title}</h1>`;
     }
   }
 
@@ -1423,8 +1543,8 @@ class SpudTextContext {
     }
 
     for (const directive_instance of directive_instances) {
+      this.spudtext.AddAndElaborateDirectiveInstance(directive_instance, this);
       directive_instance.RemoveSelfAndChildrenFromAST();
-      this.spudtext.AddAndElaborateDirectiveInstance(directive_instance)
     }
 
     return false;
@@ -1734,6 +1854,13 @@ class SpudTextContext {
   #HandleStyles() {
     for (const token_instance of this.#ASTIteratorDepthFirstPostOrder()) {
       switch (token_instance.raw_token) {
+        // TODO: this is a hack to add notes to the headings (if they exist)
+        case TOKENS.html_element: {
+          if (token_instance.tag === "h2" && token_instance.id === "_notes") {
+            this.spudtext.AddHeading("Notes", 2, "_notes");
+          }
+          break;
+        }
         case TOKENS.em_aggregate: {
           const html_container = TokenInstance.CreateFromRawToken(TOKENS.html_container);
           html_container.tag = "i";
@@ -1786,6 +1913,7 @@ class SpudTextContext {
           for (const token of token_instance.children) {
             token.parent = html_container;
           }
+          html_container.id = this.spudtext.AddHeading(token_instance.children[0].content, 2);
 
           token_instance.RemoveSelfAndChildrenFromAST(html_container);
           break;
@@ -1797,6 +1925,7 @@ class SpudTextContext {
           for (const token of token_instance.children) {
             token.parent = html_container;
           }
+          html_container.id = this.spudtext.AddHeading(token_instance.children[0].content, 3);
 
           token_instance.RemoveSelfAndChildrenFromAST(html_container);
           break;
@@ -1808,6 +1937,7 @@ class SpudTextContext {
           for (const token of token_instance.children) {
             token.parent = html_container;
           }
+          html_container.id = this.spudtext.AddHeading(token_instance.children[0].content, 4);
 
           token_instance.RemoveSelfAndChildrenFromAST(html_container);
           break;
@@ -1819,6 +1949,7 @@ class SpudTextContext {
           for (const token of token_instance.children) {
             token.parent = html_container;
           }
+          html_container.id = this.spudtext.AddHeading(token_instance.children[0].content, 5);
 
           token_instance.RemoveSelfAndChildrenFromAST(html_container);
           break;
@@ -1830,6 +1961,7 @@ class SpudTextContext {
           for (const token of token_instance.children) {
             token.parent = html_container;
           }
+          html_container.id = this.spudtext.AddHeading(token_instance.children[0].content, 6);
 
           token_instance.RemoveSelfAndChildrenFromAST(html_container);
           break;
@@ -2069,6 +2201,14 @@ class SpudTextContext {
           to_delete.push(directive_name);
           break;
         }
+        case "nomap": {
+          if (token_instances.length > 1) {
+            this.LogWarn(`Only one '${directive_name}' directive is needed.`);
+          }
+          spudtext.no_map = true;
+          to_delete.push(directive_name);
+          break;
+        }
       }
     }
 
@@ -2243,6 +2383,8 @@ class SpudTextContext {
     if (this.#ParseDirectives()) {
       return;
     }
+
+   // this.#DebugPrintTokens(this.ast.children);
 
     this.#ParseBlockquotes();
 

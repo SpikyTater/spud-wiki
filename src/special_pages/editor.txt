@@ -19,14 +19,14 @@ But.. but...
 
 == Shush and tell me how to use it ==
 
-Ok, ok. How uncouth. Well, nevermind. Here we go.
+Ok, ok. How uncouth. Well, never mind. Here we go.
 
 First of all you have to think of each line as a separate entity. You cannot have a style applied across a line break and you will have to close it before the line ends.
 
 == Directive ==
 
 A directive is a line starting with an exclamation point (**!**). Its syntax is like this:
-> !<directive_name> arguments of the directive, altough they could be optional
+> !<directive_name> arguments of the directive, although they could be optional
 
 <directive_name>, as the name suggests, stands for the name of the directive, which can be optionally followed by another line of text.
 Not all planned directives have been implemented yet, so this is open to change.
