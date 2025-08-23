@@ -17,3 +17,6 @@
   - Added bulletin board page
   - Cleaned up article_ideas.txt
   - Changed a bit the style of notes
+
+== 2025.08.23 - 0.1.1 ==
+  - "Redirected from" element now is removed if there was no redirection involved, thus not taking space anymore

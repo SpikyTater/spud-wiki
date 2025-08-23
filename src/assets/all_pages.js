@@ -39,9 +39,11 @@ function AfterDomLoaded() {
 
   const query_string = new URLSearchParams(window.location.search);
   const redirect_string = query_string.get("redirect");
-
+  const red_el = document.getElementById("redirect-lbl");
   if (redirect_string) {
-    document.getElementById("redirect-lbl").innerHTML = `(redirected from <i><b>${decodeURIComponent(redirect_string)}</b></i>)`;
+    red_el.innerHTML = `(redirected from <i><b>${decodeURIComponent(redirect_string)}</b></i>)`;
+  } else {
+    red_el.remove();
   }
 
   window.addEventListener("change", function ({ target }) {
