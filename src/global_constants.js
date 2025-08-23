@@ -20,7 +20,7 @@ export const THEMES = ["Dark", "Light"];
 export const VERSION = {
   major: 0,
   minor: 1,
-  patch: 1
+  patch: 2
 };
 
 export const VERSION_STRING = `${VERSION.major}.${VERSION.minor}.${VERSION.patch}`;

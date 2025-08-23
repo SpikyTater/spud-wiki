@@ -27,3 +27,4 @@
   - better editor issue console
   - decide whether to hide the spudtext documentation in <details> and <summary> or to make it a different page
   - make editor warn about unusual characters (MS word's ' and " alternatives)
+  - add !include directive, to include a spudtext files inside another one

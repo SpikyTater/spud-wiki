@@ -494,6 +494,10 @@ export default class SpudWiki {
       this.MAP_PATH_TO_ASSET.set(dst_path, page);
 
     }
+
+    for (const special_page of this.ASSET_MAP.get(SpudWikiAsset.SPECIAL_PAGE)) {
+      special_page.link = path.posix.join("/spud-wiki", path.posix.relative("./build/dist", special_page.dst_path));
+    }
   }
 
   #CreateSiteMapHtmlString() {
