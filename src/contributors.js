@@ -62,9 +62,12 @@ class Contributor {
 const CONTRIBUTORS = {
   "19_meg_91": new Contributor("19_meg_91", "00e700"),
   bluestrategosj: new Contributor("BlueStrategosJ", "359bff"),
+  celticjax: new Contributor("CelticJax", "ff571a"),
+  frozencascade: new Contributor("FrozenCascade", "a0ffff"),
   kawaiitron: new Contributor("Kawaiitron", "00e700", "Kawaiitron_"),
   matty5957: new Contributor("Matty5957", "daa520"),
   spammer92: new Contributor("Spammer92", "92ff00", "Spammer_92"),
+  ven_lillu: new Contributor("Ven_lillu", "ff7f50"),
   waarisdetaart: new Contributor("waarisdetaart", "daa520"),
 };
 
