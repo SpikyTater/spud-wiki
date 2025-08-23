@@ -39,9 +39,9 @@ class SpudWikiAsset {
   src_file_path;
 
   /**
-   * @type {bigint}
+   * @type {string}
    */
-  last_modified_ns;
+  last_modified_str;
 
   /**
    * @type {string | Buffer | SpudText}
@@ -107,8 +107,9 @@ class SpudWikiAsset {
   /**
    * @param {bigint} n 
    */
-  SetLastModifiedNs(n) {
-    this.last_modified_ns = n;
+  SetLastModifiedMs(n) {
+    const d = new Date(n);
+    this.last_modified_str = `${d.getUTCFullYear()}.${(d.getUTCMonth() + 1).toString().padStart(2, "0")}.${(d.getUTCDate() + 1).toString().padStart(2, "0")} at ${d.getUTCHours().toString().padStart(2, "0")}:${d.getUTCMinutes().toString().padStart(2, "0")}:${d.getUTCSeconds().toString().padStart(2, "0")} (UTC)`;
   }
 
   /**
@@ -118,6 +119,7 @@ class SpudWikiAsset {
    * 
    */
   SetDataAndPostProcess(spud_wiki, data) {
+    data ||= this.options?.data;
     switch (this.asset_type) {
       case SpudWikiAsset.SPECIAL_PAGE:
       case SpudWikiAsset.PAGE: {
@@ -188,19 +190,19 @@ class SpudWikiAsset {
         s += spud_wiki.site_map_html_string;
 
         if (!data.no_map && data.headings.length) {
-          s += `<div id="right-sidebar">${data.GetPageMapHtml()}</div>`
+          s += `<nav id="right-sidebar">${data.GetPageMapHtml()}</nav>`
         }
 
         // start content section
         s += data.GetTitleHtmlString("_title");
 
-        s+='<small id="redirect-lbl"></small>';
+        s += '<small id="redirect-lbl"></small>';
 
         // edit source link
         if (!data.no_edit) {
           s += `<a id="edit-src" href="/spud-wiki/editor.html?src=${encodeURIComponent(path.posix.normalize(this.src_file_path))}">Edit</a>`;
         }
-        s += `<div id="content" class="content">`;
+        s += `<main id="content" class="content">`;
         s += data.GetHtmlString(spud_wiki.search_map);
 
         if (this.options.append_to_content) {
@@ -208,7 +210,7 @@ class SpudWikiAsset {
         }
 
         // end content section
-        s += '</div>';
+        s += '</main>';
 
 
         // body middle section end, footer start
@@ -245,6 +247,10 @@ class SpudWikiAsset {
 
 
           s += '</div>';
+        }
+
+        if (!data.no_last_modified) {
+          s += `<div id="last-modified">This page was last edited on ${this.last_modified_str}.</div>`;
         }
 
         // theme
@@ -332,9 +338,17 @@ export default class SpudWiki {
    * @param {any} options 
    */
   #AddAssetFile(asset_type, src_file_path, options) {
-    if (typeof src_file_path !== "string" && !(src_file_path instanceof String)) {
+    options ||= {};
+    if (typeof src_file_path !== "string" && !(src_file_path instanceof String) && !Object.hasOwn(options, "data")) {
       console.error("'src_file_path' is not a string", src_file_path);
       throw 0;
+    }
+
+    if (!src_file_path && Object.hasOwn(options, "data")) {
+      const asset = new SpudWikiAsset(this, asset_type, src_file_path, options);
+      asset.SetDataAndPostProcess(this);
+      this.ASSET_MAP.get(asset_type).push(asset);
+      return false;
     }
 
     if (!existsSync(src_file_path)) {
@@ -342,15 +356,14 @@ export default class SpudWiki {
       return true;
     }
 
-    const asset = new SpudWikiAsset(this, asset_type, src_file_path, options || {});
+    const asset = new SpudWikiAsset(this, asset_type, src_file_path, options);
 
-    // using bigint so it won't break in 2038, of course
-    const promise = stat(src_file_path, { bigint: true }).then(stats => {
+    const promise = stat(src_file_path, { bigint: false }).then(stats => {
       if (!stats.isFile()) {
         throw `Path '${src_file_path}' does not represent a file.`;
       }
 
-      asset.SetLastModifiedNs(stats.mtimeNs);
+      asset.SetLastModifiedMs(stats.mtimeMs);
 
       if (asset_type === SpudWikiAsset.MEDIA) {
         return readFile(src_file_path);
@@ -372,6 +385,10 @@ export default class SpudWiki {
 
   AddSpecialPage(src_file_path, options) {
     return this.#AddAssetFile(SpudWikiAsset.SPECIAL_PAGE, src_file_path, options);
+  }
+
+  AddSpecialPageFromString(str, dst_path) {
+    return this.#AddAssetFile(SpudWikiAsset.SPECIAL_PAGE, null, { data: str, dst_path });
   }
 
   AddMediaFile(src_file_path, options) {
@@ -484,7 +501,7 @@ export default class SpudWiki {
     // TODO:
     let s = '<nav id="side-nav">';
 
-    s += '<a href="/spud-wiki/">Main Page</a><a href="/spud-wiki/credits.html">Credits</a><a href="/spud-wiki/about.html">About</a><a href="/spud-wiki/bulletin_board.html">Bulletin Board</a><a href="/spud-wiki/editor.html">SpudText Editor</a><div class="div-sep"></div>';
+    s += '<a href="/spud-wiki/">Main Page</a><a href="/spud-wiki/credits.html">Credits</a><a href="/spud-wiki/about.html">About</a><a href="/spud-wiki/bulletin_board.html">Bulletin Board</a><a href="/spud-wiki/editor.html">SpudText Editor</a><a href="/spud-wiki/changelog.html">Changelog</a><div class="div-sep"></div>';
     const all_articles = this.ASSET_MAP.get(SpudWikiAsset.PAGE), l = all_articles.length;
     for (let i = 0; i < l; i++) {
       const article = all_articles[i];
@@ -552,12 +569,12 @@ export default class SpudWiki {
       }
     })();
 
-    function add_search_map_string(str, is_title, link, title) {
+    function add_search_map_string(str, is_title, link, title, no_search_index) {
       if (Object.hasOwn(search_map, str)) {
         console.error(`Duplicate search_string '${str}'.`);
       } else {
         search_map[str] = {
-          str, is_title, link, lc_str: str.toLowerCase(), title
+          str, is_title, link, lc_str: str.toLowerCase(), title, can_search: !no_search_index
         };
       }
     }
@@ -579,9 +596,9 @@ export default class SpudWiki {
           // create search list
           const spud_text = asset.data;
 
-          if (!spud_text.no_search_index) {
-            add_search_map_string(spud_text.title, true, asset.link, spud_text.title);
-          }
+          //   if (!spud_text.no_search_index) {
+          add_search_map_string(spud_text.title, true, asset.link, spud_text.title, spud_text.no_search_index);
+          //  }
 
           for (const redirect of spud_text.redirects) {
             add_search_map_string(redirect, false, asset.link, spud_text.title);
@@ -592,6 +609,10 @@ export default class SpudWiki {
               add_command(cmd_string, asset.link);
             }
           }
+        } else if (SpudWikiAsset.SPECIAL_PAGE === asset_type) {
+          const spud_text = asset.data;
+          add_search_map_string(spud_text.title, true, asset.link, spud_text.title, spud_text.no_search_index);
+
         }
 
       }
@@ -602,7 +623,7 @@ export default class SpudWiki {
     for (const [asset_type, assets] of this.ASSET_MAP) {
       for (const asset of assets) {
         const data = asset.GetDstFileData(this);
-        console.log(asset.dst_path.padEnd(60, " "), asset.src_file_path.padEnd(60, " "), data?.length);
+        console.log(asset.dst_path.padEnd(60, " "), asset.src_file_path ? asset.src_file_path.padEnd(60, " ") : "just a string...".padEnd(60, " "), data?.length);
 
         promises.push(writeFile(asset.dst_path, data));
 

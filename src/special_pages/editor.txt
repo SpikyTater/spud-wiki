@@ -1,5 +1,6 @@
 !title SpudText Editor
 !contributor Matty5957
+!nosearchindex
 !noedit
 
 Here you can test your own articles using SpudText.

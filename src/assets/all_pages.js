@@ -41,7 +41,7 @@ function AfterDomLoaded() {
   const redirect_string = query_string.get("redirect");
 
   if (redirect_string) {
-    document.getElementById("redirect-lbl").innerHTML=`(redirected from <i><b>${decodeURIComponent(redirect_string)}</b></i>)`;
+    document.getElementById("redirect-lbl").innerHTML = `(redirected from <i><b>${decodeURIComponent(redirect_string)}</b></i>)`;
   }
 
   window.addEventListener("change", function ({ target }) {
@@ -81,8 +81,11 @@ function AfterDomLoaded() {
     }
 
     for (const k in SEARCH_DATA) {
-      const v = SEARCH_DATA[k], score = score_strings(str, v.lc_str);
-      add_to_result_arr(score, v);
+      const v = SEARCH_DATA[k];
+      if (v.can_search) {
+        const score = score_strings(str, v.lc_str);
+        add_to_result_arr(score, v);
+      }
     }
 
     return arr;

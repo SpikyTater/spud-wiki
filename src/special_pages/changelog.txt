@@ -1,0 +1,19 @@
+!title Changelog
+!nosearchindex
+
+== 2025.08.23 - 0.1.0 ==
+  - Added version and changelog
+  - Added a spell checker
+  - Fixed some typos
+  - Added article map in the right panel
+  - Added !nomap directive
+  - Added !redirect directive, only for articles, NOT for headings
+  - Added about.html
+  - Merged <sup> elements of note backlinks in order to decrease the number of DOM elements
+  - Added "redirected from" below the title of a page
+  - Cleaned up dev_todo.txt
+  - Added last edited time on the bottom of all pages
+  - Added !nolastmodified directive
+  - Added bulletin board page
+  - Cleaned up article_ideas.txt
+  - Changed a bit the style of notes

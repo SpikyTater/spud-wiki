@@ -1,29 +1,29 @@
-rework navigation
-what could go on the right side of the middle section -> page navigation, precomputed and presented as html
-site map on the left side
-add last modified on the bottom of every page unless !nolastmodified
-add recent changes to main page
-add redirected from ?redirect=#DeathForTheSpiders -> escape space # " < > [ \ ] ^ `
-use html elements -> small, sub, sup, hgroup (for redirect), main, button, footer, header, address (for contributors), abbr
-add ARIA for accessibility
-add !category and !tag, pretty self explanatory
-add a decent site map to the left sidebar
-redesign the welcome page
-for larry's sake add some testing, especially to spudtext.js (which needs a lot of it)
-cleanup spudtext.js, most of it is extremely redundant
-add // and /**/ comments to spudtext
-once !nosearchindex and !redirect get added, add !nosearchindex to Sup Face and maybe add some easter eggs for it, like 4 random characters that appear between sup and face, and idk how to search index for it
-license the SpudText format
-add warning for weird characters like microsoft word's ' " ", god I hate these
-add some way to prettify spudtext in VS Code
-make a bulletin board for todo stuff
-make a list of accepted domains for external links, and only https protocol (can be omitted in links)
-avoid any possibility of HTML injection by escaping string before adding them inside htmlifystring. same thing for !noteXXXXX, escape the XXXXX part
-decouple TokenInstance from AstNode functionality, TokenInstance extend AstNode
-editor: add save (never autosave), multiple save slots, squiggles for warnings (yellow) and errors (red), auto compile -> race between 10 seconds since last compilation, 2 seconds debounce, normal click, click on warning/error to show exact place in spudtext (select that substring as well maybe?), better issue (warning/error) console, add prettify function, hide all spudtext documentation in <details> and <summary>
-search: add arrow key support to choose result, hide search thingy when focusing out of it / clicking elsewhere
-add global constants to spudtext, for example COMMIT_HASH and other stuff
-for last_modified of each page, use git instead of the file's last_modified. don't use bigint in stat anymore
-!redirect: make it work for every heading
-merge all note refs' sups, thus decreasing the number of DOM elements. take care of whitespaces between them
-merge all note backlinks' sups, thus decreasing the number of DOM elements
+  - add !category and !tag directives
+  - add a way to search by category and tag
+  - design a site map for the left panel (the current list has to disappear)
+  - design a better welcome page
+  - design a better about page
+  - add ARIA for accessibility where possible
+  - add single line and multi line comments to spudtext
+  - think of a better title for the article 'Sup Face' and what redirects to add to it
+  - turn the !noteXXX directive into !note XXX to make it easier to tokenize and to block unsafe characters
+  - add list of allowed domains for external links
+  - only allow https in external links and make it optional
+  - add arrow key support to search feature
+  - hide search results when clicking out of their container (and out of the search input)
+  - merge adjacent note refs' <sup>s, thus decreasing the number of DOM elements. ignore whitespaces between them
+  - make !redirect directive specific for each heading (make that string redirect to that heading specifically)
+  - add global constants to spudtext, for example COMMIT_HASH and VERSION_STRING
+  - decouple tokens from node functionality
+  - add some way to prettify spudtext in VS Code and in online editor
+  - use specific html elements where possible for accessibility (small, sub, sup, hgroup (for redirect), address (for contributors), abbr)
+  - add testing for all spudtext functionality
+  - add save and load to editor, maybe multiple save slots
+  - add autosave (only if multiple save slots and it saves in a special save slot)
+  - add squiggles for warnings and errors in editor
+  - add auto-compilation in editor
+  - click/hover squiggled text to get information about it
+  - click on warning to show the spot in the editor
+  - better editor issue console
+  - decide whether to hide the spudtext documentation in <details> and <summary> or to make it a different page
+  - make editor warn about unusual characters (MS word's ' and " alternatives)

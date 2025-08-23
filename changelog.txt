@@ -1,9 +1,0 @@
-2025.08.23 - 0.1.0
-  - Added version and changelog
-  - Added a spell checker
-  - Fixed some typos
-  - Added article map in the right panel
-  - Added !nomap directive
-  - Added !redirect directive, only for articles, NOT for headings
-  - Added about.html
-  - 

@@ -1,6 +1,7 @@
 !title 404
 !contributor Matty5957
 !nomap
+!nosearchindex
 
 What's up, user face.
 
