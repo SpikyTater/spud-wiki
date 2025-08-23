@@ -1,5 +1,5 @@
 rework navigation
-what could go on the right side of the middle section -> page navigation, preomputed and presented as html
+what could go on the right side of the middle section -> page navigation, precomputed and presented as html
 site map on the left side
 add last modified on the bottom of every page unless !nolastmodified
 add recent changes to main page
@@ -8,7 +8,7 @@ use html elements -> small, sub, sup, hgroup (for redirect), main, button, foote
 add ARIA for accessibility
 add !redirect -> when searching the following string, users will be redirected to this page, to be more specific they will be redirected to the first heading node encountered when going in reverse post-order in the AST (remember to turn the title into a heading1_aggregate, first...). multiple !redirect s are allowed for each heading
 add !category and !tag, pretty self explanatory
-add article map (stickied maybe?) to the right sidebar
+add article map (NOT sticky) to the right sidebar
 add a decent site map to the left sidebar
 redesign the welcome page
 for larry's sake add some testing, especially to spudtext.js (which needs a lot of it)
