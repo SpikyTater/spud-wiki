@@ -1,5 +1,6 @@
 !title TheOnionSound
 !contributor BlueStrategosJ
+!redirect TheOrionSound
 
 On the 10th of July 2025, several YouTubers were invited to a F1 Sim Racing Event in London that was also streamed on Twitch{1}. Among them were several of Pearl's friends, like Grian, Jimmy/SolidarityGaming and **Oli**/**TheOrionSound**.
 
