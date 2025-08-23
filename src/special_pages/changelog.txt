@@ -20,3 +20,6 @@
 
 == 2025.08.23 - 0.1.1 ==
   - "Redirected from" element now is removed if there was no redirection involved, thus not taking space anymore
+
+== 2025.08.23 - 0.1.2 ==
+  - Now special pages can be linked to using internal links
