@@ -458,7 +458,7 @@ class TokenInstance {
 
       return n;
     } else {
-      // no next sibing, use parent
+      // no next sibling, use parent
       return this.parent;
     }
   }
@@ -511,7 +511,7 @@ class RawTokenInstance {
    * @param {number | undefined} raw_token_length
    */
   constructor(raw_token, src_index, raw_token_length) {
-    // I don't care if 'raw_token' is valid, performance and lazyness reasons
+    // I don't care if 'raw_token' is valid, performance and laziness reasons
     // src_index will be checked inside Finalize()
 
     raw_token_length ??= raw_token.raw_token_length;
@@ -1536,7 +1536,7 @@ class SpudTextContext {
       const contributor_username = text_token.GetRawString().trim().toLowerCase();
       const contributor = ContributorFromString(contributor_username);
       if (!contributor) {
-        this.LogWarn(`Contributor '${contributor_username}' does not exist in the database located in './src/contributors.js'. If you are sure you haven't made a spelling mistake, please contact a Wiki mantainer or make a pull request to add that contributor to the list.`);
+        this.LogWarn(`Contributor '${contributor_username}' does not exist in the database located in './src/contributors.js'. If you are sure you haven't made a spelling mistake, please contact a Wiki maintainer or make a pull request to add that contributor to the list.`);
         continue;
       }
 
