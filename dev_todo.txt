@@ -30,3 +30,10 @@
   - add !include directive, to include a spudtext files inside another one
   - Add 'titles' to contributors, like "Official Rememberer, First of her name", "Master Bopped" and so on
   - Remove duplicate search results when they point to the same article
+  - Automatically sort page contributors lexicographically
+  - Add !contrib_list directive to make the contributors page automatic
+  - Make 'Darker', 'Darkerer' and 'Darkest' themes
+  - Think about adding Spuddle minigame to the wiki, like Wordle but only using Spuddle words
+  - Add way to randomly change Celtic's username to Cetlic (!cetlic to allow it in the page, maybe?)
+  - Add a way for each page's script to know which usernames are shown on screen
+  - Add a way to add usernames in spudtext, like \#\#\#<username>\#\#\# which will also be colored if they are in the contributors' list and link to twitch

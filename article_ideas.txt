@@ -11,9 +11,9 @@
   - ##spammer's working on it - nighty##
   - karn
   - ##spuddle##
-  - ###DeathForTheSpiders, #JusticeForJerome-LucasBillSpidertonAndHisFriendsAndFamily##
+  - ##\#DeathForTheSpiders, #JusticeForJerome-LucasBillSpidertonAndHisFriendsAndFamily##
   - scorch's ban, 1L vs 2L scorch, aorta
-  - ETIQUETTE FOR CHAT
+  - ##ETIQUETTE FOR CHAT##
   - balls
   - pearlieWashed, washed
   - ##early/offline chat##
@@ -64,3 +64,5 @@
   - ##abork##
   - chat banishment during recordings
   - ##cleaning lady##
+  - ##carn##
+  - list of streamed games
