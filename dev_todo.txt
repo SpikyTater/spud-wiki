@@ -29,3 +29,4 @@
   - make editor warn about unusual characters (MS word's ' and " alternatives)
   - add !include directive, to include a spudtext files inside another one
   - Add 'titles' to contributors, like "Official Rememberer, First of her name", "Master Bopped" and so on
+  - Remove duplicate search results when they point to the same article
