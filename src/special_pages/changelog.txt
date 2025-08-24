@@ -23,3 +23,6 @@
 
 == 2025.08.23 - 0.1.2 ==
   - Now special pages can be linked to using internal links
+
+== 2025.08.24 - 0.1.3 ==
+  - The 'Edit' button is now ignored when selecting
