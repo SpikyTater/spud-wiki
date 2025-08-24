@@ -56,7 +56,7 @@
   - detroit: become human's magazines
   - goddess pearl/santa pearla
   - ##blue's working on it - car talk##
-  - pokemon, pokemon cards, cubone
+  - ##blue's working on it - pokemon, pokemon cards, cubone##
   - ###YoghurtHypeTrain/#YogurtHypeTrain##
   - mayo jar
   - panic
@@ -66,3 +66,4 @@
   - ##cleaning lady##
   - ##carn##
   - list of streamed games
+  - durgan
