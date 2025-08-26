@@ -28,7 +28,7 @@
   - decide whether to hide the spudtext documentation in <details> and <summary> or to make it a different page
   - make editor warn about unusual characters (MS word's ' and " alternatives)
   - add !include directive, to include a spudtext files inside another one
-  - Add 'titles' to contributors, like "Official Rememberer, First of her name", "Master Bopped" and so on
+  - Add 'titles' to contributors, like "Official Rememberer, First of her name", "Master Bopped", Master of the Typo and so on
   - Remove duplicate search results when they point to the same article
   - Automatically sort page contributors lexicographically
   - Add !contrib_list directive to make the contributors page automatic
@@ -37,3 +37,7 @@
   - Add way to randomly change Celtic's username to Cetlic (!cetlic to allow it in the page, maybe?)
   - Add a way for each page's script to know which usernames are shown on screen
   - Add a way to add usernames in spudtext, like \#\#\#<username>\#\#\# which will also be colored if they are in the contributors' list and link to twitch
+  - Add contributors and last modified as a part of the article content's footer, inside its content and not in the page's footer
+  - Style: body -> flex(upper + footer), upper -> flex(left, center, right), left -> flex(logo, top pad sitemap), center -> flex(search, title, content), right -> flex(top pad article map
+  - )
+  - Larry Ad...
