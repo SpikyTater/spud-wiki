@@ -67,6 +67,7 @@ const CONTRIBUTORS = {
   kawaiitron: new Contributor("Kawaiitron", "00e700", "Kawaiitron_"),
   matty5957: new Contributor("Matty5957", "daa520"),
   spammer92: new Contributor("Spammer92", "92ff00", "Spammer_92"),
+  thehornbill: new Contributor("theHornbill", "9acd32"),
   ven_lillu: new Contributor("Ven_lillu", "ff7f50"),
   waarisdetaart: new Contributor("waarisdetaart", "daa520"),
 };
