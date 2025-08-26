@@ -1,5 +1,4 @@
 !title !cowboy
-!contributor Matty5957
 !command cowboy
 !nomap
 

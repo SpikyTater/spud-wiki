@@ -1,0 +1,5 @@
+!title !grain
+!command grain
+!nomap
+
+A grain is a small, hard, dry seed.

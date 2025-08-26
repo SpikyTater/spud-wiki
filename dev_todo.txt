@@ -41,3 +41,4 @@
   - Style: body -> flex(upper + footer), upper -> flex(left, center, right), left -> flex(logo, top pad sitemap), center -> flex(search, title, content), right -> flex(top pad article map
   - )
   - Larry Ad...
+  - Add article counter (total num)
