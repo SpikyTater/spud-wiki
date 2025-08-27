@@ -38,38 +38,46 @@ class Contributor {
   twitch_link;
 
   /**
+   * @type {string}
+   */
+  title;
+
+  /**
    * @param {string} username 
    * @param {string} color 
    * @param {string | undefined} twitch_username 
+   * @param {string | undefined} title 
    */
-  constructor(username, color, twitch_username) {
+  constructor(username, color, twitch_username, title) {
     this.username = username;
     this.color = color;
     this.twitch_username = twitch_username || username;
     this.twitch_link = `https://www.twitch.tv/${this.twitch_username.toLowerCase()}`;
+    this.title = title ? ", " + title : undefined;
   }
 
   /**
    * @param {string} forced_color 
+   * @param {boolean} for_contribs_page 
    * @returns {string}
    */
-  GetHtmlString(forced_color) {
-    return `<a target="_blank" rel="noopener noreferrer" class="tw-name" href="${this.twitch_link}" style="color:#${forced_color || this.color}">${this.username}</a>`;
+  GetHtmlString(forced_color, for_contribs_page) {
+    return `<a target="_blank" rel="noopener noreferrer" class="tw-name" href="${this.twitch_link}" style="color:#${forced_color || this.color}">${this.username}${(for_contribs_page && this.title) ? this.title : ""}</a>`;
   }
 
 }
 
 const CONTRIBUTORS = {
   "19_meg_91": new Contributor("19_meg_91", "00e700"),
-  bluestrategosj: new Contributor("BlueStrategosJ", "359bff"),
+  bluestrategosj: new Contributor("BlueStrategosJ", "359bff", null, "Loremaster"),
   celticjax: new Contributor("CelticJax", "ff571a"),
   frozencascade: new Contributor("FrozenCascade", "a0ffff"),
   kawaiitron: new Contributor("Kawaiitron", "00e700", "Kawaiitron_"),
-  matty5957: new Contributor("Matty5957", "daa520"),
+  matty5957: new Contributor("Matty5957", "daa520", null, "gluon"),
   spammer92: new Contributor("Spammer92", "92ff00", "Spammer_92"),
   thehornbill: new Contributor("theHornbill", "9acd32"),
   ven_lillu: new Contributor("Ven_lillu", "ff7f50"),
-  waarisdetaart: new Contributor("waarisdetaart", "daa520"),
+  waarisdetaart: new Contributor("waarisdetaart", "daa520", null, "master typist"),
 };
 
 export default CONTRIBUTORS;
