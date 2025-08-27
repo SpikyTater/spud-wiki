@@ -80,7 +80,7 @@ We need all your help... Please feel free to reach out with any ideas you have.
 == Anything else ==
 
 Do you have any other ideas? Please reach out to us!
-`,"./build/dist/bulletin_board.html");
+`, "./build/dist/bulletin_board.html");
 
   wiki.AddSpecialPage("./src/special_pages/credits.txt", {
     dst_path: "./build/dist/credits.html",
@@ -88,7 +88,7 @@ Do you have any other ideas? Please reach out to us!
       let s = "";
       for (const lc_username in CONTRIBUTORS) {
         const contributor = CONTRIBUTORS[lc_username];
-        s += `<p class="credits-contributor">${contributor.GetHtmlString()}</p>`;
+        s += `<p class="credits-contributor">${contributor.GetHtmlString(undefined, true)}</p>`;
       }
       return s;
     })()
