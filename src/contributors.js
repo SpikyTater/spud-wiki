@@ -70,14 +70,16 @@ class Contributor {
 const CONTRIBUTORS = {
   "19_meg_91": new Contributor("19_meg_91", "00e700"),
   bluestrategosj: new Contributor("BlueStrategosJ", "359bff", null, "Loremaster"),
-  celticjax: new Contributor("CelticJax", "ff571a"),
+  celticjax: new Contributor("CelticJax", "ff571a", null, "Cletgjft , Cetlic, Master of Baiting"),
   frozencascade: new Contributor("FrozenCascade", "a0ffff"),
+  kat999xx: new Contributor("kat999xx", "5f9ea0"),
   kawaiitron: new Contributor("Kawaiitron", "00e700", "Kawaiitron_"),
-  matty5957: new Contributor("Matty5957", "daa520", null, "gluon"),
+  matty5957: new Contributor("Matty5957", "daa520", null, "resident gluon"),
+  runwiththerain: new Contributor("runwiththerain", "359bff"),
   spammer92: new Contributor("Spammer92", "92ff00", "Spammer_92"),
   thehornbill: new Contributor("theHornbill", "9acd32"),
   ven_lillu: new Contributor("Ven_lillu", "ff7f50"),
-  waarisdetaart: new Contributor("waarisdetaart", "daa520", null, "master typist"),
+  waarisdetaart: new Contributor("waarisdetaart", "daa520", null, "Master Typist, Clipper of Clips"),
 };
 
 export default CONTRIBUTORS;
