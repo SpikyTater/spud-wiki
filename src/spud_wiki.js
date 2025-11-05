@@ -20,6 +20,7 @@ import path from "path";
 import { SpudTextContext, SpudText } from "./spudtext.js";
 import { THEMES } from "./global_constants.js";
 import { MEDIA_ASSETS } from "./media_assets.js";
+import { execSync } from "child_process";
 
 const COPYRIGHT_COMMENT = `<!--Spud Wiki Engine\nCopyright (C) ${(new Date()).getFullYear()}  SpikyTater\n\nThis program is free software; you can redistribute it and/or modify\nit under the terms of the GNU General Public License as published by\nthe Free Software Foundation; either version 2 of the License, or\n(at your option) any later version.\n\nThis program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along\nwith this program; if not, write to the Free Software Foundation, Inc.,\n51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.-->\n`;
 
@@ -565,12 +566,16 @@ export default class SpudWiki {
 
     const current_commit_hash = this.current_commit_hash = (() => {
       // https://stackoverflow.com/a/34518749
-      const rev = readFileSync('.git/HEAD').toString().trim();
+      // TODO: this needs to be inside a try catch
+      const output = execSync("git rev-parse HEAD").toString().trim();
+      return output;
+
+      /*const rev = readFileSync('.git/HEAD').toString().trim();
       if (rev.indexOf(':') === -1) {
         return rev;
       } else {
         return readFileSync('.git/' + rev.substring(5)).toString().trim();
-      }
+      }*/
     })();
 
     function add_search_map_string(str, is_title, link, title, no_search_index) {
